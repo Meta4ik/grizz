@@ -254,13 +254,29 @@
               </div>
             </div>
 
-            <!-- Quick Preset Playlist Chips -->
+            <!-- Quick Preset Playlist Selector & Compact Chips -->
             <div class="preset-playlists-wrap">
-              <span class="preset-playlists-label">QUICK SWITCH PLAYLISTS:</span>
-              <div class="playlist-chips" id="playlistChipsWrap">
-                <button class="playlist-chip active" data-list="RDkOV2iTeGQik" data-title="Pantera Walk Mix (50+ Songs)">🔥 Pantera Walk Mix</button>
-                <button class="playlist-chip" data-list="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap & Hip Hop Hits">🎤 Clean Rap & Hip Hop</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="The Hits: '90s">📻 The Hits: '90s</button>
+              <div class="preset-header-row">
+                <span class="preset-playlists-label">QUICK SWITCH:</span>
+                <div class="playlist-select-wrapper">
+                  <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
+                    <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
+                    <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
+                    <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
+                    <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</option>
+                    <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
+                  </select>
+                  <span class="dropdown-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Compact Chips (All Visible at Once) -->
+              <div class="playlist-chips compact-chips" id="playlistChipsWrap">
+                <button class="playlist-chip active" data-list="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera</button>
+                <button class="playlist-chip" data-list="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</button>
               </div>
             </div>
           </div>

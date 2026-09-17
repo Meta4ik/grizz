@@ -74,6 +74,7 @@ class GrizzliesApp {
       ytRandomBannerBtn: document.getElementById('ytRandomBannerBtn'),
       ytUrlInput: document.getElementById('ytUrlInput'),
       btnAddYtTrack: document.getElementById('btnAddYtTrack'),
+      playlistSelect: document.getElementById('playlistSelect'),
       playlistChips: document.querySelectorAll('.playlist-chip'),
 
       // Master Dock
@@ -905,12 +906,33 @@ class GrizzliesApp {
         const title = chip.dataset.title;
         this.dom.playlistChips.forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
+        if (this.dom.playlistSelect) {
+          this.dom.playlistSelect.value = listId;
+        }
         this.triggerHaptic(20);
         this.ytEngine.loadPlaylist(listId, title);
       });
     });
 
-    // Highlight the active preset chip on launch if matched
+    // Preset Playlist Dropdown Menu
+    if (this.dom.playlistSelect) {
+      this.dom.playlistSelect.addEventListener('change', (e) => {
+        const listId = e.target.value;
+        const selectedOpt = e.target.options[e.target.selectedIndex];
+        const title = selectedOpt ? selectedOpt.dataset.title || selectedOpt.textContent : 'Dugout Playlist';
+        this.dom.playlistChips.forEach(c => {
+          if (c.dataset.list === listId) {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        });
+        this.triggerHaptic(20);
+        this.ytEngine.loadPlaylist(listId, title);
+      });
+    }
+
+    // Highlight the active preset chip and dropdown on launch if matched
     const currentListId = this.ytEngine?.currentPlaylist?.id;
     if (currentListId) {
       let matched = false;
@@ -922,8 +944,8 @@ class GrizzliesApp {
           c.classList.remove('active');
         }
       });
-      if (!matched && this.dom.playlistChips.length > 0) {
-        // Custom link was loaded previously
+      if (this.dom.playlistSelect) {
+        this.dom.playlistSelect.value = currentListId;
       }
     }
   }
@@ -942,6 +964,9 @@ class GrizzliesApp {
     this.ytEngine.loadPlaylist(parsed.playlistId, playlistTitle);
     this.dom.ytUrlInput.value = '';
     this.dom.playlistChips.forEach(c => c.classList.remove('active'));
+    if (this.dom.playlistSelect) {
+      this.dom.playlistSelect.value = '';
+    }
     this.triggerHaptic(25);
   }
 
