@@ -7,6 +7,18 @@ import { PLAYERS, HYPE_TRACKS } from './roster.js';
 import { WalkUpAudioEngine } from './audio-player.js';
 import { YouTubeInningsEngine } from './youtube-manager.js';
 
+// Default Songs in the Dugout Song Jar (Coach's playlist selections + Dugout Anthems)
+export const DEFAULT_JAR_SONGS = [
+  { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
+  { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
+  { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
+  { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
+  { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+  { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
+  { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
+  { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' }
+];
+
 class GrizzliesApp {
   constructor() {
     this.audioEngine = new WalkUpAudioEngine();
@@ -22,6 +34,9 @@ class GrizzliesApp {
     this.activeTrack = null;
     this.lastBatterIndex = -1;
     this.onDeckPlayer = null;
+
+    // Song Jar state
+    this.songJar = this.loadSongJar();
 
     // Inning timer state
     this.timerDuration = 120;
@@ -109,6 +124,19 @@ class GrizzliesApp {
       saveLineupBtn: document.getElementById('saveLineupBtn'),
       resetLineupBtn: document.getElementById('resetLineupBtn'),
 
+      // Song Jar Elements
+      openSongJarBtn: document.getElementById('openSongJarBtn'),
+      songJarModal: document.getElementById('songJarModal'),
+      closeSongJarModal: document.getElementById('closeSongJarModal'),
+      closeSongJarDoneBtn: document.getElementById('closeSongJarDoneBtn'),
+      songJarCount: document.getElementById('songJarCount'),
+      jarSongsCountText: document.getElementById('jarSongsCountText'),
+      jarDrawRandomBtn: document.getElementById('jarDrawRandomBtn'),
+      jarSongInput: document.getElementById('jarSongInput'),
+      jarAddSongBtn: document.getElementById('jarAddSongBtn'),
+      jarSongsList: document.getElementById('jarSongsList'),
+      jarResetDefaultBtn: document.getElementById('jarResetDefaultBtn'),
+
       // Help Modal
       helpModal: document.getElementById('helpModal'),
       closeHelpModal: document.getElementById('closeHelpModal'),
@@ -128,6 +156,7 @@ class GrizzliesApp {
     this.setupSwipeNavigation();
     this.setupInningTimer();
     this.setupYouTubeControls();
+    this.setupSongJar();
     this.updateSortLabel();
     this.updateOnDeckDisplay();
   }
@@ -991,6 +1020,257 @@ class GrizzliesApp {
     if (this.dom.playlistSelect) {
       this.dom.playlistSelect.value = '';
     }
+    this.triggerHaptic(25);
+  }
+
+  // =========================================================================
+  // Dugout Song Jar Methods
+  // =========================================================================
+  loadSongJar() {
+    try {
+      const saved = localStorage.getItem('grizzlies_song_jar');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading song jar:', e);
+    }
+    return [...DEFAULT_JAR_SONGS];
+  }
+
+  saveSongJar(songs) {
+    this.songJar = songs;
+    try {
+      localStorage.setItem('grizzlies_song_jar', JSON.stringify(songs));
+    } catch (e) {
+      console.warn('Error saving song jar:', e);
+    }
+    this.updateSongJarBadge();
+  }
+
+  updateSongJarBadge() {
+    const count = this.songJar ? this.songJar.length : 0;
+    if (this.dom.songJarCount) {
+      this.dom.songJarCount.textContent = count;
+    }
+    if (this.dom.jarSongsCountText) {
+      this.dom.jarSongsCountText.textContent = count;
+    }
+  }
+
+  setupSongJar() {
+    this.updateSongJarBadge();
+
+    if (this.dom.openSongJarBtn) {
+      this.dom.openSongJarBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        this.openSongJarModal();
+      });
+    }
+
+    if (this.dom.closeSongJarModal) {
+      this.dom.closeSongJarModal.addEventListener('click', () => {
+        this.closeSongJarModal();
+      });
+    }
+
+    if (this.dom.closeSongJarDoneBtn) {
+      this.dom.closeSongJarDoneBtn.addEventListener('click', () => {
+        this.closeSongJarModal();
+      });
+    }
+
+    if (this.dom.songJarModal) {
+      this.dom.songJarModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.songJarModal) {
+          this.closeSongJarModal();
+        }
+      });
+    }
+
+    if (this.dom.jarDrawRandomBtn) {
+      this.dom.jarDrawRandomBtn.addEventListener('click', () => {
+        this.triggerHaptic([30, 50]);
+        this.drawRandomSongFromJar();
+      });
+    }
+
+    if (this.dom.jarAddSongBtn) {
+      this.dom.jarAddSongBtn.addEventListener('click', () => {
+        this.handleAddSongToJar();
+      });
+    }
+
+    if (this.dom.jarSongInput) {
+      this.dom.jarSongInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.handleAddSongToJar();
+        }
+      });
+    }
+
+    if (this.dom.jarResetDefaultBtn) {
+      this.dom.jarResetDefaultBtn.addEventListener('click', () => {
+        if (confirm('Reset song jar to default baseball anthems?')) {
+          this.saveSongJar([...DEFAULT_JAR_SONGS]);
+          this.renderSongJarList();
+          this.triggerHaptic(20);
+        }
+      });
+    }
+  }
+
+  openSongJarModal() {
+    this.renderSongJarList();
+    if (this.dom.songJarModal) {
+      this.dom.songJarModal.style.display = 'flex';
+    }
+  }
+
+  closeSongJarModal() {
+    if (this.dom.songJarModal) {
+      this.dom.songJarModal.style.display = 'none';
+    }
+  }
+
+  renderSongJarList() {
+    if (!this.dom.jarSongsList) return;
+    this.dom.jarSongsList.innerHTML = '';
+
+    const currentYtId = this.ytEngine?.currentPlaylist?.id;
+
+    this.songJar.forEach((song, idx) => {
+      const isPlaying = this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying && currentYtId === song.id;
+
+      const item = document.createElement('div');
+      item.className = `jar-song-item ${isPlaying ? 'active' : ''}`;
+      item.dataset.id = song.id;
+
+      item.innerHTML = `
+        <div class="jar-song-left" style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-dim); width: 18px;">#${idx + 1}</span>
+          <div class="jar-song-info">
+            <div class="jar-song-title">${song.title}</div>
+            <div class="jar-song-artist">${song.artist}</div>
+          </div>
+        </div>
+        <div class="jar-song-actions" style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn-jar-play" title="Play Track">
+            ${isPlaying ? '❚❚ PAUSE' : '▶ PLAY'}
+          </button>
+          <button class="btn-jar-del" title="Remove from Jar" style="background: none; border: none; color: var(--text-dim); font-size: 0.95rem; cursor: pointer; padding: 4px;">
+            ✕
+          </button>
+        </div>
+      `;
+
+      // Play button click
+      const playBtn = item.querySelector('.btn-jar-play');
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.triggerHaptic(20);
+        if (isPlaying) {
+          this.ytEngine.pause();
+          playBtn.textContent = '▶ PLAY';
+          item.classList.remove('active');
+        } else {
+          this.playSongFromJar(song);
+        }
+      });
+
+      // Clicking row also plays
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-jar-del')) return;
+        this.triggerHaptic(20);
+        this.playSongFromJar(song);
+      });
+
+      // Delete button click
+      const delBtn = item.querySelector('.btn-jar-del');
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.songJar.length <= 1) {
+          alert('Keep at least one song in the jar!');
+          return;
+        }
+        const updated = this.songJar.filter((_, i) => i !== idx);
+        this.saveSongJar(updated);
+        this.renderSongJarList();
+      });
+
+      this.dom.jarSongsList.appendChild(item);
+    });
+  }
+
+  playSongFromJar(song) {
+    if (this.audioEngine.isPlaying) {
+      this.audioEngine.stop();
+    }
+    this.activeAudioSource = 'youtube';
+    this.dom.fadeOutBtn.disabled = false;
+    this.dom.stopCutBtn.disabled = false;
+    this.dom.liveEqBadge.classList.add('active');
+    this.dom.dockPlayerName.textContent = song.title;
+    this.dom.dockSongTitle.textContent = song.artist || 'Dugout Song Jar';
+
+    this.ytEngine.playVideo(song.id, song.title, song.artist);
+    this.renderSongJarList();
+  }
+
+  drawRandomSongFromJar() {
+    if (!this.songJar || this.songJar.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * this.songJar.length);
+    const chosen = this.songJar[randomIndex];
+
+    this.playSongFromJar(chosen);
+
+    // Visual feedback: scroll to chosen track and highlight
+    const items = this.dom.jarSongsList.querySelectorAll('.jar-song-item');
+    if (items[randomIndex]) {
+      items[randomIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      items[randomIndex].classList.add('active');
+    }
+  }
+
+  handleAddSongToJar() {
+    const raw = this.dom.jarSongInput.value.trim();
+    if (!raw) return;
+
+    let videoId = null;
+    let title = raw;
+    let artist = 'Custom Jar Pick';
+
+    // Parse YouTube URL if provided
+    const ytMatch = raw.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+    if (ytMatch && ytMatch[1]) {
+      videoId = ytMatch[1];
+      title = `YouTube Track (${videoId.slice(0, 6)})`;
+    } else {
+      if (raw.includes(' - ')) {
+        const parts = raw.split(' - ');
+        artist = parts[0].trim();
+        title = parts[1].trim();
+      } else if (raw.toLowerCase().includes(' by ')) {
+        const parts = raw.split(/\s+by\s+/i);
+        title = parts[0].trim();
+        artist = parts[1].trim();
+      }
+      videoId = 'MVDJxMxzTL0'; // Standard audio stream container
+    }
+
+    const newSong = {
+      id: videoId,
+      title: title,
+      artist: artist
+    };
+
+    const updated = [newSong, ...this.songJar];
+    this.saveSongJar(updated);
+    this.renderSongJarList();
+    this.dom.jarSongInput.value = '';
     this.triggerHaptic(25);
   }
 

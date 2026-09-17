@@ -5,8 +5,8 @@
  */
 
 export const DEFAULT_PLAYLIST = {
-  id: 'RDkOV2iTeGQik',
-  title: 'Pantera Walk Mix (50+ Songs)',
+  id: 'PLfIVhrWS4Y_M',
+  title: "Coach's Baseball Playlist",
   artist: 'Between-Innings Warm-Up Queue'
 };
 
@@ -269,6 +269,45 @@ export class YouTubeInningsEngine {
     }
     this._sendCommand('previousVideo');
     this.callbacks.onPlay(this.currentPlaylist);
+  }
+
+  playVideo(videoId, title = 'Dugout Track', artist = 'Song Jar Selection') {
+    this._cancelFade();
+    this.isPlaying = true;
+    const track = {
+      id: videoId,
+      title: title,
+      artist: artist
+    };
+    this.savePlaylist(track);
+
+    let loadedViaApi = false;
+    if (this.player && typeof this.player.loadVideoById === 'function') {
+      try {
+        this.player.setVolume(this.masterVolume);
+        this.player.loadVideoById({
+          videoId: videoId,
+          startSeconds: 0
+        });
+        loadedViaApi = true;
+      } catch (e) {}
+    }
+
+    this._sendCommand('loadVideoById', { videoId: videoId, startSeconds: 0 });
+    this._sendCommand('setVolume', [this.masterVolume]);
+    this._sendCommand('playVideo');
+
+    if (!loadedViaApi) {
+      const iframe = document.getElementById('ytPlayerFrame');
+      if (iframe) {
+        const originParam = window.location.origin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+        iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&playsinline=1&autoplay=1${originParam}`;
+        setTimeout(() => this._initPlayer(), 1200);
+      }
+    }
+
+    this.callbacks.onTrackChange(track);
+    this.callbacks.onPlay(track);
   }
 
   playRandomTrack() {

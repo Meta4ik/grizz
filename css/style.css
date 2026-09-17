@@ -1531,98 +1531,50 @@ input[type="range"]::-webkit-slider-thumb:active {
   box-shadow: 0 0 10px rgba(214, 24, 39, 0.5);
 }
 
-.yt-video-wrapper {
-  position: relative;
-  width: 100%;
-  height: 380px; /* Spacious height to easily scroll and see the playlist in the player */
-  background: #000000;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1.5px solid #361922;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+/* Compact Audio Deck Layout */
+.compact-audio-card {
+  padding: 12px 14px;
 }
 
-.yt-video-wrapper iframe,
-#ytPlayerFrame {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.playlist-hint-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: rgba(214, 24, 39, 0.12);
-  border: 1px dashed rgba(214, 24, 39, 0.4);
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin-top: 10px;
-  font-size: 0.73rem;
-  font-weight: 700;
-  color: #f1f3f7;
-  line-height: 1.35;
-}
-
-.playlist-hint-text {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.playlist-hint-banner .hint-icon {
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.btn-random-pill {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
-  border: 1px solid var(--red-bright);
-  color: #ffffff;
-  font-family: var(--font-athletic);
-  font-size: 0.95rem;
-  letter-spacing: 0.6px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(214, 24, 39, 0.4);
-  transition: transform 0.1s, box-shadow 0.15s;
-  flex-shrink: 0;
-}
-
-.btn-random-pill:active {
-  transform: scale(0.94);
-}
-
-.yt-player-meta {
+.yt-deck-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
   background: rgba(10, 11, 15, 0.75);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  margin-bottom: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
 }
 
-.yt-track-info {
-  min-width: 0;
+.yt-deck-info {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.yt-deck-info .yt-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.yt-deck-info .yt-header-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.8px;
+}
+
+.yt-deck-info .yt-audio-pill {
+  font-size: 0.6rem;
+  padding: 1px 6px;
 }
 
 .yt-track-title {
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: #ffffff;
   white-space: nowrap;
@@ -1632,25 +1584,55 @@ input[type="range"]::-webkit-slider-thumb:active {
 }
 
 .yt-track-artist {
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   color: var(--text-med);
   font-weight: 600;
-  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Small Mini Video Player in the Corner */
+.yt-video-mini-corner {
+  position: relative;
+  width: 110px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000000;
+  border: 1.5px solid #361922;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
+.yt-video-mini-corner iframe,
+#ytPlayerFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Action Bar with Controls and Song Jar Button */
+.yt-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
 .yt-quick-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 6px;
 }
 
 .btn-yt-control {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
@@ -1685,6 +1667,220 @@ input[type="range"]::-webkit-slider-thumb:active {
   border-color: #ffca28;
   color: #ffffff;
   box-shadow: 0 0 10px rgba(255, 202, 40, 0.4);
+}
+
+/* Dugout Song Jar Trigger Button */
+.btn-song-jar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #2a1116 0%, #15080b 100%);
+  border: 1.5px solid var(--red-primary);
+  border-radius: 10px;
+  padding: 6px 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-song-jar:active {
+  transform: scale(0.95);
+  background: rgba(214, 24, 39, 0.25);
+}
+
+.btn-song-jar .jar-icon {
+  font-size: 1.15rem;
+}
+
+.btn-song-jar .jar-label {
+  font-family: var(--font-athletic);
+  font-size: 1.05rem;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  color: var(--red-bright);
+}
+
+.btn-song-jar .jar-count-badge {
+  background: var(--red-primary);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+/* Song Jar Modal Styles */
+.jar-modal-card {
+  max-height: 85%;
+}
+
+.modal-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.jar-badge-icon {
+  font-size: 1.3rem;
+}
+
+.btn-jar-draw-random {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  border: 1.5px solid var(--red-bright);
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(214, 24, 39, 0.4);
+  margin-bottom: 12px;
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.btn-jar-draw-random:active {
+  transform: scale(0.97);
+}
+
+.draw-icon {
+  font-size: 1.4rem;
+}
+
+.draw-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.draw-main {
+  font-family: var(--font-athletic);
+  font-size: 1.25rem;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.draw-sub {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.jar-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.jar-add-row input {
+  flex: 1;
+  background: rgba(8, 8, 11, 0.6);
+  border: 1px solid #2a2d3b;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.jar-add-row input:focus {
+  border-color: var(--red-bright);
+}
+
+.btn-jar-add {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-athletic);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.jar-songs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-dim);
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.btn-jar-reset {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.jar-songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.jar-song-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(20, 22, 29, 0.8);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.jar-song-item.active {
+  border-color: var(--red-bright);
+  background: rgba(214, 24, 39, 0.15);
+}
+
+.jar-song-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.jar-song-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jar-song-artist {
+  font-size: 0.7rem;
+  color: var(--text-med);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-jar-play {
+  background: var(--red-primary);
+  border: 1px solid var(--red-bright);
+  color: #ffffff;
+  font-family: var(--font-athletic);
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* Add / Change YouTube Playlist Card */

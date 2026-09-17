@@ -163,22 +163,36 @@
             </div>
           </div>
 
-          <!-- YouTube Playlist Player Suite -->
-          <div class="yt-player-card">
-            <div class="yt-card-header">
-              <div class="yt-header-left">
-                <span class="live-pulse-dot" id="ytPulseDot"></span>
-                <span class="yt-header-tag">YOUTUBE INNING PLAYLIST</span>
+          <!-- YouTube Playlist Player Suite (Compact Audio Deck) -->
+          <div class="yt-player-card compact-audio-card">
+            
+            <!-- Top Row: Track Meta on Left, Mini Video in Top-Right Corner -->
+            <div class="yt-deck-top-row">
+              <div class="yt-deck-info">
+                <div class="yt-header-left">
+                  <span class="live-pulse-dot" id="ytPulseDot"></span>
+                  <span class="yt-header-tag">BETWEEN-INNINGS MUSIC</span>
+                  <span class="yt-audio-pill" id="ytAudioPill">READY</span>
+                </div>
+                <div class="yt-track-title" id="ytCurrentTitle">Coach's Baseball Playlist</div>
+                <div class="yt-track-artist" id="ytCurrentArtist">Dugout Inning Queue</div>
               </div>
-              <span class="yt-audio-pill" id="ytAudioPill">PLAYLIST READY</span>
+
+              <!-- Mini Video Player in the Top Right Corner -->
+              <div class="yt-video-mini-corner" id="ytPlayerContainer">
+                <iframe 
+                  id="ytPlayerFrame"
+                  src="https://www.youtube.com/embed/videoseries?list=PLfIVhrWS4Y_M&enablejsapi=1&playsinline=1"
+                  title="Between Innings Dugout Playlist"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen>
+                </iframe>
+              </div>
             </div>
 
-            <!-- Quick Dugout Skip & Playback Controls (At Top of Video) -->
-            <div class="yt-player-meta">
-              <div class="yt-track-info">
-                <div class="yt-track-title" id="ytCurrentTitle">Pantera Walk Mix (50+ Songs)</div>
-                <div class="yt-track-artist" id="ytCurrentArtist">Between-Innings Warm-Up Queue</div>
-              </div>
+            <!-- Transport Action Console & Song Jar Button -->
+            <div class="yt-action-bar">
               <div class="yt-quick-controls">
                 <button class="btn-yt-control" id="ytPrevBtn" title="Previous Song">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
@@ -200,37 +214,43 @@
                   </svg>
                 </button>
               </div>
-            </div>
 
-            <!-- YouTube Embedded Playlist Player -->
-            <div class="yt-video-wrapper" id="ytPlayerContainer">
-              <iframe 
-                id="ytPlayerFrame"
-                src="https://www.youtube.com/embed/videoseries?list=RDkOV2iTeGQik&enablejsapi=1&playsinline=1"
-                title="Between Innings Dugout Playlist"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen>
-              </iframe>
-            </div>
-
-            <!-- Coach Playlist Tip & Random Track Jump -->
-            <div class="playlist-hint-banner">
-              <div class="playlist-hint-text">
-                <span class="hint-icon">📋</span>
-                <span>Tap <strong>playlist (☰)</strong> in video or roll random:</span>
-              </div>
-              <button class="btn-random-pill" id="ytRandomBannerBtn" title="Pick Random Song">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="16 3 21 3 21 8"></polyline>
-                  <line x1="4" y1="20" x2="21" y2="3"></line>
-                  <polyline points="21 16 21 21 16 21"></polyline>
-                  <line x1="15" y1="15" x2="21" y2="21"></line>
-                  <line x1="4" y1="4" x2="9" y2="9"></line>
-                </svg>
-                <span>RANDOM SONG</span>
+              <!-- Dugout Song Jar Trigger Button -->
+              <button class="btn-song-jar" id="openSongJarBtn" title="Open Dugout Song Jar">
+                <span class="jar-icon">🫙</span>
+                <span class="jar-label">SONG JAR</span>
+                <span class="jar-count-badge" id="songJarCount">6</span>
               </button>
             </div>
+
+            <!-- Quick Preset Playlist Selector & Compact Chips -->
+            <div class="preset-playlists-wrap">
+              <div class="preset-header-row">
+                <span class="preset-playlists-label">QUICK SWITCH:</span>
+                <div class="playlist-select-wrapper">
+                  <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
+                    <option value="PLfIVhrWS4Y_M" data-title="Coach's Baseball Playlist" selected>⚾ My Baseball Playlist</option>
+                    <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
+                    <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
+                    <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
+                    <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</option>
+                    <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
+                  </select>
+                  <span class="dropdown-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Compact Chips (All Visible at Once) -->
+              <div class="playlist-chips compact-chips" id="playlistChipsWrap">
+                <button class="playlist-chip active" data-list="PLfIVhrWS4Y_M" data-title="Coach's Baseball Playlist">⚾ My Playlist</button>
+                <button class="playlist-chip" data-list="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera</button>
+                <button class="playlist-chip" data-list="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</button>
+                <button class="playlist-chip" data-list="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</button>
+              </div>
+            </div>
+
           </div>
 
           <!-- Change / Load Any YouTube Playlist Card -->
@@ -251,32 +271,6 @@
                 <button class="btn-add-yt" id="btnAddYtTrack" style="width: 100%;">
                   <span>⚡ LOAD PLAYLIST</span>
                 </button>
-              </div>
-            </div>
-
-            <!-- Quick Preset Playlist Selector & Compact Chips -->
-            <div class="preset-playlists-wrap">
-              <div class="preset-header-row">
-                <span class="preset-playlists-label">QUICK SWITCH:</span>
-                <div class="playlist-select-wrapper">
-                  <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
-                    <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
-                    <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
-                    <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
-                    <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</option>
-                    <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
-                  </select>
-                  <span class="dropdown-arrow">▾</span>
-                </div>
-              </div>
-
-              <!-- Compact Chips (All Visible at Once) -->
-              <div class="playlist-chips compact-chips" id="playlistChipsWrap">
-                <button class="playlist-chip active" data-list="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera</button>
-                <button class="playlist-chip" data-list="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</button>
               </div>
             </div>
           </div>
@@ -438,6 +432,52 @@
         </div>
         <div class="modal-footer">
           <button class="btn-primary" id="gotItBtn" style="width: 100%;">Got It!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dugout Song Jar Modal -->
+    <div class="modal-overlay" id="songJarModal" style="display: none;">
+      <div class="modal-card jar-modal-card">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <div class="modal-tag-row">
+              <span class="jar-badge-icon">🫙</span>
+              <h3>DUGOUT SONG JAR</h3>
+            </div>
+            <p>Pick any song from the jar or draw a random track</p>
+          </div>
+          <button class="modal-close-btn" id="closeSongJarModal">&times;</button>
+        </div>
+
+        <div class="modal-body jar-modal-body">
+          <!-- Big Draw Random Song Button -->
+          <button class="btn-jar-draw-random" id="jarDrawRandomBtn">
+            <span class="draw-icon">🎲</span>
+            <div class="draw-text">
+              <span class="draw-main">DRAW RANDOM SONG FROM JAR</span>
+              <span class="draw-sub">Instantly play a random slip from the jar</span>
+            </div>
+          </button>
+
+          <!-- Add Song to Jar Quick Form -->
+          <div class="jar-add-row">
+            <input type="text" id="jarSongInput" placeholder="Paste song title or YouTube link to add..." autocomplete="off">
+            <button class="btn-jar-add" id="jarAddSongBtn">➕ ADD</button>
+          </div>
+
+          <!-- List of songs in the jar -->
+          <div class="jar-songs-header">
+            <span>SONGS IN THE JAR (<span id="jarSongsCountText">6</span>)</span>
+            <button class="btn-jar-reset" id="jarResetDefaultBtn" title="Reset to default songs">Reset Default</button>
+          </div>
+          <div class="jar-songs-list" id="jarSongsList">
+            <!-- Dynamic song cards generated by JS -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-primary" id="closeSongJarDoneBtn" style="width: 100%;">Done</button>
         </div>
       </div>
     </div>
