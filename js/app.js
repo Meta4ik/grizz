@@ -526,43 +526,175 @@ class GrizzliesApp {
     this.lineupOrder.forEach((player, idx) => {
       const item = document.createElement('div');
       item.className = 'lineup-item';
+      item.dataset.idx = idx;
+      item.setAttribute('draggable', 'true');
       item.innerHTML = `
         <div class="lineup-item-left">
+          <div class="lineup-drag-handle" title="Drag to reorder" aria-label="Drag handle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="4" y1="7" x2="20" y2="7"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="17" x2="20" y2="17"></line>
+            </svg>
+          </div>
           <span class="lineup-batting-pos">#${idx + 1}</span>
           <div class="lineup-player-info">
-            <span class="lineup-player-name">${player.name}</span>
-            <span class="lineup-player-num">Jersey #${player.number} • ${player.song}</span>
+            <div class="lineup-name-row">
+              <span class="lineup-player-name">${player.name}</span>
+              <span class="lineup-jersey-pill">#${player.number}</span>
+            </div>
+            <span class="lineup-player-num">${player.song} • ${player.artist}</span>
           </div>
         </div>
         <div class="lineup-move-btns">
-          <button class="move-btn" data-dir="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''}>▲</button>
-          <button class="move-btn" data-dir="down" data-idx="${idx}" ${idx === this.lineupOrder.length - 1 ? 'disabled' : ''}>▼</button>
+          <button class="move-btn" data-dir="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Up">▲</button>
+          <button class="move-btn" data-dir="down" data-idx="${idx}" ${idx === this.lineupOrder.length - 1 ? 'disabled' : ''} title="Move Down">▼</button>
         </div>
       `;
 
       item.querySelectorAll('.move-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const dir = e.target.dataset.dir;
-          const index = parseInt(e.target.dataset.idx, 10);
+          e.stopPropagation();
+          const dir = btn.dataset.dir;
+          const index = parseInt(btn.dataset.idx, 10);
           this.moveLineupItem(index, dir);
         });
       });
 
       this.dom.lineupList.appendChild(item);
     });
+
+    this.setupLineupDragAndDrop();
+  }
+
+  setupLineupDragAndDrop() {
+    const list = this.dom.lineupList;
+    let draggedItem = null;
+    let draggedIndex = null;
+    let currentOverItem = null;
+
+    list.querySelectorAll('.lineup-item').forEach(item => {
+      // Desktop Mouse Drag
+      item.addEventListener('dragstart', (e) => {
+        draggedItem = item;
+        draggedIndex = parseInt(item.dataset.idx, 10);
+        item.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', draggedIndex);
+      });
+
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const rect = item.getBoundingClientRect();
+        item.classList.remove('drag-over-top', 'drag-over-bottom');
+        if (e.clientY < rect.top + rect.height / 2) {
+          item.classList.add('drag-over-top');
+        } else {
+          item.classList.add('drag-over-bottom');
+        }
+      });
+
+      item.addEventListener('dragleave', () => {
+        item.classList.remove('drag-over-top', 'drag-over-bottom');
+      });
+
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        item.classList.remove('drag-over-top', 'drag-over-bottom');
+        const targetIndex = parseInt(item.dataset.idx, 10);
+        if (draggedIndex !== null && draggedIndex !== targetIndex) {
+          const rect = item.getBoundingClientRect();
+          let finalTarget = targetIndex;
+          if (e.clientY > rect.top + rect.height / 2 && targetIndex < this.lineupOrder.length - 1) {
+            finalTarget = targetIndex + (draggedIndex > targetIndex ? 1 : 0);
+          }
+          this.reorderLineup(draggedIndex, finalTarget);
+        }
+      });
+
+      item.addEventListener('dragend', () => {
+        item.classList.remove('is-dragging');
+        list.querySelectorAll('.lineup-item').forEach(el => {
+          el.classList.remove('drag-over-top', 'drag-over-bottom', 'is-dragging');
+        });
+        draggedItem = null;
+        draggedIndex = null;
+      });
+
+      // Mobile Touch Drag on iPhone
+      const handle = item.querySelector('.lineup-drag-handle') || item;
+      
+      handle.addEventListener('touchstart', (e) => {
+        draggedItem = item;
+        draggedIndex = parseInt(item.dataset.idx, 10);
+        draggedItem.classList.add('is-dragging');
+        this.triggerHaptic(15);
+      }, { passive: true });
+
+      handle.addEventListener('touchmove', (e) => {
+        if (!draggedItem) return;
+        const touch = e.touches[0];
+        const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+        const target = elem ? elem.closest('.lineup-item') : null;
+
+        list.querySelectorAll('.lineup-item').forEach(el => {
+          if (el !== target) el.classList.remove('drag-over-top', 'drag-over-bottom');
+        });
+
+        if (target && target !== draggedItem) {
+          currentOverItem = target;
+          const rect = target.getBoundingClientRect();
+          if (touch.clientY < rect.top + rect.height / 2) {
+            target.classList.add('drag-over-top');
+            target.classList.remove('drag-over-bottom');
+          } else {
+            target.classList.add('drag-over-bottom');
+            target.classList.remove('drag-over-top');
+          }
+        }
+      }, { passive: false });
+
+      handle.addEventListener('touchend', () => {
+        if (!draggedItem) return;
+        draggedItem.classList.remove('is-dragging');
+
+        if (currentOverItem && currentOverItem !== draggedItem) {
+          const targetIndex = parseInt(currentOverItem.dataset.idx, 10);
+          const isBottom = currentOverItem.classList.contains('drag-over-bottom');
+          let finalIndex = targetIndex;
+          if (isBottom && draggedIndex < targetIndex) {
+            finalIndex = targetIndex;
+          } else if (!isBottom && draggedIndex > targetIndex) {
+            finalIndex = targetIndex;
+          }
+          this.reorderLineup(draggedIndex, finalIndex);
+          this.triggerHaptic(20);
+        }
+
+        list.querySelectorAll('.lineup-item').forEach(el => {
+          el.classList.remove('drag-over-top', 'drag-over-bottom', 'is-dragging');
+        });
+        draggedItem = null;
+        draggedIndex = null;
+        currentOverItem = null;
+      });
+    });
+  }
+
+  reorderLineup(fromIdx, toIdx) {
+    if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0) return;
+    const list = [...this.lineupOrder];
+    const [moved] = list.splice(fromIdx, 1);
+    list.splice(toIdx, 0, moved);
+    this.saveLineupOrder(list);
+    this.renderLineupModalItems();
   }
 
   moveLineupItem(idx, dir) {
     const targetIdx = dir === 'up' ? idx - 1 : idx + 1;
     if (targetIdx < 0 || targetIdx >= this.lineupOrder.length) return;
-
-    const list = [...this.lineupOrder];
-    const temp = list[idx];
-    list[idx] = list[targetIdx];
-    list[targetIdx] = temp;
-
-    this.saveLineupOrder(list);
-    this.renderLineupModalItems();
+    this.reorderLineup(idx, targetIdx);
     this.triggerHaptic(15);
   }
 
