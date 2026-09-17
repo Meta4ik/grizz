@@ -1,5 +1,6 @@
 /**
- * Wiley Grizzlies (8U Fall 2026) - Walk-Up Music Roster Data
+ * Wylie Grizzlies (8U Fall 2026) - Walk-Up Music Roster Data
+ * High-performance, fast-loading 192kbps MP3 tracks
  */
 
 export const PLAYERS = [
@@ -10,7 +11,7 @@ export const PLAYERS = [
     name: "Charlie Barcelo",
     song: "Hound Dog",
     artist: "Elvis Presley",
-    file: "sounds/Grizzlies 8u - Fall 2026 6 Charlie Barcelo__Hound Dog__Elvis Presley.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 6 Charlie Barcelo__Hound Dog__Elvis Presley.mp3"
   },
   {
     id: "player-7",
@@ -19,7 +20,7 @@ export const PLAYERS = [
     name: "Dash Johnson",
     song: "Tick Tick Boom",
     artist: "The Hives",
-    file: "sounds/Grizzlies 8u - Fall 2026 7 Dash Johnson__Tick Tick Boom.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 7 Dash Johnson__Tick Tick Boom.mp3"
   },
   {
     id: "player-8",
@@ -28,7 +29,7 @@ export const PLAYERS = [
     name: "Madoc Willis",
     song: "Save The Day",
     artist: "Stadium Mix",
-    file: "sounds/Grizzlies 8u - Fall 2026 8 Madoc Willis -  Save The Day.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 8 Madoc Willis -  Save The Day.mp3"
   },
   {
     id: "player-12",
@@ -37,7 +38,7 @@ export const PLAYERS = [
     name: "Jackson Staley",
     song: "I’m Good",
     artist: "Jelly Roll",
-    file: "sounds/Grizzlies 8u - Fall 2026 12 Jackson Staley__I’m Good__Jelly Roll — GOAT soundtrack.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 12 Jackson Staley__I’m Good__Jelly Roll — GOAT soundtrack.mp3"
   },
   {
     id: "player-13",
@@ -46,7 +47,7 @@ export const PLAYERS = [
     name: "Tim Helms",
     song: "Run",
     artist: "OneRepublic",
-    file: "sounds/Grizzlies 8u - Fall 2026 13 Tim Helms__Run__OneRepublic.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 13 Tim Helms__Run__OneRepublic.mp3"
   },
   {
     id: "player-14",
@@ -55,7 +56,7 @@ export const PLAYERS = [
     name: "Jordan Taylor",
     song: "Walk-Up Beat",
     artist: "Dugout Cut",
-    file: "sounds/Grizzlies 8u - Fall 2026 14 - Jordan Taylor.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 14 - Jordan Taylor.mp3"
   },
   {
     id: "player-15",
@@ -64,7 +65,7 @@ export const PLAYERS = [
     name: "Stephen",
     song: "Radioactive",
     artist: "Imagine Dragons",
-    file: "sounds/Grizzlies 8u - Fall 2026 15 STEPHEN - RADIOACTIVE.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 15 STEPHEN - RADIOACTIVE.mp3"
   },
   {
     id: "player-18",
@@ -73,7 +74,7 @@ export const PLAYERS = [
     name: "James Ryder",
     song: "Sure Shot",
     artist: "Beastie Boys",
-    file: "sounds/Grizzlies 8u - Fall 2026 18 James Ryder__Sure Shot__Beastie Boys.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 18 James Ryder__Sure Shot__Beastie Boys.mp3"
   },
   {
     id: "player-20",
@@ -82,7 +83,7 @@ export const PLAYERS = [
     name: "Maddox Hurst",
     song: "Walk-Up Beat",
     artist: "Dugout Cut",
-    file: "sounds/Grizzlies 8u - Fall 2026 20 - Maddox Hurst.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 20 - Maddox Hurst.mp3"
   },
   {
     id: "player-22",
@@ -91,7 +92,7 @@ export const PLAYERS = [
     name: "West Shields",
     song: "Walk-Up Beat",
     artist: "Dugout Cut",
-    file: "sounds/Grizzlies 8u - Fall 2026 22 - West Shields.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 22 - West Shields.mp3"
   },
   {
     id: "player-56",
@@ -100,7 +101,7 @@ export const PLAYERS = [
     name: "Jonah Ercan",
     song: "I’m Shipping Up to Boston",
     artist: "Dropkick Murphys",
-    file: "sounds/Grizzlies 8u - Fall 2026 56 Jonah Ercan__I’m Shipping Up to Boston.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 56 Jonah Ercan__I’m Shipping Up to Boston.mp3"
   },
   {
     id: "player-99",
@@ -109,7 +110,7 @@ export const PLAYERS = [
     name: "Garrett Dowdy",
     song: "Jesus Is Alive",
     artist: "Praise & Power",
-    file: "sounds/Grizzlies 8u - Fall 2026 99 Garrett Dowdy__Jesus Is Alive.wav"
+    file: "sounds/Grizzlies 8u - Fall 2026 99 Garrett Dowdy__Jesus Is Alive.mp3"
   }
 ];
 
@@ -121,7 +122,7 @@ export const HYPE_TRACKS = [
     name: "GET ON YOUR FEET",
     song: "Crowd Pump / Horns",
     artist: "Stadium Sound FX",
-    file: "sounds/Grizzlies 8u - Fall 2026 GET ON YOUR FEET.wav",
+    file: "sounds/Grizzlies 8u - Fall 2026 GET ON YOUR FEET.mp3",
     isHype: true
   },
   {
@@ -131,7 +132,7 @@ export const HYPE_TRACKS = [
     name: "GRIZZLIES FANS",
     song: "Let's Go Grizzlies!",
     artist: "Team Cheer & Organ",
-    file: "sounds/Grizzlies 8u - Fall 2026 GRIZZLIES FANS.wav",
+    file: "sounds/Grizzlies 8u - Fall 2026 GRIZZLIES FANS.mp3",
     isHype: true
   }
 ];

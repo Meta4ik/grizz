@@ -1,7 +1,8 @@
 /**
  * Wylie Grizzlies Walk-Up Audio Player Engine
  * Full iOS Safari & Mobile Compatible: uses Web Audio API GainNode for hardware-level
- * volume attenuation and smooth exponential fade-outs (since iOS Safari ignores audio.volume).
+ * volume attenuation and smooth exponential fade-outs.
+ * Zero-glitch architecture: keeps gain silenced on stop/fade-complete to prevent audio buffer rebound.
  */
 
 export class WalkUpAudioEngine {
@@ -134,6 +135,7 @@ export class WalkUpAudioEngine {
     this.audio.addEventListener("ended", () => {
       this.isPlaying = false;
       this.isFading = false;
+      this._applyVolume(0.0);
       this.callbacks.onStop(this.currentTrack);
       this._stopTimeTracking();
     });
@@ -142,6 +144,7 @@ export class WalkUpAudioEngine {
       console.error("Audio playback error:", e);
       this.isPlaying = false;
       this.isFading = false;
+      this._applyVolume(0.0);
       this.callbacks.onError(e, this.currentTrack);
       this._stopTimeTracking();
     });
@@ -205,9 +208,11 @@ export class WalkUpAudioEngine {
 
   /**
    * Set master volume (0.0 to 1.0)
+   * Fixed: correctly handles 0.0 without falsy fallback to 1.0
    */
   setMasterVolume(val) {
-    this.masterVolume = Math.max(0.0, Math.min(1.0, parseFloat(val) || 1.0));
+    const parsed = parseFloat(val);
+    this.masterVolume = isNaN(parsed) ? 1.0 : Math.max(0.0, Math.min(1.0, parsed));
     if (!this.isFading) {
       this._applyVolume(this.masterVolume);
     }
@@ -232,7 +237,6 @@ export class WalkUpAudioEngine {
       } catch (e) {}
     }
 
-    // If fading currently, stop animation
     if (this.isFading) {
       cancelAnimationFrame(this.fadeAnimationId);
       this.isFading = false;
@@ -241,6 +245,7 @@ export class WalkUpAudioEngine {
     // If same track is playing, toggle pause/play
     if (this.currentTrack && this.currentTrack.id === track.id) {
       if (this.isPlaying) {
+        this._applyVolume(0.0);
         this.audio.pause();
         this.isPlaying = false;
         this.callbacks.onPause(this.currentTrack);
@@ -259,9 +264,14 @@ export class WalkUpAudioEngine {
 
     // Switch to new track
     this.currentTrack = track;
+    
+    // Mute before swapping source to prevent pop
+    this._applyVolume(0.0);
     this.audio.pause();
     this.audio.src = encodeURI(track.file);
     this.audio.currentTime = 0;
+
+    // Set volume to masterVolume right as playback begins
     this._applyVolume(this.masterVolume);
 
     try {
@@ -282,26 +292,31 @@ export class WalkUpAudioEngine {
         cancelAnimationFrame(this.fadeAnimationId);
         this.isFading = false;
       }
-      this.audio.currentTime = 0;
       this._applyVolume(this.masterVolume);
+      this.audio.currentTime = 0;
       this.audio.play();
       this.isPlaying = true;
     }
   }
 
   /**
-   * Instant CUT / STOP with no fade
+   * Instant CUT / STOP with no fade.
+   * Mutes gain immediately to guarantee zero click/rebound glitch.
    */
   stop() {
     if (this.isFading) {
       cancelAnimationFrame(this.fadeAnimationId);
       this.isFading = false;
     }
+    
+    // Mute gain immediately to kill any audio pipeline buffer leakage
+    this._applyVolume(0.0);
+    
     if (this.audio) {
       this.audio.pause();
       this.audio.currentTime = 0;
     }
-    this._applyVolume(this.masterVolume);
+    
     this.isPlaying = false;
     const stoppedTrack = this.currentTrack;
     this.callbacks.onStop(stoppedTrack);
@@ -310,7 +325,7 @@ export class WalkUpAudioEngine {
 
   /**
    * Smooth exponential fade out over `this.fadeDuration` seconds.
-   * Fully supported on iOS Safari via Web Audio GainNode.
+   * Once fade hits 0, gain remains muted so paused buffer cannot pop back in.
    */
   fadeOut(customDuration = null) {
     if (!this.isPlaying || this.isFading) {
@@ -337,8 +352,7 @@ export class WalkUpAudioEngine {
       const elapsed = now - startTime;
       const progress = Math.min(1.0, elapsed / duration);
 
-      // Smooth cosine ease-out curve for natural, studio fade out
-      // Cosine curve: 1 at 0, 0 at 1
+      // Smooth cosine ease-out curve for natural studio fade out
       const easedFactor = 0.5 * (1 + Math.cos(progress * Math.PI));
       const currentVol = Math.max(0.0, startVolume * easedFactor);
 
@@ -353,13 +367,16 @@ export class WalkUpAudioEngine {
       if (progress < 1.0 && this.isFading && this.isPlaying) {
         this.fadeAnimationId = requestAnimationFrame(stepFade);
       } else {
-        // Fade completed
+        // Fade fully completed:
+        // IMPORTANT: Keep volume at 0.0 so iOS asynchronous pause() doesn't blip audio!
         this.isFading = false;
+        this._applyVolume(0.0);
+        
         if (this.audio) {
           this.audio.pause();
           this.audio.currentTime = 0;
         }
-        this._applyVolume(this.masterVolume); // Reset volume for next song
+
         this.isPlaying = false;
         this.callbacks.onFadeComplete(this.currentTrack);
         this.callbacks.onStop(this.currentTrack);
