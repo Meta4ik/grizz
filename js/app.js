@@ -9,9 +9,9 @@ import { YouTubeInningsEngine } from './youtube-manager.js';
 
 // Default Songs in the Dugout Song Jar (Coach's playlist selections + Dugout Anthems)
 export const DEFAULT_JAR_SONGS = [
-  { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
-  { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
   { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
+  { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
+  { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
   { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
   { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
   { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
@@ -1032,6 +1032,14 @@ class GrizzliesApp {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          // Ensure new coach default songs are merged in if not present
+          const existingIds = new Set(parsed.map(s => s.id));
+          const missingCoachTracks = DEFAULT_JAR_SONGS.filter(s => !existingIds.has(s.id));
+          if (missingCoachTracks.length > 0) {
+            const merged = [...missingCoachTracks, ...parsed];
+            this.saveSongJar(merged);
+            return merged;
+          }
           return parsed;
         }
       }
@@ -1272,6 +1280,24 @@ class GrizzliesApp {
     this.renderSongJarList();
     this.dom.jarSongInput.value = '';
     this.triggerHaptic(25);
+
+    // If a YouTube video link was pasted, fetch real title and artist asynchronously
+    if (videoId && videoId !== 'MVDJxMxzTL0') {
+      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.title) {
+            const found = this.songJar.find(s => s.id === videoId);
+            if (found) {
+              found.title = data.title;
+              if (data.author_name) found.artist = data.author_name;
+              this.saveSongJar(this.songJar);
+              this.renderSongJarList();
+            }
+          }
+        })
+        .catch(() => {});
+    }
   }
 
   updateSortLabel() {
