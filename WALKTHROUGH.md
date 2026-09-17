@@ -39,13 +39,13 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
 - **Master Dock CUT / STOP**: Clicking **CUT / STOP** instantly silences whatever audio is playing.
 - **Volume Slider**: Controls both Web Audio and YouTube player volume simultaneously.
 
+### 6. Small Beta Version Badge
+- **Discreet Placement**: Added a small, unobtrusive `v1.2-beta` version indicator in the lower right corner of the master bottom dock.
+- **Styling**: Rendered in clean typography with subtle opacity (`rgba(255, 255, 255, 0.35)`) and `pointer-events: none` so it never interferes with touch gestures or audio sliders.
+
 ---
 
 ## Verification & Deployment
-
-1. **Syntax & Consistency**:
-   - Node syntax checks passed for all JavaScript modules (`app.js`, `youtube-manager.js`, `audio-player.js`).
-   - Verified that all HTML element IDs match their JS references 100%.
-2. **Git & Vercel**:
-   - Pushed commit `4bb31cb` to `https://github.com/Meta4ik/grizz` on branch `main`.
-   - Vercel automatic deployment triggered for mobile access.
+1. Tested locally via `python3 -m http.server 8844` on iPhone 16 Pro Max viewport bounds.
+2. Verified swipe navigation, full-width screen bounds, YouTube playlist player, and dock integration.
+3. Pushed directly to GitHub `main` for automated Vercel deployment.
