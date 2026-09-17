@@ -1555,7 +1555,8 @@ input[type="range"]::-webkit-slider-thumb:active {
 .playlist-hint-banner {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 10px;
   background: rgba(214, 24, 39, 0.12);
   border: 1px dashed rgba(214, 24, 39, 0.4);
   border-radius: 10px;
@@ -1567,9 +1568,40 @@ input[type="range"]::-webkit-slider-thumb:active {
   line-height: 1.35;
 }
 
+.playlist-hint-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
 .playlist-hint-banner .hint-icon {
   font-size: 1.1rem;
   flex-shrink: 0;
+}
+
+.btn-random-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  border: 1px solid var(--red-bright);
+  color: #ffffff;
+  font-family: var(--font-athletic);
+  font-size: 0.95rem;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(214, 24, 39, 0.4);
+  transition: transform 0.1s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-random-pill:active {
+  transform: scale(0.94);
 }
 
 .yt-player-meta {
@@ -1639,6 +1671,20 @@ input[type="range"]::-webkit-slider-thumb:active {
   border-color: var(--red-bright);
   color: #ffffff;
   box-shadow: 0 2px 10px rgba(214, 24, 39, 0.4);
+}
+
+.btn-yt-random {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffca28;
+}
+
+.btn-yt-random:hover,
+.btn-yt-random:active {
+  background: rgba(255, 202, 40, 0.2);
+  border-color: #ffca28;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 202, 40, 0.4);
 }
 
 /* Add / Change YouTube Playlist Card */

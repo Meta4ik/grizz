@@ -114,6 +114,20 @@ export class YouTubeInningsEngine {
     // PLAYING === 1
     if (state === window.YT.PlayerState.PLAYING) {
       this.isPlaying = true;
+      if (this.player && typeof this.player.getVideoData === 'function') {
+        try {
+          const videoData = this.player.getVideoData();
+          if (videoData && videoData.title) {
+            this.callbacks.onTrackChange({
+              id: videoData.video_id || this.currentPlaylist.id,
+              title: videoData.title,
+              artist: videoData.author || this.currentPlaylist.title
+            });
+          }
+        } catch (e) {
+          // Handled gracefully
+        }
+      }
       this.callbacks.onPlay(this.currentPlaylist);
     }
     // PAUSED === 2
@@ -192,6 +206,44 @@ export class YouTubeInningsEngine {
   prevTrack() {
     if (this.player && typeof this.player.previousVideo === 'function') {
       this.player.previousVideo();
+    }
+  }
+
+  playRandomTrack() {
+    this._cancelFade();
+    if (!this.player) return;
+
+    if (typeof this.player.setVolume === 'function') {
+      this.player.setVolume(this.masterVolume);
+    }
+
+    // Try selecting a random index from the playlist array
+    if (typeof this.player.getPlaylist === 'function') {
+      const list = this.player.getPlaylist();
+      if (Array.isArray(list) && list.length > 0) {
+        const currentIndex = typeof this.player.getPlaylistIndex === 'function' ? this.player.getPlaylistIndex() : -1;
+        let targetIndex = Math.floor(Math.random() * list.length);
+        if (targetIndex === currentIndex && list.length > 1) {
+          targetIndex = (targetIndex + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
+        }
+        if (typeof this.player.playVideoAt === 'function') {
+          this.player.playVideoAt(targetIndex);
+          this.isPlaying = true;
+          return;
+        }
+      }
+    }
+
+    // Fallback: shuffle playlist order and play next
+    if (typeof this.player.setShuffle === 'function') {
+      this.player.setShuffle(true);
+    }
+    if (typeof this.player.nextVideo === 'function') {
+      this.player.nextVideo();
+      this.isPlaying = true;
+    } else if (typeof this.player.playVideo === 'function') {
+      this.player.playVideo();
+      this.isPlaying = true;
     }
   }
 

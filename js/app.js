@@ -70,6 +70,8 @@ class GrizzliesApp {
       ytPlayIcon: document.getElementById('ytPlayIcon'),
       ytPauseIcon: document.getElementById('ytPauseIcon'),
       ytNextBtn: document.getElementById('ytNextBtn'),
+      ytRandomBtn: document.getElementById('ytRandomBtn'),
+      ytRandomBannerBtn: document.getElementById('ytRandomBannerBtn'),
       ytUrlInput: document.getElementById('ytUrlInput'),
       btnAddYtTrack: document.getElementById('btnAddYtTrack'),
       playlistChips: document.querySelectorAll('.playlist-chip'),
@@ -867,6 +869,23 @@ class GrizzliesApp {
       this.triggerHaptic(20);
       this.ytEngine.prevTrack();
     });
+
+    // Random Song / Shuffle Track
+    const handleRandomTrack = () => {
+      this.triggerHaptic([25, 40]);
+      if (this.activeAudioSource === 'walkup') {
+        this.audioEngine.stop();
+      }
+      this.activeAudioSource = 'youtube';
+      this.ytEngine.playRandomTrack();
+    };
+
+    if (this.dom.ytRandomBtn) {
+      this.dom.ytRandomBtn.addEventListener('click', handleRandomTrack);
+    }
+    if (this.dom.ytRandomBannerBtn) {
+      this.dom.ytRandomBannerBtn.addEventListener('click', handleRandomTrack);
+    }
 
     // Load Playlist button
     this.dom.btnAddYtTrack.addEventListener('click', () => {
