@@ -5,11 +5,17 @@
 
 import { PLAYERS, HYPE_TRACKS } from './roster.js';
 import { WalkUpAudioEngine } from './audio-player.js';
+import { YouTubeInningsEngine } from './youtube-manager.js';
 
 class GrizzliesApp {
   constructor() {
     this.audioEngine = new WalkUpAudioEngine();
-    
+    this.ytEngine = new YouTubeInningsEngine();
+    this.activeAudioSource = 'none'; // 'walkup' or 'youtube'
+
+    // Page navigation state
+    this.currentPage = 'walkup'; // 'walkup' or 'innings'
+
     // Sort & lineup state
     this.sortMode = localStorage.getItem('grizzlies_sort_mode') || 'number'; // 'number' or 'lineup'
     this.lineupOrder = this.loadLineupOrder();
@@ -17,8 +23,22 @@ class GrizzliesApp {
     this.lastBatterIndex = -1;
     this.onDeckPlayer = null;
 
+    // Inning timer state
+    this.timerDuration = 120;
+    this.timerRemaining = 120;
+    this.timerInterval = null;
+    this.timerRunning = false;
+
     // DOM Elements
     this.dom = {
+      // Dugout Navigation Tabs & Track
+      tabWalkUp: document.getElementById('tabWalkUp'),
+      tabInnings: document.getElementById('tabInnings'),
+      pagesTrackWrapper: document.getElementById('pagesTrackWrapper'),
+      pagesTrack: document.getElementById('pagesTrack'),
+      pageWalkup: document.getElementById('pageWalkup'),
+      pageInnings: document.getElementById('pageInnings'),
+
       hypeGrid: document.getElementById('hypeGrid'),
       playerGrid: document.getElementById('playerGrid'),
       rosterSearch: document.getElementById('rosterSearch'),
@@ -29,6 +49,32 @@ class GrizzliesApp {
       onDeckBanner: document.getElementById('onDeckBanner'),
       onDeckName: document.getElementById('onDeckName'),
       playOnDeckBtn: document.getElementById('playOnDeckBtn'),
+
+      // Inning Timer
+      inningTimerDisplay: document.getElementById('inningTimerDisplay'),
+      timerToggleBtn: document.getElementById('timerToggleBtn'),
+      timerToggleIcon: document.getElementById('timerToggleIcon'),
+      timerToggleText: document.getElementById('timerToggleText'),
+      timerResetBtn: document.getElementById('timerResetBtn'),
+      timerPlus30Btn: document.getElementById('timerPlus30Btn'),
+      timerBarFill: document.getElementById('timerBarFill'),
+      timerPresets: document.querySelectorAll('.timer-preset-btn'),
+
+      // YouTube Dugout Stage
+      ytPulseDot: document.getElementById('ytPulseDot'),
+      ytAudioPill: document.getElementById('ytAudioPill'),
+      ytCurrentTitle: document.getElementById('ytCurrentTitle'),
+      ytCurrentArtist: document.getElementById('ytCurrentArtist'),
+      ytPrevBtn: document.getElementById('ytPrevBtn'),
+      ytPlayPauseBtn: document.getElementById('ytPlayPauseBtn'),
+      ytPlayIcon: document.getElementById('ytPlayIcon'),
+      ytPauseIcon: document.getElementById('ytPauseIcon'),
+      ytNextBtn: document.getElementById('ytNextBtn'),
+      ytUrlInput: document.getElementById('ytUrlInput'),
+      ytTitleInput: document.getElementById('ytTitleInput'),
+      btnAddYtTrack: document.getElementById('btnAddYtTrack'),
+      inningTracksCount: document.getElementById('inningTracksCount'),
+      inningTracksList: document.getElementById('inningTracksList'),
 
       // Master Dock
       masterDock: document.getElementById('masterDock'),
@@ -73,10 +119,15 @@ class GrizzliesApp {
 
   init() {
     this.setupAudioCallbacks();
+    this.setupYouTubeCallbacks();
     this.renderHypeTracks();
     this.renderPlayers();
+    this.renderInningTracks();
     this.setupSliders();
     this.setupEventListeners();
+    this.setupSwipeNavigation();
+    this.setupInningTimer();
+    this.setupYouTubeControls();
     this.updateSortLabel();
     this.updateOnDeckDisplay();
   }
@@ -209,11 +260,21 @@ class GrizzliesApp {
   // =========================================================================
   handleTrackClick(track) {
     this.triggerHaptic(25);
+    // Mutual exclusion: pause YouTube when walk-up track is tapped
+    if (this.ytEngine.isPlaying) {
+      this.ytEngine.pause();
+    }
+    this.activeAudioSource = 'walkup';
     this.audioEngine.play(track);
   }
 
   setupAudioCallbacks() {
     this.audioEngine.on('onPlay', (track) => {
+      // Mutual exclusion
+      if (this.ytEngine.isPlaying) {
+        this.ytEngine.pause();
+      }
+      this.activeAudioSource = 'walkup';
       this.activeTrack = track;
       this.updateActiveCardVisuals(track.id);
       this.updateDockInfo(track, true);
@@ -224,22 +285,28 @@ class GrizzliesApp {
     });
 
     this.audioEngine.on('onPause', (track) => {
-      this.updateDockInfo(track, false);
+      if (this.activeAudioSource === 'walkup') {
+        this.updateDockInfo(track, false);
+      }
     });
 
     this.audioEngine.on('onStop', (track) => {
       this.clearActiveVisuals();
-      this.dom.fadeOutBtn.disabled = true;
-      this.dom.stopCutBtn.disabled = true;
-      this.dom.fadeOutBtn.classList.remove('is-fading');
-      this.dom.dockPlayerName.textContent = 'READY TO HIT';
-      this.dom.dockSongTitle.textContent = 'Tap any player to drop their walk-up track';
-      this.dom.dockTimer.textContent = '0:00';
-      this.dom.trackProgressFill.style.width = '0%';
-      this.dom.liveEqBadge.classList.remove('active');
+      if (this.activeAudioSource === 'walkup') {
+        this.activeAudioSource = 'none';
+        this.dom.fadeOutBtn.disabled = true;
+        this.dom.stopCutBtn.disabled = true;
+        this.dom.fadeOutBtn.classList.remove('is-fading');
+        this.dom.dockPlayerName.textContent = 'READY TO HIT';
+        this.dom.dockSongTitle.textContent = 'Tap any player to drop their walk-up track';
+        this.dom.dockTimer.textContent = '0:00';
+        this.dom.trackProgressFill.style.width = '0%';
+        this.dom.liveEqBadge.classList.remove('active');
+      }
     });
 
     this.audioEngine.on('onTimeUpdate', ({ currentTime, duration, progress, track }) => {
+      if (this.activeAudioSource !== 'walkup') return;
       const mins = Math.floor(currentTime / 60);
       const secs = Math.floor(currentTime % 60).toString().padStart(2, '0');
       this.dom.dockTimer.textContent = `${mins}:${secs}`;
@@ -257,6 +324,7 @@ class GrizzliesApp {
     });
 
     this.audioEngine.on('onFadeStart', ({ track, duration }) => {
+      if (this.activeAudioSource !== 'walkup') return;
       this.triggerHaptic([30, 50, 30]);
       this.dom.fadeOutBtn.classList.add('is-fading');
       if (track) {
@@ -274,17 +342,108 @@ class GrizzliesApp {
     });
 
     this.audioEngine.on('onFadeProgress', ({ remainingTime }) => {
-      this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+      if (this.activeAudioSource === 'walkup') {
+        this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+      }
     });
 
     this.audioEngine.on('onFadeComplete', () => {
-      this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
-      this.dom.fadeOutBtn.classList.remove('is-fading');
+      if (this.activeAudioSource === 'walkup') {
+        this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+        this.dom.fadeOutBtn.classList.remove('is-fading');
+      }
     });
 
     this.audioEngine.on('onError', (err, track) => {
       console.error('Audio engine playback error:', err);
       alert(`Could not play audio for ${track?.name || 'track'}. Please check file path.`);
+    });
+  }
+
+  setupYouTubeCallbacks() {
+    this.ytEngine.on('onPlay', (track) => {
+      // Mutual exclusion: stop walk-up audio when YouTube starts
+      if (this.audioEngine.isPlaying) {
+        this.audioEngine.stop();
+      }
+      this.activeAudioSource = 'youtube';
+
+      // Update YouTube Stage UI
+      this.dom.ytPulseDot.classList.add('active');
+      this.dom.ytAudioPill.classList.add('playing');
+      this.dom.ytAudioPill.textContent = 'PLAYING';
+      this.dom.ytPlayIcon.style.display = 'none';
+      this.dom.ytPauseIcon.style.display = 'block';
+
+      // Update Master Dock
+      const title = track ? track.title : 'YOUTUBE PLAYING';
+      const artist = track ? `${track.artist} • Inning Music` : 'Between Innings Music';
+      this.dom.dockPlayerName.textContent = title;
+      this.dom.dockSongTitle.textContent = artist;
+      this.dom.liveEqBadge.classList.add('active');
+      this.dom.fadeOutBtn.disabled = false;
+      this.dom.stopCutBtn.disabled = false;
+      this.dom.fadeOutBtn.classList.remove('is-fading');
+
+      this.updateActiveInningCardVisuals(track?.id);
+    });
+
+    this.ytEngine.on('onPause', (track) => {
+      this.dom.ytPulseDot.classList.remove('active');
+      this.dom.ytAudioPill.classList.remove('playing');
+      this.dom.ytAudioPill.textContent = 'PAUSED';
+      this.dom.ytPlayIcon.style.display = 'block';
+      this.dom.ytPauseIcon.style.display = 'none';
+
+      if (this.activeAudioSource === 'youtube') {
+        this.dom.liveEqBadge.classList.remove('active');
+      }
+    });
+
+    this.ytEngine.on('onStop', (track) => {
+      this.dom.ytPulseDot.classList.remove('active');
+      this.dom.ytAudioPill.classList.remove('playing');
+      this.dom.ytAudioPill.textContent = 'STOPPED';
+      this.dom.ytPlayIcon.style.display = 'block';
+      this.dom.ytPauseIcon.style.display = 'none';
+      this.clearActiveInningCardVisuals();
+
+      if (this.activeAudioSource === 'youtube') {
+        this.activeAudioSource = 'none';
+        this.dom.fadeOutBtn.disabled = true;
+        this.dom.stopCutBtn.disabled = true;
+        this.dom.fadeOutBtn.classList.remove('is-fading');
+        this.dom.dockPlayerName.textContent = 'READY TO HIT';
+        this.dom.dockSongTitle.textContent = 'Tap any player to drop their walk-up track';
+        this.dom.dockTimer.textContent = '0:00';
+        this.dom.trackProgressFill.style.width = '0%';
+        this.dom.liveEqBadge.classList.remove('active');
+      }
+    });
+
+    this.ytEngine.on('onTrackChange', (track) => {
+      if (!track) return;
+      this.dom.ytCurrentTitle.textContent = track.title;
+      this.dom.ytCurrentArtist.textContent = `${track.artist} ${track.tag ? `• ${track.tag}` : ''}`;
+      this.updateActiveInningCardVisuals(track.id);
+    });
+
+    this.ytEngine.on('onFadeStart', ({ track, duration }) => {
+      this.triggerHaptic([30, 50, 30]);
+      this.dom.fadeOutBtn.classList.add('is-fading');
+    });
+
+    this.ytEngine.on('onFadeProgress', ({ remainingTime }) => {
+      if (this.activeAudioSource === 'youtube') {
+        this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+      }
+    });
+
+    this.ytEngine.on('onFadeComplete', () => {
+      if (this.activeAudioSource === 'youtube') {
+        this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+        this.dom.fadeOutBtn.classList.remove('is-fading');
+      }
     });
   }
 
@@ -392,6 +551,7 @@ class GrizzliesApp {
       const pct = parseInt(e.target.value, 10);
       this.dom.masterVolumeVal.textContent = `${pct}%`;
       this.audioEngine.setMasterVolume(pct / 100);
+      this.ytEngine.setVolume(pct);
       
       // Update icon
       if (pct === 0) {
@@ -421,18 +581,30 @@ class GrizzliesApp {
   }
 
   // =========================================================================
-  // Event Listeners
+  // Event Listeners & Master Controls
   // =========================================================================
   setupEventListeners() {
-    // Fade Out button
+    // Fade Out button (handles both Walk-Up audio and YouTube audio)
     this.dom.fadeOutBtn.addEventListener('click', () => {
-      this.audioEngine.fadeOut();
+      if (this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying) {
+        this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
+      } else if (this.audioEngine.isPlaying) {
+        this.audioEngine.fadeOut();
+      } else if (this.ytEngine.isPlaying) {
+        this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
+      }
     });
 
-    // Instant Cut / Stop button
+    // Instant Cut / Stop button (kills whichever audio is currently running)
     this.dom.stopCutBtn.addEventListener('click', () => {
       this.triggerHaptic(30);
-      this.audioEngine.stop();
+      if (this.ytEngine.isPlaying) {
+        this.ytEngine.stop();
+      }
+      if (this.audioEngine.isPlaying) {
+        this.audioEngine.stop();
+      }
+      this.activeAudioSource = 'none';
     });
 
     // Play On Deck button
@@ -499,10 +671,332 @@ class GrizzliesApp {
       if (e.code === 'Space') {
         e.preventDefault();
         this.audioEngine.stop();
+        this.ytEngine.stop();
+        this.activeAudioSource = 'none';
       } else if (e.key.toLowerCase() === 'f') {
-        this.audioEngine.fadeOut();
+        if (this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying) {
+          this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
+        } else if (this.audioEngine.isPlaying) {
+          this.audioEngine.fadeOut();
+        } else if (this.ytEngine.isPlaying) {
+          this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
+        }
       }
     });
+  }
+
+  // =========================================================================
+  // Page Navigation & Swipe Gestures (Walk-Up vs Between-Innings)
+  // =========================================================================
+  switchPage(page) {
+    if (page === this.currentPage) return;
+    this.currentPage = page;
+    this.triggerHaptic(15);
+
+    if (page === 'walkup') {
+      this.dom.pagesTrack.style.transform = 'translateX(0%)';
+      this.dom.tabWalkUp.classList.add('active');
+      this.dom.tabInnings.classList.remove('active');
+    } else {
+      this.dom.pagesTrack.style.transform = 'translateX(-50%)';
+      this.dom.tabWalkUp.classList.remove('active');
+      this.dom.tabInnings.classList.add('active');
+    }
+  }
+
+  setupSwipeNavigation() {
+    // Top Tab Pill clicks
+    this.dom.tabWalkUp.addEventListener('click', () => this.switchPage('walkup'));
+    this.dom.tabInnings.addEventListener('click', () => this.switchPage('innings'));
+
+    // Mobile touch swipe gestures on pages track
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isHorizontalSwipe = null;
+
+    const wrapper = this.dom.pagesTrackWrapper;
+
+    wrapper.addEventListener('touchstart', (e) => {
+      // Don't intercept touches on sliders, youtube frame, or lineup handle
+      if (e.target.closest('#ytPlayerContainer, input[type="range"], .lineup-drag-handle')) {
+        return;
+      }
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      isHorizontalSwipe = null;
+    }, { passive: true });
+
+    wrapper.addEventListener('touchmove', (e) => {
+      if (touchStartX === 0 && touchStartY === 0) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+
+      if (isHorizontalSwipe === null && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
+        isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY) + 5;
+      }
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', (e) => {
+      if (touchStartX === 0 && touchStartY === 0) return;
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+
+      if (isHorizontalSwipe && Math.abs(deltaX) > 45) {
+        if (deltaX < 0 && this.currentPage === 'walkup') {
+          // Swiped left -> show innings
+          this.switchPage('innings');
+        } else if (deltaX > 0 && this.currentPage === 'innings') {
+          // Swiped right -> show walkup
+          this.switchPage('walkup');
+        }
+      }
+
+      touchStartX = 0;
+      touchStartY = 0;
+      isHorizontalSwipe = null;
+    }, { passive: true });
+  }
+
+  // =========================================================================
+  // Inning Warm-Up Countdown Timer (2:00 / 1:30 / 1:00)
+  // =========================================================================
+  setupInningTimer() {
+    this.updateTimerDisplay();
+
+    this.dom.timerPresets.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.dom.timerPresets.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.timerDuration = parseInt(btn.dataset.time, 10);
+        this.resetTimer();
+        this.triggerHaptic(15);
+      });
+    });
+
+    this.dom.timerToggleBtn.addEventListener('click', () => {
+      this.triggerHaptic(20);
+      if (this.timerRunning) {
+        this.pauseTimer();
+      } else {
+        this.startTimer();
+      }
+    });
+
+    this.dom.timerResetBtn.addEventListener('click', () => {
+      this.triggerHaptic(20);
+      this.resetTimer();
+    });
+
+    this.dom.timerPlus30Btn.addEventListener('click', () => {
+      this.triggerHaptic(15);
+      this.timerRemaining += 30;
+      if (this.timerRemaining > this.timerDuration) {
+        this.timerDuration = this.timerRemaining;
+      }
+      this.updateTimerDisplay();
+    });
+  }
+
+  startTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerRunning = true;
+    this.dom.timerToggleIcon.textContent = '⏸';
+    this.dom.timerToggleText.textContent = 'PAUSE';
+    this.dom.inningTimerDisplay.classList.add('running');
+
+    this.timerInterval = setInterval(() => {
+      if (this.timerRemaining > 0) {
+        this.timerRemaining--;
+        this.updateTimerDisplay();
+
+        if (this.timerRemaining === 10) {
+          this.triggerHaptic([50, 100, 50]);
+          this.dom.inningTimerDisplay.classList.add('warning');
+        }
+      } else {
+        this.pauseTimer();
+        this.triggerHaptic([100, 100, 100, 100, 200]);
+      }
+    }, 1000);
+  }
+
+  pauseTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    this.timerRunning = false;
+    this.dom.timerToggleIcon.textContent = '▶';
+    this.dom.timerToggleText.textContent = 'START';
+    this.dom.inningTimerDisplay.classList.remove('running');
+  }
+
+  resetTimer() {
+    this.pauseTimer();
+    this.timerRemaining = this.timerDuration;
+    this.dom.inningTimerDisplay.classList.remove('warning');
+    this.updateTimerDisplay();
+  }
+
+  updateTimerDisplay() {
+    const mins = Math.floor(this.timerRemaining / 60);
+    const secs = (this.timerRemaining % 60).toString().padStart(2, '0');
+    this.dom.inningTimerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs}`;
+
+    const pct = this.timerDuration > 0 ? (this.timerRemaining / this.timerDuration) * 100 : 0;
+    this.dom.timerBarFill.style.width = `${pct}%`;
+  }
+
+  // =========================================================================
+  // Between-Innings YouTube Playlist & Controls
+  // =========================================================================
+  renderInningTracks() {
+    const list = this.dom.inningTracksList;
+    list.innerHTML = '';
+    const tracks = this.ytEngine.tracks;
+    this.dom.inningTracksCount.textContent = `${tracks.length} TRACKS`;
+
+    tracks.forEach((track, idx) => {
+      const card = document.createElement('div');
+      card.className = 'inning-track-card';
+      card.id = `yt-track-${track.id}`;
+      card.dataset.id = track.id;
+
+      card.innerHTML = `
+        <div class="inning-track-left">
+          <div class="track-index-num">${idx + 1}</div>
+          <div class="inning-track-info">
+            <div class="inning-track-title">${track.title}</div>
+            <div class="inning-track-meta-row">
+              <span class="inning-track-tag">${track.tag || 'INNING'}</span>
+              <span class="inning-track-artist">${track.artist}</span>
+            </div>
+          </div>
+        </div>
+        <div class="inning-track-actions">
+          <button class="btn-play-inning-track" data-id="${track.id}">
+            <span>▶ PLAY</span>
+          </button>
+          ${!track.isDefault ? `<button class="btn-remove-inning-track" data-id="${track.id}" title="Remove track">&times;</button>` : ''}
+        </div>
+      `;
+
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-remove-inning-track')) return;
+        this.triggerHaptic(20);
+        this.ytEngine.playTrack(track);
+      });
+
+      const removeBtn = card.querySelector('.btn-remove-inning-track');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(15);
+          this.ytEngine.removeTrack(track.id);
+          this.renderInningTracks();
+        });
+      }
+
+      list.appendChild(card);
+    });
+
+    if (this.ytEngine.currentTrack) {
+      this.updateActiveInningCardVisuals(this.ytEngine.currentTrack.id);
+    }
+  }
+
+  updateActiveInningCardVisuals(trackId) {
+    this.clearActiveInningCardVisuals();
+    const activeEl = document.getElementById(`yt-track-${trackId}`);
+    if (activeEl) {
+      activeEl.classList.add('playing');
+      const btn = activeEl.querySelector('.btn-play-inning-track span');
+      if (btn) btn.textContent = 'PLAYING';
+    }
+  }
+
+  clearActiveInningCardVisuals() {
+    document.querySelectorAll('.inning-track-card').forEach(el => {
+      el.classList.remove('playing');
+      const btn = el.querySelector('.btn-play-inning-track span');
+      if (btn) btn.textContent = '▶ PLAY';
+    });
+  }
+
+  setupYouTubeControls() {
+    // Stage Play / Pause toggle
+    this.dom.ytPlayPauseBtn.addEventListener('click', () => {
+      this.triggerHaptic(20);
+      if (this.ytEngine.isPlaying) {
+        this.ytEngine.pause();
+      } else {
+        if (this.ytEngine.currentTrack) {
+          this.ytEngine.playTrack(this.ytEngine.currentTrack);
+        } else if (this.ytEngine.tracks.length > 0) {
+          this.ytEngine.playTrack(this.ytEngine.tracks[0]);
+        }
+      }
+    });
+
+    // Next Track
+    this.dom.ytNextBtn.addEventListener('click', () => {
+      this.triggerHaptic(20);
+      const tracks = this.ytEngine.tracks;
+      if (!tracks.length) return;
+      const curIdx = tracks.findIndex(t => t.id === this.ytEngine.currentTrack?.id);
+      const nextIdx = (curIdx + 1) % tracks.length;
+      this.ytEngine.playTrack(tracks[nextIdx]);
+    });
+
+    // Prev Track
+    this.dom.ytPrevBtn.addEventListener('click', () => {
+      this.triggerHaptic(20);
+      const tracks = this.ytEngine.tracks;
+      if (!tracks.length) return;
+      const curIdx = tracks.findIndex(t => t.id === this.ytEngine.currentTrack?.id);
+      const prevIdx = (curIdx - 1 + tracks.length) % tracks.length;
+      this.ytEngine.playTrack(tracks[prevIdx]);
+    });
+
+    // Add Track Button
+    this.dom.btnAddYtTrack.addEventListener('click', () => {
+      this.handleAddYtTrack();
+    });
+
+    this.dom.ytUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.handleAddYtTrack();
+      }
+    });
+  }
+
+  handleAddYtTrack() {
+    const rawUrl = this.dom.ytUrlInput.value.trim();
+    if (!rawUrl) return;
+
+    const videoId = YouTubeInningsEngine.parseYouTubeId(rawUrl);
+    if (!videoId) {
+      alert('Could not parse YouTube link. Please paste a valid YouTube video URL or ID.');
+      return;
+    }
+
+    const title = this.dom.ytTitleInput.value.trim() || 'Inning Pump Track';
+    const newTrack = {
+      id: videoId,
+      title: title,
+      artist: 'Custom Inning Add',
+      tag: 'COACH ADD',
+      isDefault: false
+    };
+
+    this.ytEngine.saveCustomTrack(newTrack);
+    this.dom.ytUrlInput.value = '';
+    this.dom.ytTitleInput.value = '';
+    this.triggerHaptic(25);
+    this.renderInningTracks();
+    this.ytEngine.playTrack(newTrack);
   }
 
   updateSortLabel() {

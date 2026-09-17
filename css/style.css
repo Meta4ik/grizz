@@ -187,15 +187,103 @@ html, body {
 }
 
 /* ==========================================================================
-   2. Scrollable Soundboard Arena
+   2. Dugout Navigation Switcher Tabs
    ========================================================================== */
-.soundboard-scroll-container {
+.dugout-tabs-nav {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin: 8px 14px 4px 14px;
+  background: rgba(18, 20, 26, 0.95);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  z-index: 15;
+}
+
+.dugout-tab {
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-med);
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dugout-tab:active {
+  transform: scale(0.97);
+}
+
+.dugout-tab.active {
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(214, 24, 39, 0.45);
+}
+
+.dugout-tab .tab-icon {
+  font-size: 0.95rem;
+}
+
+.dugout-tab .tab-badge {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.dugout-tab .pulse-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   2b. Horizontal Slide Track & Scrollable Pages
+   ========================================================================== */
+.pages-track-wrapper {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+}
+
+.pages-track {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  transform: translateX(0%);
+  transition: transform 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.page-view {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 14px 14px 0 14px;
+  padding: 10px 14px 0 14px;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+}
+
+.soundboard-scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Section Header Rows */
@@ -1199,6 +1287,541 @@ input[type="range"]::-webkit-slider-thumb:active {
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
+}
+
+/* ==========================================================================
+   8. Between-Innings Music & Inning Timer Suite
+   ========================================================================== */
+
+/* Inning Warm-Up Countdown Timer */
+.inning-timer-card {
+  background: linear-gradient(145deg, #1d1217 0%, #121319 100%);
+  border: 1.5px solid #381923;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+.timer-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--red-bright);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.timer-title {
+  font-family: var(--font-athletic);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.8px;
+  line-height: 1.1;
+}
+
+.timer-presets {
+  display: flex;
+  gap: 5px;
+}
+
+.timer-preset-btn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid #2b2e3c;
+  color: var(--text-med);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.timer-preset-btn.active {
+  background: var(--red-primary);
+  border-color: var(--red-bright);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(214, 24, 39, 0.4);
+}
+
+.timer-display-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 10px 0;
+}
+
+.timer-digits {
+  font-family: var(--font-athletic);
+  font-size: 3.6rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.timer-digits.running {
+  color: #ff3b4b;
+  text-shadow: 0 0 20px rgba(214, 24, 39, 0.6);
+}
+
+.timer-digits.warning {
+  color: #ff2233;
+  animation: blink 0.8s infinite alternate;
+}
+
+.timer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-timer-primary {
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  border: 1px solid var(--red-bright);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-family: var(--font-athletic);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(214, 24, 39, 0.4);
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.btn-timer-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-timer-secondary {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  border-radius: 10px;
+  height: 38px;
+  padding: 0 12px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-timer-secondary:active {
+  background: var(--surface-card-hover);
+  border-color: var(--red-primary);
+}
+
+.timer-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--red-primary), var(--red-bright));
+  transition: width 0.3s linear;
+}
+
+/* YouTube Dugout Stage */
+.yt-player-card {
+  background: linear-gradient(145deg, #191216 0%, #111218 100%);
+  border: 1.5px solid #361922;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.yt-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.yt-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red-bright);
+  box-shadow: 0 0 8px var(--red-bright);
+}
+
+.live-pulse-dot.active {
+  animation: blink 1s infinite alternate;
+}
+
+.yt-header-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-dim);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.yt-audio-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(214, 24, 39, 0.2);
+  color: var(--red-bright);
+  border: 1px solid rgba(214, 24, 39, 0.4);
+  text-transform: uppercase;
+}
+
+.yt-audio-pill.playing {
+  background: var(--red-primary);
+  color: #ffffff;
+  border-color: var(--red-bright);
+  box-shadow: 0 0 10px rgba(214, 24, 39, 0.5);
+}
+
+.yt-video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  background: #000000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid #292d3b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.yt-video-wrapper iframe,
+#ytPlayerFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.yt-player-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+}
+
+.yt-track-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.yt-track-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+}
+
+.yt-track-artist {
+  font-size: 0.75rem;
+  color: var(--text-med);
+  font-weight: 600;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.yt-quick-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-yt-control {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.btn-yt-control:active {
+  transform: scale(0.92);
+}
+
+.btn-yt-play {
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  border-color: var(--red-bright);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(214, 24, 39, 0.4);
+}
+
+/* Add YouTube Song / Playlist Card */
+.add-yt-card {
+  background: var(--surface-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.add-yt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.add-yt-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  width: 100%;
+  background: rgba(8, 8, 11, 0.6);
+  border: 1px solid #2a2d3b;
+  border-radius: 10px;
+  padding: 10px 12px 10px 36px;
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-with-icon input:focus {
+  border-color: var(--red-primary);
+  box-shadow: 0 0 8px rgba(214, 24, 39, 0.3);
+}
+
+.add-yt-subrow {
+  display: flex;
+  gap: 8px;
+}
+
+.add-yt-subrow input {
+  flex: 1;
+  background: rgba(8, 8, 11, 0.6);
+  border: 1px solid #2a2d3b;
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.add-yt-subrow input:focus {
+  border-color: var(--red-primary);
+}
+
+.btn-add-yt {
+  background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
+  border: 1px solid var(--red-bright);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-family: var(--font-athletic);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.btn-add-yt:active {
+  transform: scale(0.95);
+}
+
+/* Inning Playlist Grid & Cards */
+.inning-playlist-section {
+  margin-bottom: 20px;
+}
+
+.inning-tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inning-track-card {
+  background: linear-gradient(145deg, #181a24 0%, #11131a 100%);
+  border: 1.5px solid #252836;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.inning-track-card:active {
+  transform: scale(0.98);
+}
+
+.inning-track-card.playing {
+  border-color: var(--red-primary);
+  background: linear-gradient(145deg, #2b1117 0%, #171924 100%);
+  box-shadow: 0 0 18px rgba(214, 24, 39, 0.45);
+}
+
+.inning-track-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.track-index-num {
+  font-family: var(--font-athletic);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--red-bright);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.inning-track-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.inning-track-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inning-track-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.inning-track-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(214, 24, 39, 0.18);
+  color: var(--red-bright);
+  letter-spacing: 0.5px;
+}
+
+.inning-track-artist {
+  font-size: 0.72rem;
+  color: var(--text-med);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inning-track-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-play-inning-track {
+  background: var(--surface-card-hover);
+  border: 1px solid #303345;
+  color: #ffffff;
+  border-radius: 9px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+
+.inning-track-card.playing .btn-play-inning-track {
+  background: var(--red-primary);
+  border-color: var(--red-bright);
+  box-shadow: 0 0 10px rgba(214, 24, 39, 0.4);
+}
+
+.btn-remove-inning-track {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+
+.btn-remove-inning-track:hover {
+  color: var(--cut-red);
 }
 
 /* Media query for larger tablets/desktops */

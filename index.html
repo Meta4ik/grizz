@@ -63,53 +63,186 @@
       </div>
     </header>
 
-    <!-- Scrollable Soundboard Arena -->
-    <main class="soundboard-scroll-container">
+    <!-- Dugout Navigation Switcher Tabs (Walk-Up vs Between-Innings) -->
+    <nav class="dugout-tabs-nav" aria-label="Main Navigation">
+      <button class="dugout-tab active" id="tabWalkUp" data-page="walkup">
+        <span class="tab-icon">⚾</span>
+        <span class="tab-title">WALK-UP BATTERS</span>
+        <span class="tab-badge" id="tabBattersCount">12</span>
+      </button>
+      <button class="dugout-tab" id="tabInnings" data-page="innings">
+        <span class="tab-icon">⚡</span>
+        <span class="tab-title">BETWEEN INNINGS</span>
+        <span class="tab-badge pulse-badge" id="tabInningsBadge">HYPE</span>
+      </button>
+    </nav>
 
-      <!-- Stadium Hype / Rally Horn Section -->
-      <section class="stadium-hype-section">
-        <div class="section-title-row">
-          <span class="section-tag">STADIUM RALLY & CHANTS</span>
-          <span class="section-hint">Instant Crowd Sound FX</span>
-        </div>
-        <div class="hype-grid" id="hypeGrid">
-          <!-- Populated by JS -->
-        </div>
-      </section>
+    <!-- Horizontal Swipe Track Pages Container -->
+    <div class="pages-track-wrapper" id="pagesTrackWrapper">
+      <div class="pages-track" id="pagesTrack">
 
-      <!-- Player Walk-Up Roster Section -->
-      <section class="roster-section">
-        <div class="section-title-row">
-          <div class="roster-heading-wrap">
-            <span class="section-tag">WALK-UP BATTERS</span>
-            <span class="batter-count-badge" id="rosterCountBadge">12 PLAYERS</span>
+        <!-- PAGE 1: Walk-Up Music & Roster -->
+        <main class="page-view page-walkup soundboard-scroll-container" id="pageWalkup">
+
+          <!-- Stadium Hype / Rally Horn Section -->
+          <section class="stadium-hype-section">
+            <div class="section-title-row">
+              <span class="section-tag">STADIUM RALLY & CHANTS</span>
+              <span class="section-hint">Instant Crowd Sound FX</span>
+            </div>
+            <div class="hype-grid" id="hypeGrid">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <!-- Player Walk-Up Roster Section -->
+          <section class="roster-section">
+            <div class="section-title-row">
+              <div class="roster-heading-wrap">
+                <span class="section-tag">WALK-UP BATTERS</span>
+                <span class="batter-count-badge" id="rosterCountBadge">12 PLAYERS</span>
+              </div>
+              <div class="search-input-wrap">
+                <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="rosterSearch" placeholder="Search # or name..." autocomplete="off">
+                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">&times;</button>
+              </div>
+            </div>
+
+            <!-- Next Batter / On-Deck Notification Pill -->
+            <div class="on-deck-banner" id="onDeckBanner" style="display: none;">
+              <span class="on-deck-label">ON DECK:</span>
+              <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
+              <button id="playOnDeckBtn" class="play-ondeck-btn">PLAY NEXT &rarr;</button>
+            </div>
+
+            <!-- Player Sound Buttons Grid -->
+            <div class="player-grid" id="playerGrid">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <!-- Extra Spacing for Bottom Dock -->
+          <div class="dock-spacer"></div>
+        </main>
+
+        <!-- PAGE 2: Between Innings Music & Warm-Up Suite -->
+        <section class="page-view page-innings soundboard-scroll-container" id="pageInnings">
+          
+          <!-- Inning Warm-Up Countdown Timer Widget -->
+          <div class="inning-timer-card">
+            <div class="timer-top-row">
+              <div class="timer-title-wrap">
+                <span class="timer-tag">DUGOUT CLOCK</span>
+                <h2 class="timer-title">INNING WARM-UP TIMER</h2>
+              </div>
+              <div class="timer-presets">
+                <button class="timer-preset-btn active" data-time="120">2:00</button>
+                <button class="timer-preset-btn" data-time="90">1:30</button>
+                <button class="timer-preset-btn" data-time="60">1:00</button>
+              </div>
+            </div>
+            
+            <div class="timer-display-row">
+              <div class="timer-digits" id="inningTimerDisplay">02:00</div>
+              <div class="timer-actions">
+                <button class="btn-timer-primary" id="timerToggleBtn">
+                  <span id="timerToggleIcon">▶</span>
+                  <span id="timerToggleText">START</span>
+                </button>
+                <button class="btn-timer-secondary" id="timerResetBtn" title="Reset Timer">↺</button>
+                <button class="btn-timer-secondary" id="timerPlus30Btn" title="Add 30 Seconds">+30s</button>
+              </div>
+            </div>
+            
+            <div class="timer-bar-wrap">
+              <div class="timer-bar-fill" id="timerBarFill"></div>
+            </div>
           </div>
-          <div class="search-input-wrap">
-            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="rosterSearch" placeholder="Search # or name..." autocomplete="off">
-            <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">&times;</button>
+
+          <!-- YouTube Player Dugout Stage -->
+          <div class="yt-player-card">
+            <div class="yt-card-header">
+              <div class="yt-header-left">
+                <span class="live-pulse-dot" id="ytPulseDot"></span>
+                <span class="yt-header-tag">NOW PLAYING ON YOUTUBE</span>
+              </div>
+              <span class="yt-audio-pill" id="ytAudioPill">READY</span>
+            </div>
+
+            <!-- Embedded 16:9 Responsive Frame -->
+            <div class="yt-video-wrapper" id="ytPlayerContainer">
+              <div id="ytPlayerFrame"></div>
+            </div>
+
+            <!-- YouTube Info & Quick Playback Bar -->
+            <div class="yt-player-meta">
+              <div class="yt-track-info">
+                <div class="yt-track-title" id="ytCurrentTitle">Walk</div>
+                <div class="yt-track-artist" id="ytCurrentArtist">Pantera • Coach Pick</div>
+              </div>
+              <div class="yt-quick-controls">
+                <button class="btn-yt-control" id="ytPrevBtn" title="Previous Track">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                </button>
+                <button class="btn-yt-control btn-yt-play" id="ytPlayPauseBtn" title="Play / Pause">
+                  <svg id="ytPlayIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  <svg id="ytPauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <button class="btn-yt-control" id="ytNextBtn" title="Next Track">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Next Batter / On-Deck Notification Pill -->
-        <div class="on-deck-banner" id="onDeckBanner" style="display: none;">
-          <span class="on-deck-label">ON DECK:</span>
-          <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
-          <button id="playOnDeckBtn" class="play-ondeck-btn">PLAY NEXT &rarr;</button>
-        </div>
+          <!-- Add YouTube Song or Playlist Bar -->
+          <div class="add-yt-card">
+            <div class="add-yt-header">
+              <span class="section-tag">ADD YOUTUBE SONG / PLAYLIST</span>
+              <span class="section-hint">Paste Any Link</span>
+            </div>
+            <div class="add-yt-inputs">
+              <div class="input-with-icon">
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <input type="text" id="ytUrlInput" placeholder="Paste YouTube link (https://youtu.be/...)" autocomplete="off">
+              </div>
+              <div class="add-yt-subrow">
+                <input type="text" id="ytTitleInput" placeholder="Song & Artist title (optional)" autocomplete="off">
+                <button class="btn-add-yt" id="btnAddYtTrack">
+                  <span>+ ADD</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
-        <!-- Player Sound Buttons Grid -->
-        <div class="player-grid" id="playerGrid">
-          <!-- Populated by JS -->
-        </div>
-      </section>
+          <!-- Between-Innings Playlist Grid -->
+          <div class="inning-playlist-section">
+            <div class="section-title-row">
+              <div class="roster-heading-wrap">
+                <span class="section-tag">BETWEEN-INNINGS PLAYLIST</span>
+                <span class="batter-count-badge" id="inningTracksCount">6 TRACKS</span>
+              </div>
+              <span class="section-hint">Tap to Play Instantly</span>
+            </div>
 
-      <!-- Extra Spacing for Bottom Dock -->
-      <div class="dock-spacer"></div>
-    </main>
+            <div class="inning-tracks-list" id="inningTracksList">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Extra Spacing for Bottom Dock -->
+          <div class="dock-spacer"></div>
+        </section>
+
+      </div>
+    </div>
 
     <!-- Master Dugout Playback & Fade Dock (Sticky to bottom) -->
     <footer class="master-dock" id="masterDock">
