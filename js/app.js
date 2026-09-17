@@ -890,6 +890,23 @@ class GrizzliesApp {
         this.ytEngine.loadPlaylist(listId, title);
       });
     });
+
+    // Highlight the active preset chip on launch if matched
+    const currentListId = this.ytEngine?.currentPlaylist?.id;
+    if (currentListId) {
+      let matched = false;
+      this.dom.playlistChips.forEach(c => {
+        if (c.dataset.list === currentListId) {
+          c.classList.add('active');
+          matched = true;
+        } else {
+          c.classList.remove('active');
+        }
+      });
+      if (!matched && this.dom.playlistChips.length > 0) {
+        // Custom link was loaded previously
+      }
+    }
   }
 
   handleLoadPlaylist() {
