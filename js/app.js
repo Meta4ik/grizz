@@ -582,11 +582,11 @@ class GrizzliesApp {
   setupEventListeners() {
     // Fade Out button (handles both Walk-Up audio and YouTube audio)
     this.dom.fadeOutBtn.addEventListener('click', () => {
-      if (this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying) {
-        this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
-      } else if (this.audioEngine.isPlaying) {
+      this.triggerHaptic(25);
+      if (this.audioEngine.isPlaying) {
         this.audioEngine.fadeOut();
-      } else if (this.ytEngine.isPlaying) {
+      } else {
+        // Fade out YouTube between-innings playlist
         this.ytEngine.fadeOut(this.audioEngine.fadeDuration);
       }
     });
@@ -594,13 +594,18 @@ class GrizzliesApp {
     // Instant Cut / Stop button (kills whichever audio is currently running)
     this.dom.stopCutBtn.addEventListener('click', () => {
       this.triggerHaptic(30);
-      if (this.ytEngine.isPlaying) {
-        this.ytEngine.stop();
-      }
-      if (this.audioEngine.isPlaying) {
-        this.audioEngine.stop();
-      }
+      this.audioEngine.stop();
+      this.ytEngine.stop();
       this.activeAudioSource = 'none';
+      this.dom.fadeOutBtn.disabled = true;
+      this.dom.stopCutBtn.disabled = true;
+      this.dom.fadeOutBtn.classList.remove('is-fading');
+      this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+      this.dom.dockPlayerName.textContent = 'READY TO HIT';
+      this.dom.dockSongTitle.textContent = 'Tap any player to drop their walk-up track';
+      this.dom.dockTimer.textContent = '0:00';
+      this.dom.trackProgressFill.style.width = '0%';
+      this.dom.liveEqBadge.classList.remove('active');
     });
 
     // Play On Deck button
@@ -697,6 +702,9 @@ class GrizzliesApp {
       this.dom.pagesTrack.style.transform = 'translateX(-50%)';
       this.dom.tabWalkUp.classList.remove('active');
       this.dom.tabInnings.classList.add('active');
+      // When on innings page, ensure master dock controls are ready
+      this.dom.fadeOutBtn.disabled = false;
+      this.dom.stopCutBtn.disabled = false;
     }
   }
 
@@ -849,12 +857,27 @@ class GrizzliesApp {
   // Between-Innings YouTube Playlist & Controls
   // =========================================================================
   setupYouTubeControls() {
+    const activateYouTubeSource = (trackTitle) => {
+      if (this.activeAudioSource === 'walkup') {
+        this.audioEngine.stop();
+      }
+      this.activeAudioSource = 'youtube';
+      this.dom.fadeOutBtn.disabled = false;
+      this.dom.stopCutBtn.disabled = false;
+      this.dom.liveEqBadge.classList.add('active');
+      if (trackTitle) {
+        this.dom.dockPlayerName.textContent = trackTitle;
+        this.dom.dockSongTitle.textContent = 'Between-Innings Playlist';
+      }
+    };
+
     // Stage Play / Pause toggle
     this.dom.ytPlayPauseBtn.addEventListener('click', () => {
       this.triggerHaptic(20);
       if (this.ytEngine.isPlaying) {
         this.ytEngine.pause();
       } else {
+        activateYouTubeSource(this.ytEngine.currentPlaylist?.title);
         this.ytEngine.play();
       }
     });
@@ -862,22 +885,21 @@ class GrizzliesApp {
     // Next Track in playlist
     this.dom.ytNextBtn.addEventListener('click', () => {
       this.triggerHaptic(20);
+      activateYouTubeSource();
       this.ytEngine.nextTrack();
     });
 
     // Previous Track in playlist
     this.dom.ytPrevBtn.addEventListener('click', () => {
       this.triggerHaptic(20);
+      activateYouTubeSource();
       this.ytEngine.prevTrack();
     });
 
     // Random Song / Shuffle Track
     const handleRandomTrack = () => {
       this.triggerHaptic([25, 40]);
-      if (this.activeAudioSource === 'walkup') {
-        this.audioEngine.stop();
-      }
-      this.activeAudioSource = 'youtube';
+      activateYouTubeSource();
       this.ytEngine.playRandomTrack();
     };
 
@@ -910,6 +932,7 @@ class GrizzliesApp {
           this.dom.playlistSelect.value = listId;
         }
         this.triggerHaptic(20);
+        activateYouTubeSource(title);
         this.ytEngine.loadPlaylist(listId, title);
       });
     });
@@ -928,6 +951,7 @@ class GrizzliesApp {
           }
         });
         this.triggerHaptic(20);
+        activateYouTubeSource(title);
         this.ytEngine.loadPlaylist(listId, title);
       });
     }

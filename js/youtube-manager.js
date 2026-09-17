@@ -34,6 +34,7 @@ export class YouTubeInningsEngine {
     };
 
     this._loadIframeApi();
+    this._setupPostMessageListener();
   }
 
   on(event, fn) {
@@ -143,6 +144,41 @@ export class YouTubeInningsEngine {
     this.callbacks.onStateChange(state);
   }
 
+  _setupPostMessageListener() {
+    window.addEventListener('message', (event) => {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (!data) return;
+
+        let playerState = null;
+        if (data.event === 'onStateChange') {
+          playerState = data.info;
+        } else if (data.event === 'infoDelivery' && data.info && data.info.playerState !== undefined) {
+          playerState = data.info.playerState;
+        }
+
+        if (playerState !== null) {
+          this._handleStateChange(playerState);
+        }
+      } catch (e) {}
+    });
+  }
+
+  _sendCommand(func, args = '') {
+    const iframe = document.getElementById('ytPlayerFrame');
+    if (iframe && iframe.contentWindow) {
+      try {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: func,
+          args: args
+        }), '*');
+      } catch (e) {
+        console.warn('postMessage command error:', e);
+      }
+    }
+  }
+
   loadPlaylist(playlistId, title = 'Dugout Inning Playlist') {
     this._cancelFade();
     const playlist = {
@@ -152,19 +188,25 @@ export class YouTubeInningsEngine {
     };
     this.savePlaylist(playlist);
 
-    const iframe = document.getElementById('ytPlayerFrame');
-    if (iframe) {
-      iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1`;
-    }
-
+    let loadedViaApi = false;
     if (this.player && typeof this.player.loadPlaylist === 'function') {
       try {
         this.player.loadPlaylist({
           list: playlistId,
           listType: 'playlist'
         });
-      } catch (e) {
-        // Fallback handled by iframe src
+        loadedViaApi = true;
+      } catch (e) {}
+    }
+
+    this._sendCommand('loadPlaylist', { list: playlistId, listType: 'playlist' });
+
+    if (!loadedViaApi) {
+      const iframe = document.getElementById('ytPlayerFrame');
+      if (iframe) {
+        const originParam = window.location.origin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+        iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1${originParam}`;
+        setTimeout(() => this._initPlayer(), 1200);
       }
     }
 
@@ -173,52 +215,71 @@ export class YouTubeInningsEngine {
 
   play() {
     this._cancelFade();
+    this.isPlaying = true;
     if (this.player && typeof this.player.playVideo === 'function') {
-      this.player.setVolume(this.masterVolume);
-      this.player.playVideo();
-      this.isPlaying = true;
+      try {
+        this.player.setVolume(this.masterVolume);
+        this.player.playVideo();
+      } catch (e) {}
     }
+    this._sendCommand('setVolume', [this.masterVolume]);
+    this._sendCommand('playVideo');
+    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   pause() {
     this._cancelFade();
+    this.isPlaying = false;
     if (this.player && typeof this.player.pauseVideo === 'function') {
-      this.player.pauseVideo();
-      this.isPlaying = false;
+      try { this.player.pauseVideo(); } catch (e) {}
     }
+    this._sendCommand('pauseVideo');
+    this.callbacks.onPause(this.currentPlaylist);
   }
 
   stop() {
     this._cancelFade();
+    this.isPlaying = false;
     if (this.player && typeof this.player.stopVideo === 'function') {
-      this.player.stopVideo();
-      this.isPlaying = false;
-      this.callbacks.onStop(this.currentPlaylist);
+      try { this.player.stopVideo(); } catch (e) {}
     }
+    if (this.player && typeof this.player.pauseVideo === 'function') {
+      try { this.player.pauseVideo(); } catch (e) {}
+    }
+    this._sendCommand('stopVideo');
+    this._sendCommand('pauseVideo');
+    this.callbacks.onStop(this.currentPlaylist);
   }
 
   nextTrack() {
+    this._cancelFade();
+    this.isPlaying = true;
     if (this.player && typeof this.player.nextVideo === 'function') {
-      this.player.nextVideo();
+      try { this.player.nextVideo(); } catch (e) {}
     }
+    this._sendCommand('nextVideo');
+    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   prevTrack() {
+    this._cancelFade();
+    this.isPlaying = true;
     if (this.player && typeof this.player.previousVideo === 'function') {
-      this.player.previousVideo();
+      try { this.player.previousVideo(); } catch (e) {}
     }
+    this._sendCommand('previousVideo');
+    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   playRandomTrack() {
     this._cancelFade();
-    if (!this.player) return;
-
-    if (typeof this.player.setVolume === 'function') {
-      this.player.setVolume(this.masterVolume);
+    if (typeof this.player?.setVolume === 'function') {
+      try { this.player.setVolume(this.masterVolume); } catch (e) {}
     }
+    this._sendCommand('setVolume', [this.masterVolume]);
 
     // Try selecting a random index from the playlist array
-    if (typeof this.player.getPlaylist === 'function') {
+    if (typeof this.player?.getPlaylist === 'function') {
       const list = this.player.getPlaylist();
       if (Array.isArray(list) && list.length > 0) {
         const currentIndex = typeof this.player.getPlaylistIndex === 'function' ? this.player.getPlaylistIndex() : -1;
@@ -227,40 +288,45 @@ export class YouTubeInningsEngine {
           targetIndex = (targetIndex + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
         }
         if (typeof this.player.playVideoAt === 'function') {
-          this.player.playVideoAt(targetIndex);
-          this.isPlaying = true;
-          return;
+          try {
+            this.player.playVideoAt(targetIndex);
+            this.isPlaying = true;
+            this.callbacks.onPlay(this.currentPlaylist);
+            return;
+          } catch (e) {}
         }
       }
     }
 
     // Fallback: shuffle playlist order and play next
-    if (typeof this.player.setShuffle === 'function') {
-      this.player.setShuffle(true);
+    if (typeof this.player?.setShuffle === 'function') {
+      try { this.player.setShuffle(true); } catch (e) {}
     }
-    if (typeof this.player.nextVideo === 'function') {
-      this.player.nextVideo();
-      this.isPlaying = true;
-    } else if (typeof this.player.playVideo === 'function') {
-      this.player.playVideo();
-      this.isPlaying = true;
+    this._sendCommand('setShuffle', true);
+
+    if (typeof this.player?.nextVideo === 'function') {
+      try { this.player.nextVideo(); } catch (e) {}
     }
+    this._sendCommand('nextVideo');
+    this.isPlaying = true;
+    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   setVolume(pct) {
     this.masterVolume = Math.max(0, Math.min(100, pct));
     if (!this.isFading && this.player && typeof this.player.setVolume === 'function') {
-      this.player.setVolume(this.masterVolume);
+      try { this.player.setVolume(this.masterVolume); } catch (e) {}
+    }
+    if (!this.isFading) {
+      this._sendCommand('setVolume', [this.masterVolume]);
     }
   }
 
   fadeOut(durationSeconds = 2.0) {
-    if (!this.isPlaying || !this.player) return;
-
     this._cancelFade();
     this.isFading = true;
 
-    const startVol = typeof this.player.getVolume === 'function' ? this.player.getVolume() : this.masterVolume;
+    const startVol = this.masterVolume;
     const startTime = Date.now();
     const durationMs = durationSeconds * 1000;
 
@@ -272,23 +338,22 @@ export class YouTubeInningsEngine {
       const remainingSecs = Math.max(0, ((durationMs - elapsed) / 1000)).toFixed(1);
 
       const targetVol = Math.round(startVol * (1.0 - progress));
-      if (typeof this.player.setVolume === 'function') {
-        this.player.setVolume(targetVol);
+      if (this.player && typeof this.player.setVolume === 'function') {
+        try { this.player.setVolume(targetVol); } catch (e) {}
       }
+      this._sendCommand('setVolume', [targetVol]);
 
       this.callbacks.onFadeProgress({ remainingTime: remainingSecs });
 
       if (progress >= 1.0) {
         this._cancelFade();
-        if (typeof this.player.pauseVideo === 'function') {
-          this.player.pauseVideo();
+        this.stop();
+        if (this.player && typeof this.player.setVolume === 'function') {
+          try { this.player.setVolume(this.masterVolume); } catch (e) {}
         }
-        if (typeof this.player.setVolume === 'function') {
-          this.player.setVolume(this.masterVolume);
-        }
+        this._sendCommand('setVolume', [this.masterVolume]);
         this.isPlaying = false;
         this.callbacks.onFadeComplete();
-        this.callbacks.onStop(this.currentPlaylist);
       }
     }, 50);
   }
