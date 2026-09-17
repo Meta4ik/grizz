@@ -163,47 +163,60 @@
             </div>
           </div>
 
-          <!-- YouTube Player Dugout Stage -->
+          <!-- YouTube Playlist Player Suite -->
           <div class="yt-player-card">
             <div class="yt-card-header">
               <div class="yt-header-left">
                 <span class="live-pulse-dot" id="ytPulseDot"></span>
-                <span class="yt-header-tag">NOW PLAYING ON YOUTUBE</span>
+                <span class="yt-header-tag">YOUTUBE INNING PLAYLIST</span>
               </div>
-              <span class="yt-audio-pill" id="ytAudioPill">READY</span>
+              <span class="yt-audio-pill" id="ytAudioPill">PLAYLIST READY</span>
             </div>
 
-            <!-- Embedded 16:9 Responsive Frame -->
+            <!-- YouTube Embedded Playlist Player (Spacious for easy scrolling) -->
             <div class="yt-video-wrapper" id="ytPlayerContainer">
-              <div id="ytPlayerFrame"></div>
+              <iframe 
+                id="ytPlayerFrame"
+                src="https://www.youtube.com/embed/videoseries?list=RDkOV2iTeGQik&enablejsapi=1&playsinline=1"
+                title="Between Innings Dugout Playlist"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+              </iframe>
             </div>
 
-            <!-- YouTube Info & Quick Playback Bar -->
+            <!-- Coach Playlist Tip -->
+            <div class="playlist-hint-banner">
+              <span class="hint-icon">📋</span>
+              <span>Tap the <strong>playlist icon (☰)</strong> in the top-right of the video to scroll & pick any song!</span>
+            </div>
+
+            <!-- Quick Dugout Skip & Playback Controls -->
             <div class="yt-player-meta">
               <div class="yt-track-info">
-                <div class="yt-track-title" id="ytCurrentTitle">Walk</div>
-                <div class="yt-track-artist" id="ytCurrentArtist">Pantera • Coach Pick</div>
+                <div class="yt-track-title" id="ytCurrentTitle">Pantera Walk Mix (50+ Songs)</div>
+                <div class="yt-track-artist" id="ytCurrentArtist">Between-Innings Warm-Up Queue</div>
               </div>
               <div class="yt-quick-controls">
-                <button class="btn-yt-control" id="ytPrevBtn" title="Previous Track">
+                <button class="btn-yt-control" id="ytPrevBtn" title="Previous Song">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
                 </button>
                 <button class="btn-yt-control btn-yt-play" id="ytPlayPauseBtn" title="Play / Pause">
                   <svg id="ytPlayIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   <svg id="ytPauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                 </button>
-                <button class="btn-yt-control" id="ytNextBtn" title="Next Track">
+                <button class="btn-yt-control" id="ytNextBtn" title="Next Song">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Add YouTube Song or Playlist Bar -->
+          <!-- Change / Load Any YouTube Playlist Card -->
           <div class="add-yt-card">
             <div class="add-yt-header">
-              <span class="section-tag">ADD YOUTUBE SONG / PLAYLIST</span>
-              <span class="section-hint">Paste Any Link</span>
+              <span class="section-tag">CHANGE / LOAD PLAYLIST</span>
+              <span class="section-hint">Paste Any Playlist Link</span>
             </div>
             <div class="add-yt-inputs">
               <div class="input-with-icon">
@@ -211,29 +224,23 @@
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
-                <input type="text" id="ytUrlInput" placeholder="Paste YouTube link (https://youtu.be/...)" autocomplete="off">
+                <input type="text" id="ytUrlInput" placeholder="Paste YouTube Playlist URL (or video link)..." autocomplete="off">
               </div>
               <div class="add-yt-subrow">
-                <input type="text" id="ytTitleInput" placeholder="Song & Artist title (optional)" autocomplete="off">
-                <button class="btn-add-yt" id="btnAddYtTrack">
-                  <span>+ ADD</span>
+                <button class="btn-add-yt" id="btnAddYtTrack" style="width: 100%;">
+                  <span>⚡ LOAD PLAYLIST</span>
                 </button>
               </div>
             </div>
-          </div>
 
-          <!-- Between-Innings Playlist Grid -->
-          <div class="inning-playlist-section">
-            <div class="section-title-row">
-              <div class="roster-heading-wrap">
-                <span class="section-tag">BETWEEN-INNINGS PLAYLIST</span>
-                <span class="batter-count-badge" id="inningTracksCount">6 TRACKS</span>
+            <!-- Quick Preset Playlist Chips -->
+            <div class="preset-playlists-wrap">
+              <span class="preset-playlists-label">QUICK SWITCH PLAYLISTS:</span>
+              <div class="playlist-chips" id="playlistChipsWrap">
+                <button class="playlist-chip active" data-list="RDkOV2iTeGQik" data-title="Pantera Walk Mix (50+ Songs)">🔥 Pantera Walk Mix</button>
+                <button class="playlist-chip" data-list="PLy44_xL8b5X70Wp-m06Wc23sXQnS_14F0" data-title="Stadium Rock & Jock Anthems">⚡ Stadium Rally Anthems</button>
+                <button class="playlist-chip" data-list="PL44F0744799EE6C57" data-title="Ultimate Baseball Pump-Up">⚾ Dugout Hype Hits</button>
               </div>
-              <span class="section-hint">Tap to Play Instantly</span>
-            </div>
-
-            <div class="inning-tracks-list" id="inningTracksList">
-              <!-- Populated dynamically by JS -->
             </div>
           </div>
 

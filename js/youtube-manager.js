@@ -1,72 +1,26 @@
 /**
- * Wylie Grizzlies Dugout App - YouTube Inning Music Engine
- * Controls between-innings YouTube music, custom playlists, and master dock integration.
+ * Wylie Grizzlies Dugout App - YouTube Inning Playlist Engine
+ * Manages between-innings YouTube playlists, full song browsing, and master dock integration.
  * Supports smooth volume fading and instant cuts on mobile.
  */
 
-export const DEFAULT_INNING_TRACKS = [
-  {
-    id: 'kOV2iTeGQik',
-    title: 'Walk',
-    artist: 'Pantera',
-    tag: 'COACH PICK',
-    duration: '5:15',
-    isDefault: true
-  },
-  {
-    id: 'v2AC41dglnM',
-    title: 'Thunderstruck',
-    artist: 'AC/DC',
-    tag: 'STADIUM HYPE',
-    duration: '4:52',
-    isDefault: true
-  },
-  {
-    id: '-tJYN-eG1zk',
-    title: 'We Will Rock You',
-    artist: 'Queen',
-    tag: 'DUGOUT STOMP',
-    duration: '2:01',
-    isDefault: true
-  },
-  {
-    id: 'z5LW07FTJbI',
-    title: 'Kernkraft 400 (Sport Chant)',
-    artist: 'Zombie Nation',
-    tag: 'RALLY HYMN',
-    duration: '3:30',
-    isDefault: true
-  },
-  {
-    id: 'tMDFv5m18Pw',
-    title: 'Crazy Train',
-    artist: 'Ozzy Osbourne',
-    tag: 'ALL ABOARD',
-    duration: '4:56',
-    isDefault: true
-  },
-  {
-    id: 'GcCNcgoyG_0',
-    title: 'Slow Ride',
-    artist: 'Foghat',
-    tag: 'CLASSIC GROOVE',
-    duration: '3:58',
-    isDefault: true
-  }
-];
+export const DEFAULT_PLAYLIST = {
+  id: 'RDkOV2iTeGQik',
+  title: 'Pantera Walk Mix (50+ Songs)',
+  artist: 'Between-Innings Warm-Up Queue'
+};
 
 export class YouTubeInningsEngine {
   constructor() {
     this.player = null;
     this.isApiReady = false;
     this.isPlayerReady = false;
-    this.currentTrack = null;
     this.isPlaying = false;
     this.isFading = false;
-    this.masterVolume = 100; // 0-100 for YouTube API
+    this.masterVolume = 100;
     this.fadeIntervalId = null;
 
-    this.tracks = this.loadTracks();
+    this.currentPlaylist = this.loadSavedPlaylist();
 
     this.callbacks = {
       onPlay: () => {},
@@ -88,30 +42,21 @@ export class YouTubeInningsEngine {
     }
   }
 
-  loadTracks() {
+  loadSavedPlaylist() {
     try {
-      const saved = localStorage.getItem('grizzlies_custom_inning_tracks');
+      const saved = localStorage.getItem('grizzlies_active_playlist');
       if (saved) {
-        const custom = JSON.parse(saved);
-        // Combine default with custom
-        return [...DEFAULT_INNING_TRACKS, ...custom];
+        return JSON.parse(saved);
       }
     } catch (e) {
-      console.warn('Error loading custom inning tracks:', e);
+      console.warn('Error reading saved playlist:', e);
     }
-    return [...DEFAULT_INNING_TRACKS];
+    return { ...DEFAULT_PLAYLIST };
   }
 
-  saveCustomTrack(track) {
-    this.tracks.push(track);
-    const custom = this.tracks.filter(t => !t.isDefault);
-    localStorage.setItem('grizzlies_custom_inning_tracks', JSON.stringify(custom));
-  }
-
-  removeTrack(id) {
-    this.tracks = this.tracks.filter(t => t.id !== id);
-    const custom = this.tracks.filter(t => !t.isDefault);
-    localStorage.setItem('grizzlies_custom_inning_tracks', JSON.stringify(custom));
+  savePlaylist(playlist) {
+    this.currentPlaylist = playlist;
+    localStorage.setItem('grizzlies_active_playlist', JSON.stringify(playlist));
   }
 
   _loadIframeApi() {
@@ -121,7 +66,6 @@ export class YouTubeInningsEngine {
       return;
     }
 
-    // Set global callback
     const prevOnReady = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = () => {
       if (typeof prevOnReady === 'function') prevOnReady();
@@ -129,7 +73,6 @@ export class YouTubeInningsEngine {
       this._initPlayer();
     };
 
-    // Check if script tag is already in DOM
     if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
@@ -139,34 +82,21 @@ export class YouTubeInningsEngine {
   }
 
   _initPlayer() {
-    const container = document.getElementById('ytPlayerContainer');
-    if (!container) {
+    const iframe = document.getElementById('ytPlayerFrame');
+    if (!iframe) {
       setTimeout(() => this._initPlayer(), 300);
       return;
     }
 
-    const defaultTrack = this.tracks[0] || DEFAULT_INNING_TRACKS[0];
-    this.currentTrack = defaultTrack;
-
     try {
       this.player = new window.YT.Player('ytPlayerFrame', {
-        height: '100%',
-        width: '100%',
-        videoId: defaultTrack.id,
-        playerVars: {
-          autoplay: 0,
-          playsinline: 1,
-          rel: 0,
-          modestbranding: 1,
-          controls: 1,
-          fs: 0,
-          iv_load_policy: 3
-        },
         events: {
           onReady: (event) => {
             this.isPlayerReady = true;
-            this.player.setVolume(this.masterVolume);
-            this.callbacks.onTrackChange(this.currentTrack);
+            if (this.player && typeof this.player.setVolume === 'function') {
+              this.player.setVolume(this.masterVolume);
+            }
+            this.callbacks.onTrackChange(this.currentPlaylist);
           },
           onStateChange: (event) => {
             this._handleStateChange(event.data);
@@ -174,54 +104,71 @@ export class YouTubeInningsEngine {
         }
       });
     } catch (err) {
-      console.error('Failed to initialize YouTube player:', err);
+      console.warn('YouTube player attachment notice:', err);
     }
   }
 
   _handleStateChange(state) {
     if (!window.YT) return;
-    
-    // YT.PlayerState.PLAYING === 1
+
+    // PLAYING === 1
     if (state === window.YT.PlayerState.PLAYING) {
       this.isPlaying = true;
-      this.callbacks.onPlay(this.currentTrack);
-    } 
-    // YT.PlayerState.PAUSED === 2
+      this.callbacks.onPlay(this.currentPlaylist);
+    }
+    // PAUSED === 2
     else if (state === window.YT.PlayerState.PAUSED) {
       this.isPlaying = false;
-      this.callbacks.onPause(this.currentTrack);
-    } 
-    // YT.PlayerState.ENDED === 0
+      this.callbacks.onPause(this.currentPlaylist);
+    }
+    // ENDED === 0
     else if (state === window.YT.PlayerState.ENDED) {
       this.isPlaying = false;
-      this.callbacks.onStop(this.currentTrack);
+      this.callbacks.onStop(this.currentPlaylist);
     }
     this.callbacks.onStateChange(state);
   }
 
-  playTrack(track) {
-    if (!this.player || !this.isPlayerReady) {
-      console.warn('YouTube player not ready yet');
-      return;
-    }
-
+  loadPlaylist(playlistId, title = 'Dugout Inning Playlist') {
     this._cancelFade();
-    this.currentTrack = track;
-    this.player.setVolume(this.masterVolume);
+    const playlist = {
+      id: playlistId,
+      title: title,
+      artist: 'Between-Innings Queue'
+    };
+    this.savePlaylist(playlist);
 
-    if (this.player.getVideoData && this.player.getVideoData().video_id === track.id) {
-      this.player.playVideo();
-    } else {
-      this.player.loadVideoById(track.id);
+    const iframe = document.getElementById('ytPlayerFrame');
+    if (iframe) {
+      iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1`;
     }
 
-    this.isPlaying = true;
-    this.callbacks.onTrackChange(track);
+    if (this.player && typeof this.player.loadPlaylist === 'function') {
+      try {
+        this.player.loadPlaylist({
+          list: playlistId,
+          listType: 'playlist'
+        });
+      } catch (e) {
+        // Fallback handled by iframe src
+      }
+    }
+
+    this.callbacks.onTrackChange(playlist);
+  }
+
+  play() {
+    this._cancelFade();
+    if (this.player && typeof this.player.playVideo === 'function') {
+      this.player.setVolume(this.masterVolume);
+      this.player.playVideo();
+      this.isPlaying = true;
+    }
   }
 
   pause() {
     this._cancelFade();
-    if (this.player && this.isPlayerReady && typeof this.player.pauseVideo === 'function') {
+    if (this.player && typeof this.player.pauseVideo === 'function') {
       this.player.pauseVideo();
       this.isPlaying = false;
     }
@@ -229,23 +176,34 @@ export class YouTubeInningsEngine {
 
   stop() {
     this._cancelFade();
-    if (this.player && this.isPlayerReady && typeof this.player.stopVideo === 'function') {
+    if (this.player && typeof this.player.stopVideo === 'function') {
       this.player.stopVideo();
       this.isPlaying = false;
-      this.callbacks.onStop(this.currentTrack);
+      this.callbacks.onStop(this.currentPlaylist);
+    }
+  }
+
+  nextTrack() {
+    if (this.player && typeof this.player.nextVideo === 'function') {
+      this.player.nextVideo();
+    }
+  }
+
+  prevTrack() {
+    if (this.player && typeof this.player.previousVideo === 'function') {
+      this.player.previousVideo();
     }
   }
 
   setVolume(pct) {
-    // pct: 0 to 100
     this.masterVolume = Math.max(0, Math.min(100, pct));
-    if (!this.isFading && this.player && this.isPlayerReady && typeof this.player.setVolume === 'function') {
+    if (!this.isFading && this.player && typeof this.player.setVolume === 'function') {
       this.player.setVolume(this.masterVolume);
     }
   }
 
   fadeOut(durationSeconds = 2.0) {
-    if (!this.isPlaying || !this.player || !this.isPlayerReady) return;
+    if (!this.isPlaying || !this.player) return;
 
     this._cancelFade();
     this.isFading = true;
@@ -254,7 +212,7 @@ export class YouTubeInningsEngine {
     const startTime = Date.now();
     const durationMs = durationSeconds * 1000;
 
-    this.callbacks.onFadeStart({ track: this.currentTrack, duration: durationSeconds });
+    this.callbacks.onFadeStart({ track: this.currentPlaylist, duration: durationSeconds });
 
     this.fadeIntervalId = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -270,12 +228,15 @@ export class YouTubeInningsEngine {
 
       if (progress >= 1.0) {
         this._cancelFade();
-        this.player.pauseVideo();
-        // Restore volume for next play
-        this.player.setVolume(this.masterVolume);
+        if (typeof this.player.pauseVideo === 'function') {
+          this.player.pauseVideo();
+        }
+        if (typeof this.player.setVolume === 'function') {
+          this.player.setVolume(this.masterVolume);
+        }
         this.isPlaying = false;
         this.callbacks.onFadeComplete();
-        this.callbacks.onStop(this.currentTrack);
+        this.callbacks.onStop(this.currentPlaylist);
       }
     }, 50);
   }
@@ -289,28 +250,40 @@ export class YouTubeInningsEngine {
   }
 
   /**
-   * Helper to parse video ID from various YouTube URL formats
+   * Helper to parse playlist ID or video ID to mix playlist
    */
-  static parseYouTubeId(input) {
+  static parseYouTubePlaylistInput(input) {
     if (!input) return null;
     const str = input.trim();
 
-    // Direct 11 char video id
-    if (/^[a-zA-Z0-9_-]{11}$/.test(str)) {
-      return str;
+    // 1. Direct Playlist ID parameter in URL e.g. list=PL... or list=RD...
+    const listMatch = str.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if (listMatch) {
+      return { playlistId: listMatch[1], isMix: listMatch[1].startsWith('RD') };
     }
 
-    // youtu.be/<id>
+    // 2. Direct 34-char playlist ID string
+    if (/^(PL|RD|FL|UU|LL)[a-zA-Z0-9_-]{10,}$/.test(str)) {
+      return { playlistId: str, isMix: str.startsWith('RD') };
+    }
+
+    // 3. Single video link -> generate YouTube mix playlist for that track!
+    let videoId = null;
     const shortMatch = str.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-    if (shortMatch) return shortMatch[1];
+    if (shortMatch) videoId = shortMatch[1];
 
-    // youtube.com/watch?v=<id>
     const watchMatch = str.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-    if (watchMatch) return watchMatch[1];
+    if (watchMatch) videoId = watchMatch[1];
 
-    // youtube.com/embed/<id>
     const embedMatch = str.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
-    if (embedMatch) return embedMatch[1];
+    if (embedMatch) videoId = embedMatch[1];
+
+    if (/^[a-zA-Z0-9_-]{11}$/.test(str)) videoId = str;
+
+    if (videoId) {
+      // YouTube Mix playlist for this video
+      return { playlistId: `RD${videoId}`, videoId: videoId, isMix: true };
+    }
 
     return null;
   }

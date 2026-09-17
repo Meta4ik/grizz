@@ -250,29 +250,35 @@ html, body {
 }
 
 /* ==========================================================================
-   2b. Horizontal Slide Track & Scrollable Pages
+   2b. Horizontal Slide Track & Scrollable Pages (100% Full Viewport)
    ========================================================================== */
 .pages-track-wrapper {
   flex: 1;
   position: relative;
   overflow: hidden;
   width: 100%;
-  display: flex;
+  min-height: 0;
+  display: block; /* Block container so flexbox doesn't shrink width */
 }
 
 .pages-track {
   display: flex;
   width: 200%;
+  min-width: 200%;
+  max-width: 200%;
   height: 100%;
   transform: translateX(0%);
-  transition: transform 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
 .page-view {
   width: 50%;
+  min-width: 50%;
+  max-width: 50%;
+  flex: 0 0 50%;
+  box-sizing: border-box;
   height: 100%;
-  flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px 14px 0 14px;
@@ -1509,13 +1515,12 @@ input[type="range"]::-webkit-slider-thumb:active {
 .yt-video-wrapper {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 ratio */
-  height: 0;
+  height: 380px; /* Spacious height to easily scroll and see the playlist in the player */
   background: #000000;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1.5px solid #292d3b;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid #361922;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
 }
 
 .yt-video-wrapper iframe,
@@ -1526,6 +1531,26 @@ input[type="range"]::-webkit-slider-thumb:active {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.playlist-hint-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(214, 24, 39, 0.12);
+  border: 1px dashed rgba(214, 24, 39, 0.4);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: #f1f3f7;
+  line-height: 1.35;
+}
+
+.playlist-hint-banner .hint-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .yt-player-meta {
@@ -1593,13 +1618,13 @@ input[type="range"]::-webkit-slider-thumb:active {
   box-shadow: 0 2px 10px rgba(214, 24, 39, 0.4);
 }
 
-/* Add YouTube Song / Playlist Card */
+/* Add / Change YouTube Playlist Card */
 .add-yt-card {
   background: var(--surface-card);
   border: 1.5px solid var(--border-subtle);
   border-radius: 14px;
   padding: 12px 14px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .add-yt-header {
@@ -1651,31 +1676,14 @@ input[type="range"]::-webkit-slider-thumb:active {
   gap: 8px;
 }
 
-.add-yt-subrow input {
-  flex: 1;
-  background: rgba(8, 8, 11, 0.6);
-  border: 1px solid #2a2d3b;
-  border-radius: 10px;
-  padding: 8px 12px;
-  color: #ffffff;
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.add-yt-subrow input:focus {
-  border-color: var(--red-primary);
-}
-
 .btn-add-yt {
   background: linear-gradient(135deg, #d61827 0%, #9e101d 100%);
   border: 1px solid var(--red-bright);
   color: #ffffff;
   border-radius: 10px;
-  padding: 0 16px;
+  padding: 10px 16px;
   font-family: var(--font-athletic);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.8px;
   cursor: pointer;
@@ -1684,144 +1692,58 @@ input[type="range"]::-webkit-slider-thumb:active {
 }
 
 .btn-add-yt:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
-/* Inning Playlist Grid & Cards */
-.inning-playlist-section {
-  margin-bottom: 20px;
-}
-
-.inning-tracks-list {
+/* Preset Playlists Switcher */
+.preset-playlists-wrap {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.inning-track-card {
-  background: linear-gradient(145deg, #181a24 0%, #11131a 100%);
-  border: 1.5px solid #252836;
-  border-radius: 14px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  cursor: pointer;
-  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s, background 0.15s;
-}
-
-.inning-track-card:active {
-  transform: scale(0.98);
-}
-
-.inning-track-card.playing {
-  border-color: var(--red-primary);
-  background: linear-gradient(145deg, #2b1117 0%, #171924 100%);
-  box-shadow: 0 0 18px rgba(214, 24, 39, 0.45);
-}
-
-.inning-track-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  flex: 1;
-}
-
-.track-index-num {
-  font-family: var(--font-athletic);
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--red-bright);
-  width: 24px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.inning-track-info {
-  min-width: 0;
-  flex: 1;
-}
-
-.inning-track-title {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.inning-track-meta-row {
-  display: flex;
-  align-items: center;
   gap: 6px;
-  margin-top: 2px;
 }
 
-.inning-track-tag {
-  font-size: 0.62rem;
+.preset-playlists-label {
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(214, 24, 39, 0.18);
-  color: var(--red-bright);
-  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.inning-track-artist {
-  font-size: 0.72rem;
+.playlist-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.playlist-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   color: var(--text-med);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.inning-track-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.btn-play-inning-track {
-  background: var(--surface-card-hover);
-  border: 1px solid #303345;
-  color: #ffffff;
-  border-radius: 9px;
-  padding: 6px 12px;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.6px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   transition: all 0.15s;
 }
 
-.inning-track-card.playing .btn-play-inning-track {
+.playlist-chip:active {
+  transform: scale(0.95);
+}
+
+.playlist-chip.active {
   background: var(--red-primary);
   border-color: var(--red-bright);
+  color: #ffffff;
   box-shadow: 0 0 10px rgba(214, 24, 39, 0.4);
-}
-
-.btn-remove-inning-track {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 4px 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.15s;
-}
-
-.btn-remove-inning-track:hover {
-  color: var(--cut-red);
 }
 
 /* Media query for larger tablets/desktops */

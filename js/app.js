@@ -71,10 +71,8 @@ class GrizzliesApp {
       ytPauseIcon: document.getElementById('ytPauseIcon'),
       ytNextBtn: document.getElementById('ytNextBtn'),
       ytUrlInput: document.getElementById('ytUrlInput'),
-      ytTitleInput: document.getElementById('ytTitleInput'),
       btnAddYtTrack: document.getElementById('btnAddYtTrack'),
-      inningTracksCount: document.getElementById('inningTracksCount'),
-      inningTracksList: document.getElementById('inningTracksList'),
+      playlistChips: document.querySelectorAll('.playlist-chip'),
 
       // Master Dock
       masterDock: document.getElementById('masterDock'),
@@ -122,7 +120,6 @@ class GrizzliesApp {
     this.setupYouTubeCallbacks();
     this.renderHypeTracks();
     this.renderPlayers();
-    this.renderInningTracks();
     this.setupSliders();
     this.setupEventListeners();
     this.setupSwipeNavigation();
@@ -361,7 +358,7 @@ class GrizzliesApp {
   }
 
   setupYouTubeCallbacks() {
-    this.ytEngine.on('onPlay', (track) => {
+    this.ytEngine.on('onPlay', (playlist) => {
       // Mutual exclusion: stop walk-up audio when YouTube starts
       if (this.audioEngine.isPlaying) {
         this.audioEngine.stop();
@@ -376,19 +373,17 @@ class GrizzliesApp {
       this.dom.ytPauseIcon.style.display = 'block';
 
       // Update Master Dock
-      const title = track ? track.title : 'YOUTUBE PLAYING';
-      const artist = track ? `${track.artist} • Inning Music` : 'Between Innings Music';
+      const title = playlist ? playlist.title : 'YOUTUBE PLAYING';
+      const artist = playlist ? (playlist.artist || 'Between Innings Music') : 'Between Innings Music';
       this.dom.dockPlayerName.textContent = title;
       this.dom.dockSongTitle.textContent = artist;
       this.dom.liveEqBadge.classList.add('active');
       this.dom.fadeOutBtn.disabled = false;
       this.dom.stopCutBtn.disabled = false;
       this.dom.fadeOutBtn.classList.remove('is-fading');
-
-      this.updateActiveInningCardVisuals(track?.id);
     });
 
-    this.ytEngine.on('onPause', (track) => {
+    this.ytEngine.on('onPause', (playlist) => {
       this.dom.ytPulseDot.classList.remove('active');
       this.dom.ytAudioPill.classList.remove('playing');
       this.dom.ytAudioPill.textContent = 'PAUSED';
@@ -400,13 +395,12 @@ class GrizzliesApp {
       }
     });
 
-    this.ytEngine.on('onStop', (track) => {
+    this.ytEngine.on('onStop', (playlist) => {
       this.dom.ytPulseDot.classList.remove('active');
       this.dom.ytAudioPill.classList.remove('playing');
       this.dom.ytAudioPill.textContent = 'STOPPED';
       this.dom.ytPlayIcon.style.display = 'block';
       this.dom.ytPauseIcon.style.display = 'none';
-      this.clearActiveInningCardVisuals();
 
       if (this.activeAudioSource === 'youtube') {
         this.activeAudioSource = 'none';
@@ -421,11 +415,10 @@ class GrizzliesApp {
       }
     });
 
-    this.ytEngine.on('onTrackChange', (track) => {
-      if (!track) return;
-      this.dom.ytCurrentTitle.textContent = track.title;
-      this.dom.ytCurrentArtist.textContent = `${track.artist} ${track.tag ? `• ${track.tag}` : ''}`;
-      this.updateActiveInningCardVisuals(track.id);
+    this.ytEngine.on('onTrackChange', (playlist) => {
+      if (!playlist) return;
+      this.dom.ytCurrentTitle.textContent = playlist.title;
+      this.dom.ytCurrentArtist.textContent = playlist.artist || 'Between-Innings Warm-Up Queue';
     });
 
     this.ytEngine.on('onFadeStart', ({ track, duration }) => {
@@ -852,79 +845,6 @@ class GrizzliesApp {
   // =========================================================================
   // Between-Innings YouTube Playlist & Controls
   // =========================================================================
-  renderInningTracks() {
-    const list = this.dom.inningTracksList;
-    list.innerHTML = '';
-    const tracks = this.ytEngine.tracks;
-    this.dom.inningTracksCount.textContent = `${tracks.length} TRACKS`;
-
-    tracks.forEach((track, idx) => {
-      const card = document.createElement('div');
-      card.className = 'inning-track-card';
-      card.id = `yt-track-${track.id}`;
-      card.dataset.id = track.id;
-
-      card.innerHTML = `
-        <div class="inning-track-left">
-          <div class="track-index-num">${idx + 1}</div>
-          <div class="inning-track-info">
-            <div class="inning-track-title">${track.title}</div>
-            <div class="inning-track-meta-row">
-              <span class="inning-track-tag">${track.tag || 'INNING'}</span>
-              <span class="inning-track-artist">${track.artist}</span>
-            </div>
-          </div>
-        </div>
-        <div class="inning-track-actions">
-          <button class="btn-play-inning-track" data-id="${track.id}">
-            <span>▶ PLAY</span>
-          </button>
-          ${!track.isDefault ? `<button class="btn-remove-inning-track" data-id="${track.id}" title="Remove track">&times;</button>` : ''}
-        </div>
-      `;
-
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-remove-inning-track')) return;
-        this.triggerHaptic(20);
-        this.ytEngine.playTrack(track);
-      });
-
-      const removeBtn = card.querySelector('.btn-remove-inning-track');
-      if (removeBtn) {
-        removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.triggerHaptic(15);
-          this.ytEngine.removeTrack(track.id);
-          this.renderInningTracks();
-        });
-      }
-
-      list.appendChild(card);
-    });
-
-    if (this.ytEngine.currentTrack) {
-      this.updateActiveInningCardVisuals(this.ytEngine.currentTrack.id);
-    }
-  }
-
-  updateActiveInningCardVisuals(trackId) {
-    this.clearActiveInningCardVisuals();
-    const activeEl = document.getElementById(`yt-track-${trackId}`);
-    if (activeEl) {
-      activeEl.classList.add('playing');
-      const btn = activeEl.querySelector('.btn-play-inning-track span');
-      if (btn) btn.textContent = 'PLAYING';
-    }
-  }
-
-  clearActiveInningCardVisuals() {
-    document.querySelectorAll('.inning-track-card').forEach(el => {
-      el.classList.remove('playing');
-      const btn = el.querySelector('.btn-play-inning-track span');
-      if (btn) btn.textContent = '▶ PLAY';
-    });
-  }
-
   setupYouTubeControls() {
     // Stage Play / Pause toggle
     this.dom.ytPlayPauseBtn.addEventListener('click', () => {
@@ -932,71 +852,61 @@ class GrizzliesApp {
       if (this.ytEngine.isPlaying) {
         this.ytEngine.pause();
       } else {
-        if (this.ytEngine.currentTrack) {
-          this.ytEngine.playTrack(this.ytEngine.currentTrack);
-        } else if (this.ytEngine.tracks.length > 0) {
-          this.ytEngine.playTrack(this.ytEngine.tracks[0]);
-        }
+        this.ytEngine.play();
       }
     });
 
-    // Next Track
+    // Next Track in playlist
     this.dom.ytNextBtn.addEventListener('click', () => {
       this.triggerHaptic(20);
-      const tracks = this.ytEngine.tracks;
-      if (!tracks.length) return;
-      const curIdx = tracks.findIndex(t => t.id === this.ytEngine.currentTrack?.id);
-      const nextIdx = (curIdx + 1) % tracks.length;
-      this.ytEngine.playTrack(tracks[nextIdx]);
+      this.ytEngine.nextTrack();
     });
 
-    // Prev Track
+    // Previous Track in playlist
     this.dom.ytPrevBtn.addEventListener('click', () => {
       this.triggerHaptic(20);
-      const tracks = this.ytEngine.tracks;
-      if (!tracks.length) return;
-      const curIdx = tracks.findIndex(t => t.id === this.ytEngine.currentTrack?.id);
-      const prevIdx = (curIdx - 1 + tracks.length) % tracks.length;
-      this.ytEngine.playTrack(tracks[prevIdx]);
+      this.ytEngine.prevTrack();
     });
 
-    // Add Track Button
+    // Load Playlist button
     this.dom.btnAddYtTrack.addEventListener('click', () => {
-      this.handleAddYtTrack();
+      this.handleLoadPlaylist();
     });
 
     this.dom.ytUrlInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        this.handleAddYtTrack();
+        this.handleLoadPlaylist();
       }
+    });
+
+    // Preset Playlist Chips
+    this.dom.playlistChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const listId = chip.dataset.list;
+        const title = chip.dataset.title;
+        this.dom.playlistChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        this.triggerHaptic(20);
+        this.ytEngine.loadPlaylist(listId, title);
+      });
     });
   }
 
-  handleAddYtTrack() {
-    const rawUrl = this.dom.ytUrlInput.value.trim();
-    if (!rawUrl) return;
+  handleLoadPlaylist() {
+    const rawInput = this.dom.ytUrlInput.value.trim();
+    if (!rawInput) return;
 
-    const videoId = YouTubeInningsEngine.parseYouTubeId(rawUrl);
-    if (!videoId) {
-      alert('Could not parse YouTube link. Please paste a valid YouTube video URL or ID.');
+    const parsed = YouTubeInningsEngine.parseYouTubePlaylistInput(rawInput);
+    if (!parsed || !parsed.playlistId) {
+      alert('Could not parse YouTube playlist or video link. Please paste a valid YouTube playlist URL or video link.');
       return;
     }
 
-    const title = this.dom.ytTitleInput.value.trim() || 'Inning Pump Track';
-    const newTrack = {
-      id: videoId,
-      title: title,
-      artist: 'Custom Inning Add',
-      tag: 'COACH ADD',
-      isDefault: false
-    };
-
-    this.ytEngine.saveCustomTrack(newTrack);
+    const playlistTitle = parsed.isMix ? 'Custom Dugout Mix (50+ Songs)' : 'Custom Inning Playlist';
+    this.ytEngine.loadPlaylist(parsed.playlistId, playlistTitle);
     this.dom.ytUrlInput.value = '';
-    this.dom.ytTitleInput.value = '';
+    this.dom.playlistChips.forEach(c => c.classList.remove('active'));
     this.triggerHaptic(25);
-    this.renderInningTracks();
-    this.ytEngine.playTrack(newTrack);
   }
 
   updateSortLabel() {
