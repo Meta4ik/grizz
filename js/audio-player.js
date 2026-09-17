@@ -1,6 +1,7 @@
 /**
- * Wiley Grizzlies Walk-Up Audio Player Engine
- * Handles smooth audio playback, exponential volume fade-outs, and mobile audio unlock.
+ * Wylie Grizzlies Walk-Up Audio Player Engine
+ * Full iOS Safari & Mobile Compatible: uses Web Audio API GainNode for hardware-level
+ * volume attenuation and smooth exponential fade-outs (since iOS Safari ignores audio.volume).
  */
 
 export class WalkUpAudioEngine {
@@ -8,12 +9,19 @@ export class WalkUpAudioEngine {
     this.audio = new Audio();
     this.audio.preload = "auto";
     
+    // Web Audio API context & gain node (vital for iOS Safari volume & fade)
+    this.audioCtx = null;
+    this.gainNode = null;
+    this.sourceNode = null;
+    this.webAudioInitialized = false;
+
     this.currentTrack = null;
     this.isPlaying = false;
     this.isFading = false;
     
-    // Master volume (0.0 to 1.0)
+    // Master volume & current live volume (0.0 to 1.0)
     this.masterVolume = 1.0;
+    this.currentVolume = 1.0;
     
     // Fade duration in seconds (customizable via slider)
     this.fadeDuration = 2.0;
@@ -44,6 +52,67 @@ export class WalkUpAudioEngine {
   on(event, fn) {
     if (this.callbacks[event] !== undefined) {
       this.callbacks[event] = fn;
+    }
+  }
+
+  /**
+   * Initializes Web Audio API routing through GainNode.
+   * On iOS Safari, HTMLAudioElement.volume is read-only and ignored.
+   * Routing through GainNode allows true volume fading on iPhone.
+   */
+  _initWebAudio() {
+    if (this.webAudioInitialized) {
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume().catch(() => {});
+      }
+      return;
+    }
+
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      this.audioCtx = new AudioContextClass();
+      this.gainNode = this.audioCtx.createGain();
+      this.gainNode.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
+
+      // Connect: Audio Element -> Gain Node -> Device Speakers
+      this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
+      this.sourceNode.connect(this.gainNode);
+      this.gainNode.connect(this.audioCtx.destination);
+
+      this.webAudioInitialized = true;
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume().catch(() => {});
+      }
+    } catch (err) {
+      console.warn("Web Audio API GainNode routing notice:", err);
+    }
+  }
+
+  /**
+   * Universal volume setter for both iOS (GainNode) and Desktop/Android (audio.volume)
+   */
+  _applyVolume(val) {
+    const clamped = Math.max(0.0, Math.min(1.0, val));
+    this.currentVolume = clamped;
+
+    if (this.gainNode && this.audioCtx) {
+      try {
+        this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.gainNode.gain.setValueAtTime(clamped, this.audioCtx.currentTime);
+      } catch (e) {
+        try {
+          this.gainNode.gain.value = clamped;
+        } catch (err) {}
+      }
+    }
+
+    if (this.audio) {
+      try {
+        this.audio.volume = clamped;
+      } catch (e) {}
     }
   }
 
@@ -81,12 +150,15 @@ export class WalkUpAudioEngine {
   _setupAudioUnlock() {
     // Mobile Safari requires user interaction before audio can play unrestricted
     const unlock = () => {
+      this._initWebAudio();
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume().catch(() => {});
+      }
       this.audio.play().then(() => {
         this.audio.pause();
         this.audio.currentTime = 0;
-      }).catch(() => {
-        // Silent catch for initial unlock attempt
-      });
+      }).catch(() => {});
+
       window.removeEventListener("touchend", unlock, true);
       window.removeEventListener("click", unlock, true);
     };
@@ -136,8 +208,8 @@ export class WalkUpAudioEngine {
    */
   setMasterVolume(val) {
     this.masterVolume = Math.max(0.0, Math.min(1.0, parseFloat(val) || 1.0));
-    if (!this.isFading && this.audio) {
-      this.audio.volume = this.masterVolume;
+    if (!this.isFading) {
+      this._applyVolume(this.masterVolume);
     }
   }
 
@@ -152,6 +224,14 @@ export class WalkUpAudioEngine {
    * Play a track
    */
   async play(track) {
+    // Ensure Web Audio context is initialized and active on user tap
+    this._initWebAudio();
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      try {
+        await this.audioCtx.resume();
+      } catch (e) {}
+    }
+
     // If fading currently, stop animation
     if (this.isFading) {
       cancelAnimationFrame(this.fadeAnimationId);
@@ -166,7 +246,7 @@ export class WalkUpAudioEngine {
         this.callbacks.onPause(this.currentTrack);
         return;
       } else {
-        this.audio.volume = this.masterVolume;
+        this._applyVolume(this.masterVolume);
         try {
           await this.audio.play();
           this.isPlaying = true;
@@ -182,7 +262,7 @@ export class WalkUpAudioEngine {
     this.audio.pause();
     this.audio.src = encodeURI(track.file);
     this.audio.currentTime = 0;
-    this.audio.volume = this.masterVolume;
+    this._applyVolume(this.masterVolume);
 
     try {
       await this.audio.play();
@@ -203,7 +283,7 @@ export class WalkUpAudioEngine {
         this.isFading = false;
       }
       this.audio.currentTime = 0;
-      this.audio.volume = this.masterVolume;
+      this._applyVolume(this.masterVolume);
       this.audio.play();
       this.isPlaying = true;
     }
@@ -220,8 +300,8 @@ export class WalkUpAudioEngine {
     if (this.audio) {
       this.audio.pause();
       this.audio.currentTime = 0;
-      this.audio.volume = this.masterVolume;
     }
+    this._applyVolume(this.masterVolume);
     this.isPlaying = false;
     const stoppedTrack = this.currentTrack;
     this.callbacks.onStop(stoppedTrack);
@@ -229,15 +309,22 @@ export class WalkUpAudioEngine {
   }
 
   /**
-   * Smooth exponential fade out over `this.fadeDuration` seconds
+   * Smooth exponential fade out over `this.fadeDuration` seconds.
+   * Fully supported on iOS Safari via Web Audio GainNode.
    */
   fadeOut(customDuration = null) {
     if (!this.isPlaying || this.isFading) {
       return;
     }
 
+    // Ensure Web Audio context is running
+    this._initWebAudio();
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume().catch(() => {});
+    }
+
     const duration = (customDuration !== null ? customDuration : this.fadeDuration) * 1000;
-    const startVolume = this.audio.volume;
+    const startVolume = this.currentVolume !== undefined ? this.currentVolume : this.masterVolume;
     const startTime = performance.now();
 
     this.isFading = true;
@@ -250,14 +337,12 @@ export class WalkUpAudioEngine {
       const elapsed = now - startTime;
       const progress = Math.min(1.0, elapsed / duration);
 
-      // Smooth cosine ease-out curve for natural, pleasant studio fade out
+      // Smooth cosine ease-out curve for natural, studio fade out
       // Cosine curve: 1 at 0, 0 at 1
       const easedFactor = 0.5 * (1 + Math.cos(progress * Math.PI));
       const currentVol = Math.max(0.0, startVolume * easedFactor);
 
-      if (this.audio) {
-        this.audio.volume = currentVol;
-      }
+      this._applyVolume(currentVol);
 
       this.callbacks.onFadeProgress({
         progress,
@@ -273,8 +358,8 @@ export class WalkUpAudioEngine {
         if (this.audio) {
           this.audio.pause();
           this.audio.currentTime = 0;
-          this.audio.volume = this.masterVolume; // Reset volume for next song
         }
+        this._applyVolume(this.masterVolume); // Reset volume for next song
         this.isPlaying = false;
         this.callbacks.onFadeComplete(this.currentTrack);
         this.callbacks.onStop(this.currentTrack);
