@@ -1,0 +1,1132 @@
+/* ==========================================================================
+   Wylie Grizzlies (8U Fall 2026) - Walk-Up Music Design System
+   Official Team Colors: Wylie Crimson Red, Carbon Black, & Chalk White
+   Optimized specifically for iPhone 16 Pro Max & Mobile Dugout Environments
+   ========================================================================== */
+
+:root {
+  /* Wylie Grizzlies Team Palette */
+  --bg-field: #08080b;
+  --bg-dugout: #0e0f14;
+  --surface-card: #15171e;
+  --surface-card-hover: #1e212b;
+  --surface-active: #2b1115;
+  --border-subtle: #242733;
+  --border-glow: #d61827;
+
+  /* Official Wylie Crimson Red */
+  --red-primary: #d61827;
+  --red-bright: #ff2e3e;
+  --red-dark: #8c0c16;
+  --red-soft-bg: rgba(214, 24, 39, 0.15);
+  --red-glow: rgba(214, 24, 39, 0.45);
+
+  /* Hype / Rally Accent */
+  --rally-accent: #ff471a;
+  --rally-glow: rgba(255, 71, 26, 0.3);
+
+  /* Alert / Instant Kill */
+  --cut-red: #ff1e2d;
+  --cut-glow: rgba(255, 30, 45, 0.45);
+
+  /* High Contrast Typography */
+  --text-pure: #ffffff;
+  --text-high: #f1f3f7;
+  --text-med: #9ca3af;
+  --text-dim: #6b7280;
+  --text-red: #ff3b4b;
+
+  /* Fonts */
+  --font-athletic: 'Teko', -apple-system, sans-serif;
+  --font-ui: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+
+  /* iPhone 16 Pro Max Viewport & Safe Areas */
+  --safe-top: env(safe-area-inset-top, 54px);
+  --safe-bottom: env(safe-area-inset-bottom, 34px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Elevation Shadows */
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 22px rgba(214, 24, 39, 0.35);
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-field);
+  color: var(--text-high);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Device Viewport Frame */
+.app-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 480px; /* Perfectly bounds iPhone 16 Pro Max at 440px */
+  height: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 0%, #1f0f13 0%, #08080b 75%);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   1. Header Section
+   ========================================================================== */
+.app-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--safe-top) + 8px) 16px 12px 16px;
+  background: rgba(12, 13, 17, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1.5px solid #291518;
+  z-index: 20;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #121419;
+  border: 1.5px solid var(--red-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.team-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-meta {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--red-bright);
+  text-transform: uppercase;
+}
+
+.app-title {
+  font-family: var(--font-athletic);
+  font-size: 1.7rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--text-pure);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.btn-icon:active {
+  transform: scale(0.94);
+  background: var(--surface-active);
+  border-color: var(--red-primary);
+}
+
+.btn-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   2. Scrollable Soundboard Arena
+   ========================================================================== */
+.soundboard-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 14px 0 14px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Section Header Rows */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.section-hint {
+  font-size: 0.7rem;
+  color: var(--red-bright);
+  font-weight: 700;
+}
+
+/* Stadium Hype Section */
+.stadium-hype-section {
+  margin-bottom: 18px;
+}
+
+.hype-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.hype-btn {
+  position: relative;
+  background: linear-gradient(145deg, #201316 0%, #14151b 100%);
+  border: 1.5px solid #3d1c22;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+  overflow: hidden;
+  text-align: left;
+}
+
+.hype-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--red-primary);
+}
+
+.hype-btn:active {
+  transform: scale(0.96);
+  border-color: var(--red-bright);
+  box-shadow: 0 0 15px var(--red-glow);
+}
+
+.hype-btn.playing {
+  border-color: var(--red-bright);
+  background: linear-gradient(145deg, #381218 0%, #1e1317 100%);
+  box-shadow: 0 0 20px var(--red-glow);
+}
+
+.hype-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hype-img-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.hype-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hype-tag {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--red-bright);
+  text-transform: uppercase;
+}
+
+.hype-name {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-pure);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hype-song {
+  font-size: 0.68rem;
+  color: var(--text-med);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Roster Section */
+.roster-section {
+  margin-bottom: 20px;
+}
+
+.roster-heading-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batter-count-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(214, 24, 39, 0.15);
+  color: var(--red-bright);
+  border: 1px solid rgba(214, 24, 39, 0.35);
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 8px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+#rosterSearch {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-pure);
+  font-size: 0.78rem;
+  font-family: var(--font-ui);
+  padding: 5px 24px 5px 26px;
+  border-radius: 8px;
+  width: 140px;
+  outline: none;
+  transition: width 0.2s, border-color 0.2s;
+}
+
+#rosterSearch:focus {
+  width: 160px;
+  border-color: var(--red-primary);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* On-Deck Notification Banner */
+.on-deck-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, rgba(214, 24, 39, 0.22) 0%, rgba(22, 24, 32, 0.85) 100%);
+  border: 1px solid rgba(214, 24, 39, 0.45);
+  padding: 7px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.on-deck-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--red-bright);
+  letter-spacing: 1px;
+}
+
+.on-deck-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin-left: 6px;
+  flex: 1;
+}
+
+.play-ondeck-btn {
+  background: var(--red-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(214, 24, 39, 0.4);
+}
+
+/* ==========================================================================
+   3. Player Cards Soundboard Grid
+   ========================================================================== */
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+}
+
+.player-card {
+  position: relative;
+  background: var(--surface-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 94px;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.12s, border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+  overflow: hidden;
+  text-align: left;
+}
+
+.player-card:active {
+  transform: scale(0.96);
+  background: var(--surface-card-hover);
+  border-color: var(--red-primary);
+}
+
+/* Active Playing State */
+.player-card.playing {
+  background: linear-gradient(160deg, #2e1015 0%, #15171f 100%);
+  border-color: var(--red-bright);
+  box-shadow: 0 0 22px rgba(214, 24, 39, 0.45);
+  animation: pulseCard 2.5s infinite alternate ease-in-out;
+}
+
+.player-card.fading {
+  border-color: var(--cut-red);
+  box-shadow: 0 0 16px var(--cut-glow);
+}
+
+/* Card Progress Overlay Bar */
+.card-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--red-primary);
+  transition: width 0.1s linear;
+}
+
+.player-card.playing .card-progress-bar {
+  background: linear-gradient(90deg, var(--red-primary), var(--red-bright), #ffffff);
+}
+
+.card-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+/* Big Athletic Jersey Badge (Wylie Red with White Numbers) */
+.jersey-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 32px;
+  padding: 0 6px;
+  background: var(--red-primary);
+  border: 1.5px solid #ffffff;
+  border-radius: 7px;
+  font-family: var(--font-athletic);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(214, 24, 39, 0.4);
+  flex-shrink: 0;
+}
+
+.player-card.playing .jersey-badge {
+  background: #ffffff;
+  color: var(--red-primary);
+  border-color: var(--red-bright);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Card Status Badges */
+.card-status-badge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.card-status-badge.live {
+  background: var(--red-primary);
+  color: #ffffff;
+}
+
+.card-status-badge.fade-status {
+  background: var(--cut-red);
+  color: #ffffff;
+  animation: blink 0.6s infinite alternate;
+}
+
+.card-status-badge.on-deck-tag {
+  background: rgba(214, 24, 39, 0.18);
+  color: var(--red-bright);
+  border: 1px solid rgba(214, 24, 39, 0.45);
+}
+
+/* Card Content / Name & Song */
+.card-bottom-row {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-top: 4px;
+}
+
+.player-name {
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--text-pure);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-red);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.song-artist {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-spacer {
+  height: 250px; /* Ensures the last cards scroll comfortably above the dock */
+}
+
+/* ==========================================================================
+   4. Master Dugout Bottom Dock
+   ========================================================================== */
+.master-dock {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(12, 13, 17, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1.5px solid #36171b;
+  padding: 10px 14px calc(var(--safe-bottom) + 8px) 14px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Live Track Header in Dock */
+.dock-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.now-playing-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.live-eq-badge {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  width: 22px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.eq-bar {
+  width: 3.5px;
+  background: var(--red-primary);
+  border-radius: 2px;
+  height: 4px;
+  transition: height 0.15s ease;
+}
+
+.live-eq-badge.active .bar-1 { animation: eqBounce 0.6s infinite alternate ease-in-out; }
+.live-eq-badge.active .bar-2 { animation: eqBounce 0.45s infinite alternate ease-in-out 0.15s; }
+.live-eq-badge.active .bar-3 { animation: eqBounce 0.7s infinite alternate ease-in-out 0.3s; }
+.live-eq-badge.active .bar-4 { animation: eqBounce 0.5s infinite alternate ease-in-out 0.2s; }
+
+.track-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.track-player {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-pure);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-song {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-red);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-timer {
+  font-family: var(--font-athletic);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-med);
+  flex-shrink: 0;
+}
+
+/* Master Track Progress Track */
+.track-progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.track-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--red-primary), var(--red-bright));
+  transition: width 0.1s linear;
+}
+
+/* Master Action Buttons Row */
+.dock-controls-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 10px;
+}
+
+.btn-action {
+  position: relative;
+  border: none;
+  border-radius: 12px;
+  height: 52px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s, opacity 0.2s, filter 0.15s;
+  overflow: hidden;
+}
+
+.btn-action:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.btn-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* Fade Out Button Styling (Distinct Warm Amber/Red Fade) */
+.btn-fade {
+  background: linear-gradient(135deg, #f57c00 0%, #d61827 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-fade:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(245, 124, 0, 0.45);
+}
+
+.btn-fade.is-fading {
+  background: linear-gradient(135deg, #ff9800 0%, #ff1744 100%);
+  color: #ffffff;
+  animation: pulseFadeBtn 0.7s infinite alternate;
+}
+
+.btn-action-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.btn-title {
+  font-family: var(--font-athletic);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.btn-subtitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  opacity: 0.95;
+  letter-spacing: 0.3px;
+}
+
+/* Instant Cut / Stop Button Styling */
+.btn-stop {
+  background: linear-gradient(135deg, #1f0b0e 0%, #110607 100%);
+  color: #ffffff;
+  border: 2px solid var(--cut-red);
+}
+
+.btn-stop:not(:disabled) {
+  box-shadow: 0 4px 16px var(--cut-glow);
+}
+
+.btn-stop svg {
+  color: var(--cut-red);
+}
+
+/* ==========================================================================
+   5. Sliders Drawer (Fade Duration & Master Volume)
+   ========================================================================== */
+.dock-sliders-wrapper {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 10px;
+  background: rgba(21, 23, 30, 0.7);
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.slider-control-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-label-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slider-icon {
+  font-size: 0.75rem;
+}
+
+.slider-title {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-med);
+  letter-spacing: 0.8px;
+}
+
+.slider-badge {
+  font-family: var(--font-athletic);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--red-bright);
+  line-height: 1;
+}
+
+.slider-track-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+/* Custom Range Input (Touch Optimized) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #20232e;
+  border-radius: 4px;
+  outline: none;
+  border: 1px solid var(--border-subtle);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red-primary);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.18);
+  background: var(--red-bright);
+}
+
+/* Preset Duration Chips */
+.preset-pills {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.preset-pill {
+  flex: 1;
+  background: #191c25;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 3px 0;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.preset-pill.active {
+  background: var(--red-primary);
+  color: #ffffff;
+  border-color: var(--red-primary);
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   6. Reorder Lineup Modal & Tips Modal
+   ========================================================================== */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(4, 5, 8, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal-card {
+  width: 100%;
+  max-height: 84%;
+  background: #12141a;
+  border-top: 2.5px solid var(--red-primary);
+  border-radius: 20px 20px 0 0;
+  padding: 16px 16px calc(var(--safe-bottom) + 16px) 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
+  animation: slideUp 0.25s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 10px;
+}
+
+.modal-title-group h3 {
+  font-family: var(--font-athletic);
+  font-size: 1.45rem;
+  color: var(--red-bright);
+  letter-spacing: 0.8px;
+}
+
+.modal-title-group p {
+  font-size: 0.72rem;
+  color: var(--text-med);
+}
+
+.modal-close-btn {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.lineup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.lineup-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lineup-batting-pos {
+  font-family: var(--font-athletic);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--red-bright);
+  width: 24px;
+}
+
+.lineup-player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.lineup-player-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-pure);
+}
+
+.lineup-player-num {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.lineup-move-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.move-btn {
+  background: #202430;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.btn-secondary {
+  flex: 1;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-high);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  flex: 1;
+  background: var(--red-primary);
+  border: none;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(214, 24, 39, 0.4);
+}
+
+.tip-box {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.tip-box h4 {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--red-bright);
+  margin-bottom: 8px;
+}
+
+.tips-list, .tips-bullets {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tips-list li, .tips-bullets li {
+  font-size: 0.78rem;
+  color: var(--text-high);
+  line-height: 1.4;
+}
+
+.tips-list li strong, .tips-bullets li strong {
+  color: var(--red-bright);
+}
+
+/* ==========================================================================
+   7. Keyframe Animations
+   ========================================================================== */
+@keyframes eqBounce {
+  0% { height: 3px; }
+  100% { height: 16px; }
+}
+
+@keyframes pulseCard {
+  0% { box-shadow: 0 0 10px rgba(214, 24, 39, 0.25); }
+  100% { box-shadow: 0 0 24px rgba(214, 24, 39, 0.55); }
+}
+
+@keyframes pulseFadeBtn {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.2); box-shadow: 0 0 20px rgba(255, 46, 62, 0.7); }
+}
+
+@keyframes blink {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Media query for larger tablets/desktops */
+@media (min-width: 600px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #040406;
+  }
+  .app-viewport {
+    height: 920px;
+    border-radius: 36px;
+    border: 3px solid #291518;
+    overflow: hidden;
+  }
+}
