@@ -150,11 +150,21 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - All CSS styles (`.inning-timer-card`, `.timer-digits`, etc.) remain fully defined in `css/style.css`.
   - Ready to be re-activated or repurposed at any time (e.g. for pitch count limits, game countdowns, or batting cage clocks) with a single property toggle.
 
+### 22. Collapsible Stadium Rally & Chants Lock (Accidental Bump Prevention)
+- **Problem Solved**: During live games, fast scrolling through batters could result in accidentally brushing against the loud Stadium Rally and Chants buttons (air horns / sirens) in the dugout.
+- **Dedicated Quick-Close Toggle (`[✕ HIDE]` / `[＋ SHOW CHANTS]`)**:
+  - Added a tactile toggle button right in the header row of the **STADIUM RALLY & CHANTS** section.
+  - Tapping **`[✕ HIDE]`** cleanly collapses the 4 sound effect buttons (`#hypeGrid`), collapses the section into a slim safety bar, and displays the status badge `Locked for Game`.
+  - In locked/collapsed mode, loud sound FX are completely un-bumpable, leaving full unobstructed focus on the walk-up batter grid.
+  - Tapping either the **`[＋ SHOW CHANTS]`** button or anywhere on the slim collapsed bar instantly re-opens the section whenever a rally breaks out.
+  - **Persistent State**: The coach's preference is remembered in `localStorage` (`grizzlies_rally_hidden`) so refreshing or reopening during a game preserves the closed state.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, and hidden `dugoutClockWidget`.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, and clean between-innings view with dugout clock safely preserved in code.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, hidden `dugoutClockWidget`, and `toggleRallyBtn`.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, and collapsible rally/chants section for game-time safety.
+
 
 

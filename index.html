@@ -90,11 +90,17 @@
         <!-- PAGE 1: Walk-Up Music & Roster -->
         <main class="page-view page-walkup soundboard-scroll-container" id="pageWalkup">
 
-          <!-- Stadium Hype / Rally Horn Section -->
-          <section class="stadium-hype-section">
+          <!-- Stadium Hype / Rally Horn Section (Can be hidden during live games to avoid accidental bumps) -->
+          <section class="stadium-hype-section" id="stadiumHypeSection">
             <div class="section-title-row">
-              <span class="section-tag">STADIUM RALLY & CHANTS</span>
-              <span class="section-hint">Instant Crowd Sound FX</span>
+              <div class="hype-title-left">
+                <span class="section-tag">STADIUM RALLY & CHANTS</span>
+                <span class="section-hint" id="rallySectionHint">Instant Crowd Sound FX</span>
+              </div>
+              <button class="btn-rally-toggle" id="toggleRallyBtn" title="Hide or show Stadium Rally & Chants during games" aria-expanded="true">
+                <span class="rally-toggle-icon" id="rallyToggleIcon">✕</span>
+                <span class="rally-toggle-text" id="rallyToggleText">HIDE</span>
+              </button>
             </div>
             <div class="hype-grid" id="hypeGrid">
               <!-- Populated by JS -->

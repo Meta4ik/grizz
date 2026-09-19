@@ -140,6 +140,11 @@ class GrizzliesApp {
       pageInnings: document.getElementById('pageInnings'),
 
       hypeGrid: document.getElementById('hypeGrid'),
+      stadiumHypeSection: document.getElementById('stadiumHypeSection'),
+      toggleRallyBtn: document.getElementById('toggleRallyBtn'),
+      rallyToggleIcon: document.getElementById('rallyToggleIcon'),
+      rallyToggleText: document.getElementById('rallyToggleText'),
+      rallySectionHint: document.getElementById('rallySectionHint'),
       playerGrid: document.getElementById('playerGrid'),
       rosterSearch: document.getElementById('rosterSearch'),
       clearSearchBtn: document.getElementById('clearSearchBtn'),
@@ -259,6 +264,7 @@ class GrizzliesApp {
     this.setupYouTubeControls();
     this.setupInlineSongJar();
     this.setupDockDrawer();
+    this.setupRallyToggle();
     this.updateSortLabel();
     this.updateOnDeckDisplay();
   }
@@ -352,6 +358,56 @@ class GrizzliesApp {
       btn.addEventListener('click', () => this.handleTrackClick(track));
       this.dom.hypeGrid.appendChild(btn);
     });
+  }
+
+  // =========================================================================
+  // Stadium Rally & Chants Collapsible Safety Toggle
+  // =========================================================================
+  setupRallyToggle() {
+    if (!this.dom.toggleRallyBtn || !this.dom.stadiumHypeSection) return;
+
+    // Read saved preference from localStorage
+    const isSavedHidden = localStorage.getItem('grizzlies_rally_hidden') === 'true';
+    if (isSavedHidden) {
+      this.setRallySectionVisible(false);
+    }
+
+    // Toggle button click
+    this.dom.toggleRallyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.triggerHaptic(20);
+      const isCurrentlyHidden = this.dom.stadiumHypeSection.classList.contains('is-hidden');
+      this.setRallySectionVisible(isCurrentlyHidden); // toggle state
+    });
+
+    // Also tap the collapsed header bar to quickly re-expand
+    this.dom.stadiumHypeSection.addEventListener('click', (e) => {
+      if (this.dom.stadiumHypeSection.classList.contains('is-hidden') && !e.target.closest('#toggleRallyBtn')) {
+        this.triggerHaptic(20);
+        this.setRallySectionVisible(true);
+      }
+    });
+  }
+
+  setRallySectionVisible(visible) {
+    if (!this.dom.stadiumHypeSection || !this.dom.toggleRallyBtn) return;
+    if (visible) {
+      this.dom.stadiumHypeSection.classList.remove('is-hidden');
+      this.dom.toggleRallyBtn.classList.remove('collapsed');
+      this.dom.toggleRallyBtn.setAttribute('aria-expanded', 'true');
+      if (this.dom.rallyToggleIcon) this.dom.rallyToggleIcon.textContent = '✕';
+      if (this.dom.rallyToggleText) this.dom.rallyToggleText.textContent = 'HIDE';
+      if (this.dom.rallySectionHint) this.dom.rallySectionHint.textContent = 'Instant Crowd Sound FX';
+      localStorage.setItem('grizzlies_rally_hidden', 'false');
+    } else {
+      this.dom.stadiumHypeSection.classList.add('is-hidden');
+      this.dom.toggleRallyBtn.classList.add('collapsed');
+      this.dom.toggleRallyBtn.setAttribute('aria-expanded', 'false');
+      if (this.dom.rallyToggleIcon) this.dom.rallyToggleIcon.textContent = '＋';
+      if (this.dom.rallyToggleText) this.dom.rallyToggleText.textContent = 'SHOW CHANTS';
+      if (this.dom.rallySectionHint) this.dom.rallySectionHint.textContent = 'Locked for Game';
+      localStorage.setItem('grizzlies_rally_hidden', 'true');
+    }
   }
 
   renderPlayers() {
