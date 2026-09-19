@@ -109,26 +109,28 @@
 
           <!-- Player Walk-Up Roster Section -->
           <section class="roster-section">
-            <div class="section-title-row">
-              <div class="roster-heading-wrap">
-                <span class="section-tag">WALK-UP BATTERS</span>
-                <span class="batter-count-badge" id="rosterCountBadge">12 PLAYERS</span>
+            <div class="roster-sticky-header" id="rosterStickyHeader">
+              <div class="section-title-row">
+                <div class="roster-heading-wrap">
+                  <span class="section-tag">WALK-UP BATTERS</span>
+                  <span class="batter-count-badge" id="rosterCountBadge">12 PLAYERS</span>
+                </div>
+                <div class="search-input-wrap">
+                  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="rosterSearch" placeholder="Search # or name..." autocomplete="off">
+                  <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">&times;</button>
+                </div>
               </div>
-              <div class="search-input-wrap">
-                <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="rosterSearch" placeholder="Search # or name..." autocomplete="off">
-                <button id="clearSearchBtn" class="clear-search-btn" style="display: none;">&times;</button>
-              </div>
-            </div>
 
-            <!-- Next Batter / On-Deck Notification Pill -->
-            <div class="on-deck-banner" id="onDeckBanner" style="display: none;">
-              <span class="on-deck-label"><span class="baseball-ico">⚾</span> ON DECK:</span>
-              <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
-              <button id="playOnDeckBtn" class="play-ondeck-btn">PLAY NEXT &rarr;</button>
+              <!-- Next Batter / On-Deck Notification Pill -->
+              <div class="on-deck-banner" id="onDeckBanner" style="display: none;">
+                <span class="on-deck-label"><span class="baseball-ico">⚾</span> ON DECK:</span>
+                <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
+                <button id="playOnDeckBtn" class="play-ondeck-btn">PLAY NEXT &rarr;</button>
+              </div>
             </div>
 
             <!-- Player Sound Buttons Grid -->

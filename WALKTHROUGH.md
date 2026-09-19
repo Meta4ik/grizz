@@ -181,9 +181,18 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - If in 5-random mode, immediately drops and plays a random track from the 5 visible picks.
   - If in all-songs mode, drops and plays a random track from all 24 songs in the playlist.
 
+### 25. Sticky On-Deck Banner & Walk-Up Batters Header
+- **Problem Solved**: When scrolling down through the 12 batter cards on mobile, the on-deck notification and upcoming batter controls would scroll off the screen.
+- **Unified Sticky Container (`.roster-sticky-header`)**:
+  - Encapsulated the **`WALK-UP BATTERS`** section header, player count badge, search box, and the **`⚾ ON DECK: ... PLAY NEXT →`** notification banner together in a single sticky wrapper (`position: sticky; top: 0; z-index: 25`).
+  - As the coach scrolls up the players list, the Stadium Rally & Chants section scrolls away smoothly above.
+  - The **`WALK-UP BATTERS`** header and **On-Deck banner** freeze cleanly at the very top of the scroll container—the on-deck banner stops exactly right under the walk-up batters title row and does not scroll past it.
+  - All 12 player cards glide underneath cleanly with a dark backdrop-blur shield (`background: linear-gradient(...)`, `backdrop-filter: blur(14px)`), keeping the next batter always visible and tap-ready without blocking roster cards.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with 24-song Baseball playlist and `jarModeRandom5Btn`.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, and 24-track song jar with 5-random shuffle mode.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with sticky roster header and 24-song Baseball playlist.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, 24-track song jar with 5-random shuffle mode, and pinned sticky on-deck banner.
+

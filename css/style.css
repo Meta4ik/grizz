@@ -498,6 +498,24 @@ html, body {
   margin-bottom: 20px;
 }
 
+/* Sticky Header for Walk-Up Batters Title & On-Deck Banner */
+.roster-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: linear-gradient(180deg, #0e0f14 0%, #0e0f14 90%, rgba(14, 15, 20, 0.95) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  margin-left: -14px;
+  margin-right: -14px;
+  padding: 8px 14px 6px 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+}
+
+.roster-sticky-header .section-title-row {
+  margin-bottom: 6px;
+}
+
 .roster-heading-wrap {
   display: flex;
   align-items: center;
@@ -565,7 +583,8 @@ html, body {
   border: 1.5px solid rgba(0, 229, 255, 0.55);
   padding: 8px 12px;
   border-radius: 12px;
-  margin-bottom: 12px;
+  margin-top: 4px;
+  margin-bottom: 4px;
   animation: fadeIn 0.3s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 229, 255, 0.15);
 }
@@ -615,6 +634,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  margin-top: 10px;
 }
 
 .player-card {
