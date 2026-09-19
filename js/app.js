@@ -1093,9 +1093,10 @@ class GrizzliesApp {
   }
 
   // =========================================================================
-  // Inning Warm-Up Countdown Timer (2:00 / 1:30 / 1:00)
+  // Inning Warm-Up Countdown Timer (Preserved in code for future use)
   // =========================================================================
   setupInningTimer() {
+    if (!this.dom.inningTimerDisplay || !this.dom.timerToggleBtn) return;
     this.updateTimerDisplay();
 
     this.dom.timerPresets.forEach(btn => {
@@ -1108,36 +1109,42 @@ class GrizzliesApp {
       });
     });
 
-    this.dom.timerToggleBtn.addEventListener('click', () => {
-      this.triggerHaptic(20);
-      if (this.timerRunning) {
-        this.pauseTimer();
-      } else {
-        this.startTimer();
-      }
-    });
+    if (this.dom.timerToggleBtn) {
+      this.dom.timerToggleBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        if (this.timerRunning) {
+          this.pauseTimer();
+        } else {
+          this.startTimer();
+        }
+      });
+    }
 
-    this.dom.timerResetBtn.addEventListener('click', () => {
-      this.triggerHaptic(20);
-      this.resetTimer();
-    });
+    if (this.dom.timerResetBtn) {
+      this.dom.timerResetBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        this.resetTimer();
+      });
+    }
 
-    this.dom.timerPlus30Btn.addEventListener('click', () => {
-      this.triggerHaptic(15);
-      this.timerRemaining += 30;
-      if (this.timerRemaining > this.timerDuration) {
-        this.timerDuration = this.timerRemaining;
-      }
-      this.updateTimerDisplay();
-    });
+    if (this.dom.timerPlus30Btn) {
+      this.dom.timerPlus30Btn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        this.timerRemaining += 30;
+        if (this.timerRemaining > this.timerDuration) {
+          this.timerDuration = this.timerRemaining;
+        }
+        this.updateTimerDisplay();
+      });
+    }
   }
 
   startTimer() {
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerRunning = true;
-    this.dom.timerToggleIcon.textContent = '⏸';
-    this.dom.timerToggleText.textContent = 'PAUSE';
-    this.dom.inningTimerDisplay.classList.add('running');
+    if (this.dom.timerToggleIcon) this.dom.timerToggleIcon.textContent = '⏸';
+    if (this.dom.timerToggleText) this.dom.timerToggleText.textContent = 'PAUSE';
+    if (this.dom.inningTimerDisplay) this.dom.inningTimerDisplay.classList.add('running');
 
     this.timerInterval = setInterval(() => {
       if (this.timerRemaining > 0) {
@@ -1146,7 +1153,7 @@ class GrizzliesApp {
 
         if (this.timerRemaining === 10) {
           this.triggerHaptic([50, 100, 50]);
-          this.dom.inningTimerDisplay.classList.add('warning');
+          if (this.dom.inningTimerDisplay) this.dom.inningTimerDisplay.classList.add('warning');
         }
       } else {
         this.pauseTimer();
@@ -1161,25 +1168,26 @@ class GrizzliesApp {
       this.timerInterval = null;
     }
     this.timerRunning = false;
-    this.dom.timerToggleIcon.textContent = '▶';
-    this.dom.timerToggleText.textContent = 'START';
-    this.dom.inningTimerDisplay.classList.remove('running');
+    if (this.dom.timerToggleIcon) this.dom.timerToggleIcon.textContent = '▶';
+    if (this.dom.timerToggleText) this.dom.timerToggleText.textContent = 'START';
+    if (this.dom.inningTimerDisplay) this.dom.inningTimerDisplay.classList.remove('running');
   }
 
   resetTimer() {
     this.pauseTimer();
     this.timerRemaining = this.timerDuration;
-    this.dom.inningTimerDisplay.classList.remove('warning');
+    if (this.dom.inningTimerDisplay) this.dom.inningTimerDisplay.classList.remove('warning');
     this.updateTimerDisplay();
   }
 
   updateTimerDisplay() {
+    if (!this.dom.inningTimerDisplay) return;
     const mins = Math.floor(this.timerRemaining / 60);
     const secs = (this.timerRemaining % 60).toString().padStart(2, '0');
     this.dom.inningTimerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs}`;
 
     const pct = this.timerDuration > 0 ? (this.timerRemaining / this.timerDuration) * 100 : 0;
-    this.dom.timerBarFill.style.width = `${pct}%`;
+    if (this.dom.timerBarFill) this.dom.timerBarFill.style.width = `${pct}%`;
   }
 
   // =========================================================================

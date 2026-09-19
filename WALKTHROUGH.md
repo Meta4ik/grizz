@@ -142,10 +142,19 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - When the coach taps the `[FADE OUT]` button, the crossfader thumb knob physically glides across the phone screen in real time synchronized with the audio engine cosine fade curve over the selected duration (`1.0s`, `2.0s`, `3.0s`, `4.0s`).
   - Auto-restores to 100% sound whenever a new batter or song is tapped.
 
+### 21. Dugout Clock Widget (Removed from UI, Preserved in Code for Future Use)
+- **Cleaned Up Active UI**: Removed the Dugout Clock widget from the active Between-Innings display (`style="display: none;" aria-hidden="true"`) to give maximum screen real estate and visibility to the YouTube Player Deck, Ballpark Organ Music hot-key, and Song Jar.
+- **100% Preserved for Future Repurposing**:
+  - The complete DOM hierarchy (`#dugoutClockWidget`, `#inningTimerDisplay`, `#timerToggleBtn`, `#timerResetBtn`, `#timerPlus30Btn`, `#timerBarFill`) remains intact in `index.html`.
+  - All timer methods (`setupInningTimer`, `startTimer`, `pauseTimer`, `resetTimer`, `updateTimerDisplay`) are preserved with defensive null guards in `js/app.js`.
+  - All CSS styles (`.inning-timer-card`, `.timer-digits`, etc.) remain fully defined in `css/style.css`.
+  - Ready to be re-activated or repurposed at any time (e.g. for pitch count limits, game countdowns, or batting cage clocks) with a single property toggle.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn` and `masterCrossfader`.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, and full-width DJ mixer crossfader.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, and hidden `dugoutClockWidget`.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, and clean between-innings view with dugout clock safely preserved in code.
+
 
