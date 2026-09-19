@@ -189,10 +189,19 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - The **`WALK-UP BATTERS`** header and **On-Deck banner** freeze cleanly at the very top of the scroll container—the on-deck banner stops exactly right under the walk-up batters title row and does not scroll past it.
   - All 12 player cards glide underneath cleanly with a dark backdrop-blur shield (`background: linear-gradient(...)`, `backdrop-filter: blur(14px)`), keeping the next batter always visible and tap-ready without blocking roster cards.
 
+### 26. Full-Width Top Header Meta Bar (`8U FALL 2026 • DUGOUT SOUNDBOARD`)
+- **Problem Solved**: Stacking the team meta subtitle inside the title block created a tall header that pushed down the navigation tabs, rally chants, and player cards.
+- **Full-Width Edge-to-Edge Ribbon (`.team-meta-topbar`)**:
+  - Separated the team subtitle into a sleek, dedicated top ribbon spanning **100% full width across the very top** of the app header.
+  - Styled with refined typography (`letter-spacing: 2px; color: var(--red-bright); font-weight: 800`), subtle lower border separator, and crimson glow.
+- **Ultra-Compact Main Header Row (`.header-main-row`)**:
+  - Aligned the Grizzly logo, **`WYLIE GRIZZLIES`** athletic title, and the 4 utility icon buttons (`[🔄 Sync]`, `[Tips]`, `[Lineup]`, `[Fullscreen]`) into a single, compact, horizontally-centered row.
+  - Substantially reduces vertical header bulk, giving maximum screen real estate to the dugout soundboard and batter grid below.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with sticky roster header and 24-song Baseball playlist.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with full-width top header meta bar, sticky roster header, and 24-song Baseball playlist.
 3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, 24-track song jar with 5-random shuffle mode, and pinned sticky on-deck banner.
 
