@@ -159,12 +159,19 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - Tapping either the **`[＋ SHOW CHANTS]`** button or anywhere on the slim collapsed bar instantly re-opens the section whenever a rally breaks out.
   - **Persistent State**: The coach's preference is remembered in `localStorage` (`grizzlies_rally_hidden`) so refreshing or reopening during a game preserves the closed state.
 
+### 23. Faded Blue Edge Open Indicator (Fade & Controls Drawer)
+- **High-Visibility Open State**:
+  - When the bottom drawer for fade and controls is open (`.master-dock.drawer-expanded`), the top edge lights up with a vibrant **electric cyan/blue border** (`border-top: 2px solid #00e5ff`) and an ambient blue glow (`box-shadow: 0 -8px 26px rgba(0, 229, 255, 0.38)`).
+  - A soft, faded blue gradient curtain (`linear-gradient(180deg, rgba(0, 229, 255, 0.24) 0%, rgba(0, 176, 255, 0.08) 50%, transparent 100%)`) washes down into the top 32px of the drawer.
+  - The drag handle pill transitions to glowing cyan (`background: #00e5ff; box-shadow: 0 0 10px rgba(0, 229, 255, 0.75)`), providing instantaneous visual confirmation at a glance that the controls drawer is open.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, hidden `dugoutClockWidget`, and `toggleRallyBtn`.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, and collapsible rally/chants section for game-time safety.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, hidden `dugoutClockWidget`, `toggleRallyBtn`, and luminous blue open drawer edge indicator.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, and glowing blue open drawer indicator.
+
 
 
 
