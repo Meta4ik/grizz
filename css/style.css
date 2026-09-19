@@ -233,7 +233,7 @@ html, body {
   grid-template-columns: 1fr 1fr;
   gap: 6px;
   padding: 4px;
-  margin: 5px 14px 4px 14px;
+  margin: 5px 14px 0 14px;
   background: rgba(18, 20, 26, 0.95);
   border: 1px solid var(--border-subtle);
   border-radius: 14px;
@@ -319,7 +319,7 @@ html, body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 14px 0 14px;
+  padding: 0 14px 0 14px;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
@@ -397,11 +397,13 @@ html, body {
 
 /* Stadium Hype Section */
 .stadium-hype-section {
+  margin-top: 8px;
   margin-bottom: 18px;
   transition: all 0.2s ease;
 }
 
 .stadium-hype-section.is-hidden {
+  margin-top: 8px;
   margin-bottom: 12px;
   background: rgba(18, 20, 28, 0.55);
   border: 1px dashed rgba(255, 255, 255, 0.14);
@@ -419,24 +421,25 @@ html, body {
 
 .hype-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
 .hype-btn {
   position: relative;
-  background: linear-gradient(145deg, #201316 0%, #14151b 100%);
-  border: 1.5px solid #3d1c22;
+  background: var(--surface-card);
+  border: 1.5px solid var(--border-subtle);
   border-radius: 14px;
-  padding: 12px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
   overflow: hidden;
   text-align: left;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hype-btn::before {
@@ -517,13 +520,14 @@ html, body {
   position: sticky;
   top: 0;
   z-index: 25;
-  background: linear-gradient(180deg, #0e0f14 0%, #0e0f14 90%, rgba(14, 15, 20, 0.95) 100%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: #0e0f14;
+  background: linear-gradient(180deg, #0e0f14 0%, #0e0f14 92%, rgba(14, 15, 20, 0.98) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   margin-left: -14px;
   margin-right: -14px;
   padding: 8px 14px 6px 14px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75);
 }
 
 .roster-sticky-header .section-title-row {
@@ -2081,6 +2085,7 @@ html, body {
 
 /* YouTube Dugout Stage */
 .yt-player-card {
+  margin-top: 8px;
   background: linear-gradient(145deg, #191216 0%, #111218 100%);
   border: 1.5px solid #361922;
   border-radius: 16px;

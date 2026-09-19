@@ -198,11 +198,19 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - Balanced alongside the Grizzly team logo badge (`44px × 40px`).
   - Frees up significant horizontal breathing room for the 4 header action buttons (`[🔄 Sync]`, `[Tips]`, `[Lineup]`, `[Fullscreen]`) with comfortable gaps, preventing any cramped layout.
 
+### 27. Flush Sticky Header Alignment Under Navigation Tabs (Zero Gap)
+- **Problem Solved**: A transparent top padding gap in the scroll container allowed player cards to be briefly seen scrolling between the navigation tabs bar and the pinned sticky on-deck header.
+- **Seamless 0px Sticky Pinning**:
+  - Removed container top padding (`padding: 0 14px 0 14px`) and eliminated the lower margin on `.dugout-tabs-nav` (`margin: 5px 14px 0 14px`).
+  - The **`WALK-UP BATTERS`** + **`⚾ ON DECK`** sticky header pins **100% flush directly underneath the dugout navigation tabs** (`[ ⚾ WALK-UP BATTERS ]` / `[ ⚡ BETWEEN INNINGS ]`).
+  - Applied solid dark background shield (`#0e0f14` / `backdrop-filter: blur(16px)` / `box-shadow: 0 4px 18px rgba(0,0,0,0.75)`), completely preventing any cards from peeking or bleeding through while scrolling.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with full-width top header meta bar, two-line stacked title lockup, sticky roster header, and 24-song Baseball playlist.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, 24-track song jar with 5-random shuffle mode, and pinned sticky on-deck banner.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with full-width top header meta bar, two-line stacked title lockup, flush sticky roster header, and 24-song Baseball playlist.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, 24-track song jar with 5-random shuffle mode, and flush sticky on-deck banner.
+
 
 
