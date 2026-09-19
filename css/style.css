@@ -477,39 +477,51 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(90deg, rgba(214, 24, 39, 0.22) 0%, rgba(22, 24, 32, 0.85) 100%);
-  border: 1px solid rgba(214, 24, 39, 0.45);
-  padding: 7px 12px;
-  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.16) 0%, rgba(13, 27, 42, 0.92) 100%);
+  border: 1.5px solid rgba(0, 229, 255, 0.55);
+  padding: 8px 12px;
+  border-radius: 12px;
   margin-bottom: 12px;
   animation: fadeIn 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 229, 255, 0.15);
 }
 
 .on-deck-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--red-bright);
-  letter-spacing: 1px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #00e5ff;
+  letter-spacing: 0.8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
 }
 
 .on-deck-name {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--text-pure);
-  margin-left: 6px;
+  margin-left: 8px;
   flex: 1;
 }
 
 .play-ondeck-btn {
-  background: var(--red-primary);
+  background: linear-gradient(135deg, #00d2ff 0%, #0066ff 100%);
   color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 0.7rem;
-  font-weight: 800;
+  border: 1px solid #70f3ff;
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(214, 24, 39, 0.4);
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 10px rgba(0, 102, 255, 0.5);
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+.play-ondeck-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.7);
 }
 
 /* ==========================================================================
@@ -632,6 +644,115 @@ html, body {
   background: rgba(214, 24, 39, 0.18);
   color: var(--red-bright);
   border: 1px solid rgba(214, 24, 39, 0.45);
+}
+
+/* ==========================================================================
+   At-Bat & On-Deck Lighting & Badges (High Contrast Outdoor Sun Mode)
+   ========================================================================== */
+
+.baseball-ico {
+  display: inline-block;
+  font-size: 0.85rem;
+  line-height: 1;
+  vertical-align: -1px;
+  margin-right: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+/* Current Batter At-Bat: Lit Up Electric Blue / Cyan */
+.player-card.is-at-bat {
+  background: linear-gradient(145deg, #092645 0%, #081729 100%) !important;
+  border: 2px solid #00e5ff !important;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.6), inset 0 0 12px rgba(0, 229, 255, 0.25) !important;
+  transform: translateY(-2px);
+  z-index: 2;
+}
+
+.player-card.is-at-bat .jersey-badge {
+  background: #00e5ff !important;
+  color: #021427 !important;
+  border: 2px solid #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.95), inset 0 0 6px rgba(255, 255, 255, 0.8) !important;
+}
+
+.player-card.is-at-bat .player-name {
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.player-card.is-at-bat .song-title {
+  color: #70f3ff !important;
+  font-weight: 700;
+}
+
+.player-card.is-at-bat .card-progress-bar {
+  background: #00e5ff !important;
+}
+
+/* When the At-Bat Batter is actively playing their walk-up track */
+.player-card.is-at-bat.playing {
+  background: linear-gradient(145deg, #0a3560 0%, #051a30 100%) !important;
+  border-color: #70f3ff !important;
+  box-shadow: 0 0 32px rgba(0, 229, 255, 0.85), inset 0 0 14px rgba(0, 229, 255, 0.35) !important;
+  animation: pulseBlueCard 2s infinite alternate ease-in-out !important;
+}
+
+.player-card.is-at-bat.playing .jersey-badge {
+  background: #ffffff !important;
+  color: #0077c2 !important;
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(0, 229, 255, 0.9) !important;
+}
+
+.player-card.is-at-bat.playing .card-progress-bar {
+  background: linear-gradient(90deg, #0077c2, #00e5ff, #ffffff) !important;
+}
+
+/* On-Deck Batter (The Person Immediately Following) */
+.player-card.is-on-deck {
+  border: 2px dashed #00e5ff !important;
+  background: linear-gradient(145deg, rgba(0, 229, 255, 0.12) 0%, rgba(18, 23, 34, 0.95) 100%) !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.3) !important;
+}
+
+.player-card.is-on-deck .jersey-badge {
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+}
+
+.player-card.is-on-deck .song-title {
+  color: #9eeeff;
+}
+
+/* Badges for At-Bat and On-Deck */
+.card-status-badge.at-bat-badge {
+  background: #00e5ff;
+  color: #031427;
+  border: 1px solid #ffffff;
+  font-weight: 900;
+  font-size: 0.66rem;
+  letter-spacing: 0.5px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.85);
+  display: inline-flex;
+  align-items: center;
+}
+
+.card-status-badge.on-deck-badge {
+  background: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
+  border: 1.5px solid #00e5ff;
+  font-weight: 900;
+  font-size: 0.64rem;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Card Content / Name & Song */
@@ -1422,6 +1543,17 @@ input[type="range"]::-webkit-slider-thumb:active {
 @keyframes pulseCard {
   0% { box-shadow: 0 0 10px rgba(214, 24, 39, 0.25); }
   100% { box-shadow: 0 0 24px rgba(214, 24, 39, 0.55); }
+}
+
+@keyframes pulseBlueCard {
+  0% {
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.5);
+    border-color: #00e5ff;
+  }
+  100% {
+    box-shadow: 0 0 34px rgba(0, 229, 255, 0.95);
+    border-color: #ffffff;
+  }
 }
 
 @keyframes pulseFadeBtn {

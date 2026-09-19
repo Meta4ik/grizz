@@ -92,8 +92,9 @@ class GrizzliesApp {
     this.sortMode = localStorage.getItem('grizzlies_sort_mode') || 'number'; // 'number' or 'lineup'
     this.lineupOrder = this.loadLineupOrder();
     this.activeTrack = null;
-    this.lastBatterIndex = -1;
-    this.onDeckPlayer = null;
+    this.lastBatterIndex = 0;
+    this.currentBatter = this.lineupOrder[0] || null;
+    this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
 
     // Active Playlist & Song Jar State (defaults to Coach's Baseball playlist)
     this.activePlaylistId = this.ytEngine?.currentPlaylist?.id || 'PLfIVhrWS4Y_M';
@@ -263,6 +264,20 @@ class GrizzliesApp {
     this.lineupOrder = orderList;
     const ids = orderList.map(p => p.id);
     localStorage.setItem('grizzlies_batting_order', JSON.stringify(ids));
+
+    // Re-sync on-deck player to match newly ordered lineup
+    if (this.currentBatter) {
+      const idx = this.lineupOrder.findIndex(p => p.id === this.currentBatter.id);
+      if (idx >= 0) {
+        this.lastBatterIndex = idx;
+        const nextIdx = (idx + 1) % this.lineupOrder.length;
+        this.onDeckPlayer = this.lineupOrder[nextIdx];
+      }
+    } else {
+      this.currentBatter = this.lineupOrder[0] || null;
+      this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
+    }
+    this.updateOnDeckDisplay();
   }
 
   getDisplayedPlayers() {
@@ -321,6 +336,15 @@ class GrizzliesApp {
       card.id = `btn-${player.id}`;
       card.dataset.id = player.id;
 
+      const isAtBat = this.currentBatter && this.currentBatter.id === player.id;
+      const isOnDeck = !isAtBat && this.onDeckPlayer && this.onDeckPlayer.id === player.id;
+
+      if (isAtBat) {
+        card.classList.add('is-at-bat');
+      } else if (isOnDeck) {
+        card.classList.add('is-on-deck');
+      }
+
       // Status badge: If sorting by lineup, show batting slot e.g. "1st", "2nd"
       let battingSlotText = '';
       if (this.sortMode === 'lineup') {
@@ -330,12 +354,20 @@ class GrizzliesApp {
         }
       }
 
+      let batterBadgeHtml = '';
+      if (isAtBat) {
+        batterBadgeHtml = `<span class="card-status-badge at-bat-badge"><span class="baseball-ico">⚾</span> AT BAT</span>`;
+      } else if (isOnDeck) {
+        batterBadgeHtml = `<span class="card-status-badge on-deck-badge"><span class="baseball-ico">⚾</span> ON DECK</span>`;
+      }
+
       card.innerHTML = `
         <div class="card-progress-bar" id="progress-${player.id}"></div>
         <div class="card-top-row">
           <div class="jersey-badge">#${player.number}</div>
-          <div class="card-badges-wrap">
+          <div class="card-badges-wrap" id="badges-${player.id}">
             ${battingSlotText ? `<span class="card-status-badge on-deck-tag">${battingSlotText}</span>` : ''}
+            ${batterBadgeHtml}
             <span class="card-status-badge" id="status-${player.id}" style="display: none;">PLAYING</span>
           </div>
         </div>
@@ -356,6 +388,47 @@ class GrizzliesApp {
     }
   }
 
+  updateBatterCardsState() {
+    const cards = this.dom.playerGrid.querySelectorAll('.player-card');
+    cards.forEach(card => {
+      const id = card.dataset.id;
+      const isAtBat = this.currentBatter && this.currentBatter.id === id;
+      const isOnDeck = !isAtBat && this.onDeckPlayer && this.onDeckPlayer.id === id;
+
+      card.classList.toggle('is-at-bat', !!isAtBat);
+      card.classList.toggle('is-on-deck', !!isOnDeck);
+
+      const badgesWrap = card.querySelector('.card-badges-wrap');
+      if (badgesWrap) {
+        const oldAtBat = badgesWrap.querySelector('.at-bat-badge');
+        if (oldAtBat) oldAtBat.remove();
+        const oldOnDeck = badgesWrap.querySelector('.on-deck-badge');
+        if (oldOnDeck) oldOnDeck.remove();
+
+        const statusEl = badgesWrap.querySelector(`#status-${id}`);
+        if (isAtBat) {
+          const b = document.createElement('span');
+          b.className = 'card-status-badge at-bat-badge';
+          b.innerHTML = `<span class="baseball-ico">⚾</span> AT BAT`;
+          if (statusEl) {
+            badgesWrap.insertBefore(b, statusEl);
+          } else {
+            badgesWrap.appendChild(b);
+          }
+        } else if (isOnDeck) {
+          const b = document.createElement('span');
+          b.className = 'card-status-badge on-deck-badge';
+          b.innerHTML = `<span class="baseball-ico">⚾</span> ON DECK`;
+          if (statusEl) {
+            badgesWrap.insertBefore(b, statusEl);
+          } else {
+            badgesWrap.appendChild(b);
+          }
+        }
+      }
+    });
+  }
+
   // =========================================================================
   // Playback & Audio Controls
   // =========================================================================
@@ -366,6 +439,20 @@ class GrizzliesApp {
       this.ytEngine.pause();
     }
     this.activeAudioSource = 'walkup';
+
+    // Advance batting rotation if a roster player is clicked
+    if (!track.isHype) {
+      this.currentBatter = track;
+      const idx = this.lineupOrder.findIndex(p => p.id === track.id);
+      if (idx >= 0) {
+        this.lastBatterIndex = idx;
+        const nextIdx = (idx + 1) % this.lineupOrder.length;
+        this.onDeckPlayer = this.lineupOrder[nextIdx];
+      }
+      this.updateOnDeckDisplay();
+      this.updateBatterCardsState();
+    }
+
     this.audioEngine.play(track);
   }
 
@@ -611,13 +698,6 @@ class GrizzliesApp {
       if (this.dom.miniEqDot) this.dom.miniEqDot.classList.remove('active');
     }
   }
-    
-    if (isPlaying) {
-      this.dom.liveEqBadge.classList.add('active');
-    } else {
-      this.dom.liveEqBadge.classList.remove('active');
-    }
-  }
 
   // =========================================================================
   // On-Deck Batter Management
@@ -625,6 +705,7 @@ class GrizzliesApp {
   updateOnDeckAfterPlay(track) {
     if (track.isHype) return;
 
+    this.currentBatter = track;
     // Find position in lineup
     const idx = this.lineupOrder.findIndex(p => p.id === track.id);
     if (idx >= 0) {
@@ -632,16 +713,15 @@ class GrizzliesApp {
       const nextIdx = (idx + 1) % this.lineupOrder.length;
       this.onDeckPlayer = this.lineupOrder[nextIdx];
       this.updateOnDeckDisplay();
+      this.updateBatterCardsState();
     }
   }
 
   updateOnDeckDisplay() {
+    if (!this.onDeckPlayer && this.lineupOrder.length > 0) {
+      this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0];
+    }
     if (this.onDeckPlayer) {
-      this.dom.onDeckBanner.style.display = 'flex';
-      this.dom.onDeckName.textContent = `#${this.onDeckPlayer.number} ${this.onDeckPlayer.name} (${this.onDeckPlayer.song})`;
-    } else {
-      // Default to first batter in lineup
-      this.onDeckPlayer = this.lineupOrder[0];
       this.dom.onDeckBanner.style.display = 'flex';
       this.dom.onDeckName.textContent = `#${this.onDeckPlayer.number} ${this.onDeckPlayer.name} (${this.onDeckPlayer.song})`;
     }
@@ -782,6 +862,7 @@ class GrizzliesApp {
     this.dom.resetLineupBtn.addEventListener('click', () => {
       const defaultOrder = [...PLAYERS].sort((a, b) => a.numVal - b.numVal);
       this.saveLineupOrder(defaultOrder);
+      this.renderPlayers();
       this.renderLineupModalItems();
     });
 

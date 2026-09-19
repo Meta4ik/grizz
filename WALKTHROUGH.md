@@ -86,9 +86,28 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
 - **Draw Random Song**: Big `[🎲 DRAW RANDOM SONG FROM PLAYLIST]` button immediately selects and drops a random track from the current playlist.
 - **Add Songs on the Fly**: Inline `[➕ ADD]` bar allows coaches to paste YouTube links or song titles into their active playlist jar, with automatic asynchronous title fetching via YouTube oEmbed.
 
+### 15. Active Batter Electric Blue Lighting & Baseball Indicators (`⚾`)
+- **Electric Blue "At Bat" Highlight**:
+  - The current person batting in the Walk-Up section lights up with a radiant **electric cyan/blue theme** (`#00e5ff`) designed specifically to pop outdoors under intense Texas sunlight:
+    - Glowing 2px electric blue card border and deep navy gradient background.
+    - Prominent **jersey number badge lit up electric blue** (`#00e5ff`) with bold dark navy numerals and white rim.
+    - Pill status badge: `<span class="baseball-ico">⚾</span> AT BAT`.
+    - Real-time pulse animation (`pulseBlueCard`) when playing their walk-up track.
+- **Next-Up "On Deck" Baseball Indicator**:
+  - The batter immediately following the current batter in the lineup is highlighted with:
+    - Dashed cyan border (`border: 2px dashed #00e5ff`) and subtle cyan glow.
+    - Pill status badge: `<span class="baseball-ico">⚾</span> ON DECK`.
+    - Cyan-accented on-deck banner at the top of the Walk-Up page with `⚾ ON DECK:` and one-touch `[PLAY NEXT ➔]` button.
+- **Automatic Lineup Rotation**:
+  - When the coach taps the on-deck batter, taps "PLAY NEXT", or selects any batter:
+    - That batter instantly transitions to the **electric blue `⚾ AT BAT`** state.
+    - The subsequent player in the lineup automatically receives the **`⚾ ON DECK`** indicator.
+    - Wraps sequentially from batter #12 back to batter #1.
+    - Fully synchronized with custom lineup reordering in the Lineup Modal.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 8845 and verified valid HTML response.
-3. Verified "Baseball" playlist default, dropdown options, outdoor 62px play button, inline Song Jar listing all tracks, and the master dock sliding drawer.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS.
+3. Verified electric blue styling, baseball icons on both At-Bat and On-Deck cards, and automatic lineup rotation.
