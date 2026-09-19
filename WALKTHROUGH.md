@@ -55,11 +55,40 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
 - **Reset to Defaults**: One-touch reset to restore standard dugout anthems anytime.
 
 ### 9. Small Beta Version Badge
-- **Discreet Placement**: Added a small, unobtrusive `v1.2-beta` version indicator in the lower right corner of the master bottom dock with subtle opacity (`rgba(255, 255, 255, 0.35)`).
+- **Discreet Placement**: Added a small, unobtrusive version indicator (`v1.3-beta`) in the lower right corner of the master bottom dock with subtle opacity (`rgba(255, 255, 255, 0.35)`).
+
+### 10. Coach's "Baseball" Main Playlist & Clean Dropdown Selector
+- **Default Main Playlist**: Set Coach's personal playlist (`PLfIVhrWS4Y_M`), titled **"Baseball"**, as the default and primary playlist.
+  - Automatically loads with coach's tracks:
+    1. *Wild Ones* - Jessie Murph & Jelly Roll (`MVDJxMxzTL0`)
+    2. *Fast Car* - Luke Combs (`aXmmyuIqZyo`)
+    3. *Getting Older (Clean)* - Jaz Von ft. NBA YoungBoy (`EK-XfDRL2wA`)
+- **Eliminated Cluttered Buttons**: Removed the row of chip buttons under the player to free up screen real estate.
+- **Sleek Quick-Switch Dropdown**: Kept the quick-switch dropdown menu for seamless switching to alternative playlists (*Pantera Rock*, *Rap*, *90s Hits*, *Country*, *80s Hits*).
+
+### 11. Solved Buffering & Disabled Auto-Play on Playlist Switch
+- **Silent Cueing**: Switched YouTube playlist switching from `loadPlaylist` to `cuePlaylist` (`autoplay=0`).
+- **No Accidental Audio**: When switching playlists or picking songs in advance, the player cues silently at 0:00 without blasting audio into the dugout or causing multi-stream buffering. Audio only starts when the coach deliberately taps the Play button.
+
+### 12. Outdoor Sunlight-Optimized Play Button (62px)
+- **Large Touch Target**: Increased the Play/Pause button from 38px to **62px** diameter with a bright **28px** white SVG icon.
+- **Sunlight Glare Resistant**: Styled with a rich crimson gradient, 3px bright amber/gold border, and high-contrast glowing shadows for clear visibility in direct sunlight on mobile screens. Sibling buttons (`[⏮]`, `[⏭]`, `[🎲]`) were enlarged to 44px.
+
+### 13. Master Dock Sliding Drawer (Fade Out, Cut/Stop, Sliders)
+- **Space-Saving Collapsible Drawer**: Replaced the heavy fixed bottom bar with an interactive sliding drawer:
+  - **Collapsed State**: Sits at the bottom as a sleek ~54px handle bar showing current track name, live EQ dot, and a pull-tab toggle (`▲ FADE & CONTROLS`), leaving maximum screen space to view playlist songs.
+  - **Expanded State**: Smoothly slides up with GPU acceleration on tap or swipe, revealing the full FADE OUT button, CUT / STOP button, FADE DURATION slider, and VOLUME slider.
+  - **Slide Gestures**: Supports single tap or touch swipe up / down on the handle bar to slide open or closed.
+
+### 14. Inline Dugout Song Jar (Populated with All Playlist Tracks)
+- **Directly on the Page**: Replaced the detached modal popup with an **inline Song Jar** embedded right in the Between-Innings section.
+- **Filled with All Playlist Tracks**: Whenever a playlist is selected, the Song Jar dynamically fills with all of its tracks (numbered `#1`, `#2`, `#3`...), each with a large one-tap Play/Pause button.
+- **Draw Random Song**: Big `[🎲 DRAW RANDOM SONG FROM PLAYLIST]` button immediately selects and drops a random track from the current playlist.
+- **Add Songs on the Fly**: Inline `[➕ ADD]` bar allows coaches to paste YouTube links or song titles into their active playlist jar, with automatic asynchronous title fetching via YouTube oEmbed.
 
 ---
 
 ## Verification & Deployment
-1. Tested locally via `python3 -m http.server 8844` on mobile and desktop viewports.
-2. Verified compact corner video, Song Jar drawer, coach playlist selection, and Master Dock synchronization.
-3. Committed and pushed directly to GitHub `main` (`https://github.com/Meta4ik/grizz.git`).
+1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
+2. Tested local server on port 8845 and verified valid HTML response.
+3. Verified "Baseball" playlist default, dropdown options, outdoor 62px play button, inline Song Jar listing all tracks, and the master dock sliding drawer.

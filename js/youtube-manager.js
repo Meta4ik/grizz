@@ -6,7 +6,7 @@
 
 export const DEFAULT_PLAYLIST = {
   id: 'PLfIVhrWS4Y_M',
-  title: "Coach's Baseball Playlist",
+  title: 'Baseball',
   artist: 'Between-Innings Warm-Up Queue'
 };
 
@@ -47,7 +47,8 @@ export class YouTubeInningsEngine {
     try {
       const saved = localStorage.getItem('grizzlies_active_playlist');
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id) return parsed;
       }
     } catch (e) {
       console.warn('Error reading saved playlist:', e);
@@ -179,7 +180,7 @@ export class YouTubeInningsEngine {
     }
   }
 
-  loadPlaylist(playlistId, title = 'Dugout Inning Playlist') {
+  loadPlaylist(playlistId, title = 'Baseball', autoPlay = false) {
     this._cancelFade();
     const playlist = {
       id: playlistId,
@@ -189,28 +190,75 @@ export class YouTubeInningsEngine {
     this.savePlaylist(playlist);
 
     let loadedViaApi = false;
-    if (this.player && typeof this.player.loadPlaylist === 'function') {
+    if (this.player) {
       try {
-        this.player.loadPlaylist({
-          list: playlistId,
-          listType: 'playlist'
-        });
-        loadedViaApi = true;
+        if (autoPlay && typeof this.player.loadPlaylist === 'function') {
+          this.player.loadPlaylist({
+            list: playlistId,
+            listType: 'playlist'
+          });
+          loadedViaApi = true;
+        } else if (!autoPlay && typeof this.player.cuePlaylist === 'function') {
+          this.player.cuePlaylist({
+            list: playlistId,
+            listType: 'playlist'
+          });
+          loadedViaApi = true;
+        }
       } catch (e) {}
     }
 
-    this._sendCommand('loadPlaylist', { list: playlistId, listType: 'playlist' });
+    if (autoPlay) {
+      this._sendCommand('loadPlaylist', { list: playlistId, listType: 'playlist' });
+    } else {
+      this._sendCommand('cuePlaylist', { list: playlistId, listType: 'playlist' });
+    }
 
     if (!loadedViaApi) {
       const iframe = document.getElementById('ytPlayerFrame');
       if (iframe) {
         const originParam = window.location.origin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
-        iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1${originParam}`;
+        const autoplayVal = autoPlay ? 1 : 0;
+        iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1&autoplay=${autoplayVal}${originParam}`;
         setTimeout(() => this._initPlayer(), 1200);
       }
     }
 
+    this.isPlaying = autoPlay;
     this.callbacks.onTrackChange(playlist);
+    if (autoPlay) {
+      this.callbacks.onPlay(playlist);
+    } else {
+      this.callbacks.onPause(playlist);
+    }
+  }
+
+  playVideoAtIndex(index) {
+    this._cancelFade();
+    this.isPlaying = true;
+    if (this.player && typeof this.player.playVideoAt === 'function') {
+      try {
+        this.player.setVolume(this.masterVolume);
+        this.player.playVideoAt(index);
+        this.callbacks.onPlay(this.currentPlaylist);
+        return;
+      } catch (e) {}
+    }
+    this._sendCommand('setVolume', [this.masterVolume]);
+    this._sendCommand('playVideoAt', [index]);
+    this.callbacks.onPlay(this.currentPlaylist);
+  }
+
+  getPlaylistVideos() {
+    if (this.player && typeof this.player.getPlaylist === 'function') {
+      try {
+        const list = this.player.getPlaylist();
+        if (Array.isArray(list) && list.length > 0) {
+          return list;
+        }
+      } catch (e) {}
+    }
+    return [];
   }
 
   play() {

@@ -167,6 +167,7 @@
           <div class="yt-player-card compact-audio-card">
             
             <!-- Top Row: Track Meta on Left, Mini Video in Top-Right Corner -->
+            <!-- Top Row: Track Meta on Left, Mini Video in Top-Right Corner -->
             <div class="yt-deck-top-row">
               <div class="yt-deck-info">
                 <div class="yt-header-left">
@@ -174,7 +175,7 @@
                   <span class="yt-header-tag">BETWEEN-INNINGS MUSIC</span>
                   <span class="yt-audio-pill" id="ytAudioPill">READY</span>
                 </div>
-                <div class="yt-track-title" id="ytCurrentTitle">Coach's Baseball Playlist</div>
+                <div class="yt-track-title" id="ytCurrentTitle">Baseball</div>
                 <div class="yt-track-artist" id="ytCurrentArtist">Dugout Inning Queue</div>
               </div>
 
@@ -182,7 +183,7 @@
               <div class="yt-video-mini-corner" id="ytPlayerContainer">
                 <iframe 
                   id="ytPlayerFrame"
-                  src="https://www.youtube.com/embed/videoseries?list=PLfIVhrWS4Y_M&enablejsapi=1&playsinline=1"
+                  src="https://www.youtube.com/embed/videoseries?list=PLfIVhrWS4Y_M&enablejsapi=1&playsinline=1&autoplay=0"
                   title="Between Innings Dugout Playlist"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerpolicy="strict-origin-when-cross-origin"
@@ -191,21 +192,21 @@
               </div>
             </div>
 
-            <!-- Transport Action Console & Song Jar Button -->
+            <!-- Transport Action Console with Sunlight-Optimized Large Play Button -->
             <div class="yt-action-bar">
               <div class="yt-quick-controls">
-                <button class="btn-yt-control" id="ytPrevBtn" title="Previous Song">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                <button class="btn-yt-control btn-yt-skip" id="ytPrevBtn" title="Previous Song">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
                 </button>
-                <button class="btn-yt-control btn-yt-play" id="ytPlayPauseBtn" title="Play / Pause">
-                  <svg id="ytPlayIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                  <svg id="ytPauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                <button class="btn-yt-control btn-yt-play" id="ytPlayPauseBtn" title="Play / Pause (Outdoor Sunlight Sized)">
+                  <svg id="ytPlayIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  <svg id="ytPauseIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                 </button>
-                <button class="btn-yt-control" id="ytNextBtn" title="Next Song">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                <button class="btn-yt-control btn-yt-skip" id="ytNextBtn" title="Next Song">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                 </button>
-                <button class="btn-yt-control btn-yt-random" id="ytRandomBtn" title="Random Song">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <button class="btn-yt-control btn-yt-random" id="ytRandomBtn" title="Random Song from Active Playlist">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="16 3 21 3 21 8"></polyline>
                     <line x1="4" y1="20" x2="21" y2="3"></line>
                     <polyline points="21 16 21 21 16 21"></polyline>
@@ -215,21 +216,19 @@
                 </button>
               </div>
 
-              <!-- Dugout Song Jar Trigger Button -->
-              <button class="btn-song-jar" id="openSongJarBtn" title="Open Dugout Song Jar">
-                <span class="jar-icon">🫙</span>
-                <span class="jar-label">SONG JAR</span>
-                <span class="jar-count-badge" id="songJarCount">6</span>
-              </button>
+              <!-- Quick Link Indicator -->
+              <div class="yt-status-badge-wrap">
+                <span class="yt-status-tag" id="ytPlaylistStatusTag">⚾ BASEBALL QUEUE</span>
+              </div>
             </div>
 
-            <!-- Quick Preset Playlist Selector & Compact Chips -->
+            <!-- Quick Preset Playlist Selector (Dropdown Only - No Cluttered Buttons) -->
             <div class="preset-playlists-wrap">
               <div class="preset-header-row">
-                <span class="preset-playlists-label">QUICK SWITCH:</span>
+                <span class="preset-playlists-label">QUICK SWITCH PLAYLIST:</span>
                 <div class="playlist-select-wrapper">
                   <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
-                    <option value="PLfIVhrWS4Y_M" data-title="Coach's Baseball Playlist" selected>⚾ My Baseball Playlist</option>
+                    <option value="PLfIVhrWS4Y_M" data-title="Baseball" selected>⚾ Baseball (Coach's Playlist)</option>
                     <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
                     <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
                     <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
@@ -239,143 +238,167 @@
                   <span class="dropdown-arrow">▾</span>
                 </div>
               </div>
-
-              <!-- Compact Chips (All Visible at Once) -->
-              <div class="playlist-chips compact-chips" id="playlistChipsWrap">
-                <button class="playlist-chip active" data-list="PLfIVhrWS4Y_M" data-title="Coach's Baseball Playlist">⚾ My Playlist</button>
-                <button class="playlist-chip" data-list="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera</button>
-                <button class="playlist-chip" data-list="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</button>
-                <button class="playlist-chip" data-list="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</button>
-              </div>
             </div>
 
           </div>
 
-          <!-- Change / Load Any YouTube Playlist Card -->
-          <div class="add-yt-card">
-            <div class="add-yt-header">
-              <span class="section-tag">CHANGE / LOAD PLAYLIST</span>
-              <span class="section-hint">Paste Any Playlist Link</span>
+          <!-- Inline Dugout Song Jar (Filled Directly from the Playlist) -->
+          <div class="inline-song-jar-card" id="inlineSongJarCard">
+            <div class="inline-jar-header">
+              <div class="jar-header-left">
+                <span class="jar-header-icon">🫙</span>
+                <div>
+                  <div class="jar-header-title" id="inlineJarTitle">⚾ BASEBALL SONG JAR</div>
+                  <div class="jar-header-subtitle">All tracks from this playlist • Tap to play</div>
+                </div>
+              </div>
+              <div class="jar-header-right">
+                <span class="jar-count-pill" id="inlineJarCountPill">3 SONGS</span>
+              </div>
             </div>
-            <div class="add-yt-inputs">
-              <div class="input-with-icon">
-                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                <input type="text" id="ytUrlInput" placeholder="Paste YouTube Playlist URL (or video link)..." autocomplete="off">
+
+            <!-- Big Draw Random Song from Jar Button -->
+            <button class="btn-jar-draw-random" id="inlineJarDrawRandomBtn">
+              <span class="draw-icon">🎲</span>
+              <div class="draw-text">
+                <span class="draw-main">DRAW RANDOM SONG FROM PLAYLIST</span>
+                <span class="draw-sub">Instantly drop a random track from this jar</span>
               </div>
-              <div class="add-yt-subrow">
-                <button class="btn-add-yt" id="btnAddYtTrack" style="width: 100%;">
-                  <span>⚡ LOAD PLAYLIST</span>
-                </button>
-              </div>
+            </button>
+
+            <!-- Quick Add Song to Active Playlist / Jar -->
+            <div class="jar-add-row">
+              <input type="text" id="inlineJarAddInput" placeholder="Paste YouTube link or song title to add..." autocomplete="off">
+              <button class="btn-jar-add" id="inlineJarAddBtn">➕ ADD</button>
+            </div>
+
+            <!-- Scrollable Track List from Playlist -->
+            <div class="inline-jar-songs-list" id="inlineJarSongsList">
+              <!-- Populated dynamically by JS -->
             </div>
           </div>
 
-          <!-- Extra Spacing for Bottom Dock -->
-          <div class="dock-spacer"></div>
+          <!-- Extra Spacing for Bottom Sliding Dock -->
+          <div class="dock-spacer" id="dockSpacer"></div>
         </section>
 
       </div>
     </div>
 
-    <!-- Master Dugout Playback & Fade Dock (Sticky to bottom) -->
-    <footer class="master-dock" id="masterDock">
+    <!-- Master Dugout Playback & Fade Dock (Sliding Drawer) -->
+    <footer class="master-dock drawer-collapsed" id="masterDock">
       
-      <!-- Live Track Card & State -->
-      <div class="dock-status-bar">
-        <div class="now-playing-info">
-          <div class="live-eq-badge" id="liveEqBadge">
-            <span class="eq-bar bar-1"></span>
-            <span class="eq-bar bar-2"></span>
-            <span class="eq-bar bar-3"></span>
-            <span class="eq-bar bar-4"></span>
+      <!-- Sliding Drawer Pull Handle Bar (Always Visible at Bottom) -->
+      <div class="dock-drawer-handle-bar" id="dockDrawerHandleBar" role="button" aria-label="Toggle Controls Drawer" tabindex="0">
+        <div class="drawer-drag-pill"></div>
+        <div class="drawer-handle-row">
+          <div class="drawer-now-playing-mini">
+            <span class="mini-eq-dot" id="miniEqDot"></span>
+            <span class="mini-track-text" id="miniTrackText">READY TO HIT</span>
           </div>
-          <div class="track-text">
-            <div class="track-player" id="dockPlayerName">READY TO HIT</div>
-            <div class="track-song" id="dockSongTitle">Tap any player to drop their walk-up track</div>
-          </div>
+          <button class="btn-drawer-toggle" id="drawerToggleBtn" type="button" aria-label="Toggle Controls Drawer">
+            <span class="toggle-btn-label" id="drawerToggleLabel">FADE & CONTROLS</span>
+            <svg class="toggle-chevron" id="drawerChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
         </div>
-        <div class="track-timer" id="dockTimer">0:00</div>
       </div>
 
-      <!-- Live Track Progress Bar -->
-      <div class="track-progress-track">
-        <div class="track-progress-fill" id="trackProgressFill"></div>
-      </div>
-
-      <!-- Master Action Controls -->
-      <div class="dock-controls-row">
-        <!-- Big FADE OUT Button -->
-        <button id="fadeOutBtn" class="btn-action btn-fade" disabled>
-          <div class="btn-fade-glow"></div>
-          <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-            <path d="M19 12h-4"></path>
-            <path d="M17 9l-2 3 2 3"></path>
-          </svg>
-          <div class="btn-action-text">
-            <span class="btn-title">FADE OUT</span>
-            <span class="btn-subtitle" id="fadeBtnSubtitle">Over 2.0s</span>
-          </div>
-        </button>
-
-        <!-- Big CUT / STOP Button -->
-        <button id="stopCutBtn" class="btn-action btn-stop" disabled>
-          <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <rect x="5" y="5" width="14" height="14" rx="2"></rect>
-          </svg>
-          <div class="btn-action-text">
-            <span class="btn-title">CUT / STOP</span>
-            <span class="btn-subtitle">Instant Kill</span>
-          </div>
-        </button>
-      </div>
-
-      <!-- Fade Slider & Master Volume Slider Drawer -->
-      <div class="dock-sliders-wrapper">
-        
-        <!-- Dedicated Fade Out Duration Slider -->
-        <div class="slider-control-card">
-          <div class="slider-header">
-            <div class="slider-label-group">
-              <span class="slider-icon">⏳</span>
-              <span class="slider-title">FADE DURATION</span>
+      <!-- Sliding Drawer Expandable Body -->
+      <div class="dock-drawer-body" id="dockDrawerBody">
+        <!-- Live Track Card & State -->
+        <div class="dock-status-bar">
+          <div class="now-playing-info">
+            <div class="live-eq-badge" id="liveEqBadge">
+              <span class="eq-bar bar-1"></span>
+              <span class="eq-bar bar-2"></span>
+              <span class="eq-bar bar-3"></span>
+              <span class="eq-bar bar-4"></span>
             </div>
-            <div class="slider-badge" id="fadeDurationVal">2.0s</div>
-          </div>
-          <div class="slider-track-wrap">
-            <input type="range" id="fadeDurationSlider" min="0.5" max="5.0" step="0.5" value="2.0" aria-label="Fade out duration in seconds">
-          </div>
-          <div class="preset-pills">
-            <button class="preset-pill" data-seconds="1.0">1.0s</button>
-            <button class="preset-pill active" data-seconds="2.0">2.0s</button>
-            <button class="preset-pill" data-seconds="3.0">3.0s</button>
-            <button class="preset-pill" data-seconds="4.0">4.0s</button>
-          </div>
-        </div>
-
-        <!-- Master Volume Slider -->
-        <div class="slider-control-card volume-card">
-          <div class="slider-header">
-            <div class="slider-label-group">
-              <span class="slider-icon" id="volIcon">🔊</span>
-              <span class="slider-title">VOLUME</span>
+            <div class="track-text">
+              <div class="track-player" id="dockPlayerName">READY TO HIT</div>
+              <div class="track-song" id="dockSongTitle">Tap any player to drop their walk-up track</div>
             </div>
-            <div class="slider-badge" id="masterVolumeVal">100%</div>
           </div>
-          <div class="slider-track-wrap">
-            <input type="range" id="masterVolumeSlider" min="0" max="100" step="1" value="100" aria-label="Master volume percentage">
-          </div>
+          <div class="track-timer" id="dockTimer">0:00</div>
         </div>
 
-      </div>
+        <!-- Live Track Progress Bar -->
+        <div class="track-progress-track">
+          <div class="track-progress-fill" id="trackProgressFill"></div>
+        </div>
 
-      <!-- Beta Version Tag in Lower Right Corner -->
-      <div class="app-beta-tag" id="appBetaTag">v1.2-beta</div>
+        <!-- Master Action Controls -->
+        <div class="dock-controls-row">
+          <!-- Big FADE OUT Button -->
+          <button id="fadeOutBtn" class="btn-action btn-fade" disabled>
+            <div class="btn-fade-glow"></div>
+            <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+              <path d="M19 12h-4"></path>
+              <path d="M17 9l-2 3 2 3"></path>
+            </svg>
+            <div class="btn-action-text">
+              <span class="btn-title">FADE OUT</span>
+              <span class="btn-subtitle" id="fadeBtnSubtitle">Over 2.0s</span>
+            </div>
+          </button>
+
+          <!-- Big CUT / STOP Button -->
+          <button id="stopCutBtn" class="btn-action btn-stop" disabled>
+            <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+            </svg>
+            <div class="btn-action-text">
+              <span class="btn-title">CUT / STOP</span>
+              <span class="btn-subtitle">Instant Kill</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Fade Slider & Master Volume Slider Drawer -->
+        <div class="dock-sliders-wrapper">
+          
+          <!-- Dedicated Fade Out Duration Slider -->
+          <div class="slider-control-card">
+            <div class="slider-header">
+              <div class="slider-label-group">
+                <span class="slider-icon">⏳</span>
+                <span class="slider-title">FADE DURATION</span>
+              </div>
+              <div class="slider-badge" id="fadeDurationVal">2.0s</div>
+            </div>
+            <div class="slider-track-wrap">
+              <input type="range" id="fadeDurationSlider" min="0.5" max="5.0" step="0.5" value="2.0" aria-label="Fade out duration in seconds">
+            </div>
+            <div class="preset-pills">
+              <button class="preset-pill" data-seconds="1.0">1.0s</button>
+              <button class="preset-pill active" data-seconds="2.0">2.0s</button>
+              <button class="preset-pill" data-seconds="3.0">3.0s</button>
+              <button class="preset-pill" data-seconds="4.0">4.0s</button>
+            </div>
+          </div>
+
+          <!-- Master Volume Slider -->
+          <div class="slider-control-card volume-card">
+            <div class="slider-header">
+              <div class="slider-label-group">
+                <span class="slider-icon" id="volIcon">🔊</span>
+                <span class="slider-title">VOLUME</span>
+              </div>
+              <div class="slider-badge" id="masterVolumeVal">100%</div>
+            </div>
+            <div class="slider-track-wrap">
+              <input type="range" id="masterVolumeSlider" min="0" max="100" step="1" value="100" aria-label="Master volume percentage">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Beta Version Tag in Lower Right Corner -->
+        <div class="app-beta-tag" id="appBetaTag">v1.3-beta</div>
+      </div>
 
     </footer>
 

@@ -1,83 +1,86 @@
-# Implementation Plan: Between-Innings Music Page with Swipe Navigation & YouTube Integration
+# Implementation Plan: Between-Innings Playlist Refinements, Sunlight Play Button, Sliding Dock Drawer & Inline Song Jar
 
-Add a dedicated **"Between Innings"** page to the Wylie Grizzlies baseball dugout app. Coaches can seamlessly switch between the **Walk-Up Batters** board and the **Between Innings** music suite either by **swiping left/right** or **tapping the top navigation tabs**. The new page integrates the YouTube playlist/video provided by the user (`https://youtu.be/kOV2iTeGQik` - Pantera "Walk"), provides an Inning Warm-Up countdown timer, and synchronizes with the master dock's **Fade Out** and **Stop / Cut** buttons.
+Refine the between-innings music suite in the Wylie Grizzlies baseball dugout app to address buffering, eliminate unwanted auto-play, optimize outdoor visibility under bright sunlight, and replace the fixed bottom dock with a sleek sliding drawer so coaches can easily browse the playlist "Song Jar".
+
+## Proposed Changes
+
+### 1. Main Playlist: "Baseball" & Clean Dropdown Selector
+- **Primary Playlist**: Set Coach's playlist (`PLfIVhrWS4Y_M`), titled **"Baseball"**, as the default and primary between-innings playlist. It contains:
+  1. *Wild Ones* - Jessie Murph & Jelly Roll (`MVDJxMxzTL0`)
+  2. *Fast Car* - Luke Combs (`aXmmyuIqZyo`)
+  3. *Getting Older (Clean)* - Jaz Von ft. NBA YoungBoy (`EK-XfDRL2wA`)
+  (plus any coach-added tracks).
+- **Remove Chip Buttons**: Remove the row of button chips (`#playlistChipsWrap`) from the layout to reduce clutter and free up vertical space.
+- **Quick Switch Dropdown**: Keep the clean `<select id="playlistSelect">` dropdown as the single quick switch selector for alternative playlists (Pantera Rock, Rap, 90s Hits, Country, 80s Hits).
+
+---
+
+### 2. Prevent Auto-Play & Fix Playlist Buffering
+- In [youtube-manager.js](file:///Users/mw/Sites/grizzlies%20baseball%20app/js/youtube-manager.js):
+  - When switching playlists via the dropdown, use `player.cuePlaylist(...)` instead of `player.loadPlaylist(...)`.
+  - Send the `cuePlaylist` postMessage command instead of `loadPlaylist`.
+  - For iframe fallbacks, ensure `autoplay=0` instead of `autoplay=1`.
+  - Ensure the audio engine remains in `paused` / `ready` state on switch without firing audio streams until the user taps **PLAY**.
+  - This stops surprise playback in the dugout and eliminates multi-stream buffering.
+
+---
+
+### 3. Large Sunlight-Ready Outdoor Play Button
+- In [css/style.css](file:///Users/mw/Sites/grizzlies%20baseball%20app/css/style.css) & [index.html](file:///Users/mw/Sites/grizzlies%20baseball%20app/index.html):
+  - Increase the Between-Innings Play/Pause button (`#ytPlayPauseBtn`) from 38px to **62px** in diameter.
+  - Scale play/pause SVG icons to **28px** with bright high-contrast white fill.
+  - Add a high-contrast glowing border and subtle ring shadow so it pops clearly against mobile screen glare in direct sunlight.
+  - Enlarge transport buttons (`⏮`, `⏭`, `🎲`) to **44px** with comfortable touch targets.
+
+---
+
+### 4. Sliding Drawer for Master Bottom Dock (Fade Out, Cut/Stop, Sliders)
+- In [index.html](file:///Users/mw/Sites/grizzlies%20baseball%20app/index.html), [css/style.css](file:///Users/mw/Sites/grizzlies%20baseball%20app/css/style.css), & [js/app.js](file:///Users/mw/Sites/grizzlies%20baseball%20app/js/app.js):
+  - Convert `#masterDock` into a collapsible sliding drawer:
+    - **Collapsed Mode**: Collapses down to a compact ~54px bottom bar showing the current track name, live timer, and a clear tap/slide pull-tab button (`▲ MASTER CONTROLS [Fade / Stop]`).
+    - **Expanded Mode**: Slides up smoothly with hardware-accelerated CSS transition to reveal the full master suite:
+      - **FADE OUT** button (with current duration subtitle)
+      - **CUT / STOP** button (instant kill)
+      - **FADE DURATION** slider + 1s, 2s, 3s, 4s chips
+      - **MASTER VOLUME** slider
+      - Toggle arrow flips to `▼ SLIDE DOWN`
+    - **Interactive Gestures**:
+      - Single tap on the handle bar toggles the drawer open/closed.
+      - Touch swipe up / down on the dock glides it open / shut.
+    - Reduce the bottom dock spacer when collapsed so the page content and playlist songs are fully visible on iPhone screens.
+
+---
+
+### 5. Inline "Song Jar" Directly from the Active Playlist
+- Replace the popup modal approach with an **inline Song Jar** embedded directly on the Between-Innings page:
+  - Header: **"⚾ BASEBALL SONG JAR"** (dynamically updates with playlist title) + live track count badge.
+  - **Draw Random Song**: Prominent `[🎲 DRAW RANDOM SONG]` button to immediately pick and cue/play a track from the jar.
+  - **Inline Song List**: Clean, scrollable list of tracks with index badges (`#1`, `#2`, `#3`), track title, artist, and large one-tap Play buttons.
+  - **Add Track to Jar**: Quick input field to paste any YouTube link or song name to append to the active Song Jar on the fly (saved in `localStorage`).
+  - Active playing track receives a glowing crimson border and animated equalizer bars.
 
 ---
 
 ## User Review Required
 
-- **Mutual Audio Exclusivity**: Playing a walk-up batter will immediately pause/stop any between-innings YouTube music, and playing YouTube music will immediately stop any walk-up track to avoid double-audio in the dugout.
-- **Master Dock Fade Out & Stop**: The bottom dock's **FADE OUT** and **CUT / STOP** buttons will work for YouTube as well, smoothly ramping down YouTube's volume over the selected fade duration (e.g., 2.0s) and stopping when the umpire signals play.
-- **Custom Playlists & Songs**: Coaches will be able to paste any YouTube URL or playlist link to add to their between-innings library, stored locally in `localStorage`.
-
----
-
-## Proposed Changes
-
-### Navigation & Page Layout
-
-#### [MODIFY] [index.html](file:///Users/mw/Sites/grizzlies%20baseball%20app/index.html)
-- Add a top Dugout Navigation Pill bar below the header:
-  - `[ ⚾ WALK-UP BATTERS ]` and `[ ⚡ BETWEEN INNINGS ]`
-- Wrap the main arena into a horizontal slide container (`.pages-track-wrapper` and `.pages-track`):
-  - **Slide 1 (`#pageWalkUp`)**: Contains the existing Stadium Hype Horns + Batter Walk-Up Cards + Search + On-Deck banner.
-  - **Slide 2 (`#pageInnings`)**: The new Between-Innings experience containing:
-    1. **YouTube Player Screen**: Sleek embedded player with dugout Crimson Red styling, live track title, and channel info.
-    2. **Inning Warm-Up Timer**: 2:00 / 1:30 countdown timer widget for timing the 8 warm-up pitches between innings.
-    3. **Quick Add YouTube Track / Playlist**: Input field to paste any YouTube song or playlist URL.
-    4. **Inning Hype Playlist Grid**: Default tracklist featuring Pantera - "Walk" (`kOV2iTeGQik`) as #1, along with classic stadium rally anthems, with one-tap play buttons and delete capability for custom songs.
-
----
-
-### Logic & YouTube Engine
-
-#### [NEW] [js/youtube-manager.js](file:///Users/mw/Sites/grizzlies%20baseball%20app/js/youtube-manager.js)
-- Loads and interfaces with the official YouTube IFrame Player API (`https://www.youtube.com/iframe_api`).
-- Manages playlist state (defaults with Pantera - "Walk" + saved items from `localStorage`).
-- Implements:
-  - `playTrack(videoId, title, artist)`
-  - `pause()`, `stop()`
-  - `fadeOut(durationSeconds)`: Uses `setInterval` to step down `player.setVolume(vol)` smoothly to zero, then pauses.
-  - `setVolume(volumePercent)`: Respects the master volume slider.
-  - URL parser supporting standard formats (`youtu.be/...`, `youtube.com/watch?v=...`, `youtube.com/playlist?list=...`).
-
-#### [MODIFY] [js/app.js](file:///Users/mw/Sites/grizzlies%20baseball%20app/js/app.js)
-- Wire up tab switching (`walkup` vs `innings`) with active pill indicators.
-- Implement touch gesture swipe detection (`touchstart`, `touchmove`, `touchend`) with horizontal thresholding (>40px deltaX with horizontal priority) so vertical scrolling remains silky-smooth.
-- Synchronize audio playback:
-  - When walk-up audio starts, pause YouTube player.
-  - When YouTube player starts, stop walk-up audio and update dock track text and EQ badge.
-- Wire master dock **FADE OUT** and **CUT / STOP** buttons to control whichever player is active.
-- Implement the Inning Warm-Up Countdown Timer (Play/Pause, Reset, +30s).
-
----
-
-### Styling & Responsive Motion
-
-#### [MODIFY] [css/style.css](file:///Users/mw/Sites/grizzlies%20baseball%20app/css/style.css)
-- Add styles for Dugout Tab Pills (`.dugout-tabs-nav`, `.dugout-tab`, `.dugout-tab.active`).
-- Add styles for 2-page horizontal slide track (`.pages-track-wrapper`, `.pages-track`, `.page-view`).
-- Add styles for YouTube player container, video wrapper, and status indicators.
-- Add styles for Inning Warm-Up Timer (digital athletic font, glowing countdown ring/bar).
-- Add styles for Inning Playlist items (cover thumbnail, title, artist, play/remove controls).
+> [!IMPORTANT]
+> **No Modal Needed for Song Jar**: The Song Jar list will now be displayed directly on the Between-Innings page instead of requiring coaches to open a separate popup modal. Tapping the Random button or any track in the list cues or plays that track directly.
+>
+> **Auto-Play Disabled on Switch**: Changing the dropdown will now cue the playlist silently ready at 0:00. You'll tap the newly enlarged Play button when you want music to start.
 
 ---
 
 ## Verification Plan
 
-### Automated / Browser Verification
-1. Run local HTTP server (`python3 -m http.server 8844`).
-2. Test:
-   - Click navigation between "Walk-Up Batters" and "Between Innings" tabs.
-   - Touch/drag swipe simulation between the two pages.
-   - YouTube player embed loads and plays Pantera - "Walk".
-   - Clicking a walk-up batter pauses YouTube and starts walk-up track.
-   - Clicking Between-Innings track stops walk-up track and plays YouTube.
-   - Master dock **FADE OUT** button smoothly fades down YouTube volume.
-   - Master dock **CUT / STOP** instantly kills YouTube playback.
-   - Warm-up timer countdown counts down and resets cleanly.
-3. Test on simulated iPhone 16 Pro Max viewport (440x956 px).
+### Automated / Syntax & Build Verification
+1. Validate JavaScript syntax via Node (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`).
+2. Verify HTML structure and valid tags in `index.html`.
 
-### Git & Deployment
-1. Commit all changes cleanly.
-2. Push to GitHub repo `https://github.com/Meta4ik/grizz` on branch `main` to trigger Vercel deployment.
+### Manual & Interactive Testing
+1. Launch local web server and test on mobile viewport (iPhone 16 Pro Max / Safari dimensions: 430px × 932px).
+2. Verify:
+   - **Default Playlist**: Loads "Baseball" (`PLfIVhrWS4Y_M`) with Jessie Murph / Jelly Roll, Luke Combs, Jaz Von.
+   - **No Auto-Play on Switch**: Changing dropdown to Pantera or Country cues playlist without auto-playing audio.
+   - **Play Button**: Test large 62px play/pause button outdoor styling and responsive toggle.
+   - **Sliding Drawer**: Tap handle to slide bottom controls down; verify screen space opens up; tap again or swipe to slide back up; verify Fade Out and Cut/Stop remain fully functional.
+   - **Inline Song Jar**: Test picking individual songs, drawing a random song, and adding a track to the jar.
