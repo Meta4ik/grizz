@@ -120,9 +120,32 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
 - **Cache & Service Worker Purge**: Tapping the button flushes browser `CacheStorage`, updates service worker registrations, and pings the server with a cache-busting timestamp.
 - **Instant Hard Reload**: Automatically re-fetches the latest code and assets directly from the server, eliminating cached stale bundles on mobile devices.
 
+### 19. Dedicated Baseball Organ Music Quick-Launch (`XwxWsq4otGg`)
+- **Organ Music Playlist Added**: Integrated YouTube link `https://youtu.be/XwxWsq4otGg` (Ballpark organ master **Matthew Kaminski** - Atlanta Braves organist playing *The Star-Spangled Banner* and iconic stadium organ chants).
+- **Dedicated Quick-Launch Hot-Key**:
+  - Prominently placed in the Between-Innings music section right below the YouTube status badge.
+  - Styled with a dark ebony/purple ballpark organ console gradient, rich amber border (`#f59e0b`), neon organ emoji icon (`🎹`), hot-key badge (`HOT KEY`), and title/subtitle with full wrapping and zero word cut-offs.
+  - One-tap immediate launch: tapping instantly cues/plays the organ music, highlights the hot-key with gold glow, resets the crossfader if muted, and syncs the playlist dropdown.
+- **Dropdown & Song Jar Integration**: Added to the `playlistSelect` dropdown as `🎹 Baseball Organ Music (Matthew Kaminski)` and populates the Song Jar with organ classics and ballpark themes.
+
+### 20. Full-Width DJ Master Crossfader (Edge-to-Edge Screen Width)
+- **Authentic DJ Mixer Console Aesthetic**:
+  - Replaced small sliders with a heavy-duty **DJ Crossfader Deck** spanning the **full width of the phone screen**.
+  - Features an edge-to-edge fader slot (`width: 100%`) with textured brushed aluminum track housing, inset drop shadows, center zero/mid notch, and LED tick marks.
+  - Massive, tactile **58px × 38px DJ mixer fader cap** (`.dj-crossfader-slider::-webkit-slider-thumb`) with 3D bevels, side grip grooves, and a high-contrast white center tracking line for effortless thumb sliding even under direct sunlight.
+- **Full Screen-Width Slide Control**:
+  - Sliders travel from the far left of the phone screen (`0%` - 🔊 Full Sound) all the way to the far right (`100%` - 🔇 Silence / Cut).
+  - Formula: `volPct = Math.max(0, Math.min(100, 100 - fadePos))`.
+  - Master status badge displays `100% SOUND`, `XX% SOUND`, and `0% CUT` in real time as the thumb moves.
+  - Quick `↺ 100%` reset button instantly returns sound to full blast.
+- **Physical Auto-Fade Knob Glide**:
+  - When the coach taps the `[FADE OUT]` button, the crossfader thumb knob physically glides across the phone screen in real time synchronized with the audio engine cosine fade curve over the selected duration (`1.0s`, `2.0s`, `3.0s`, `4.0s`).
+  - Auto-restores to 100% sound whenever a new batter or song is tapped.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, and live server ping refresh functionality.
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn` and `masterCrossfader`.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, and full-width DJ mixer crossfader.
+

@@ -228,6 +228,18 @@
               </div>
             </div>
 
+            <!-- Dedicated Quick-Launch Ballpark Organ Music Button -->
+            <div class="organ-launch-wrap">
+              <button class="btn-organ-launch" id="organMusicBtn" title="Play Ballpark Organ Music (Matthew Kaminski)">
+                <span class="organ-icon">🎹</span>
+                <div class="organ-text">
+                  <span class="organ-title">BASEBALL ORGAN MUSIC</span>
+                  <span class="organ-subtitle">Ballpark Organ Classics • Matthew Kaminski (The Star-Spangled Banner & Chants)</span>
+                </div>
+                <span class="organ-badge">HOT KEY</span>
+              </button>
+            </div>
+
             <!-- Quick Preset Playlist Selector (Dropdown Only - No Cluttered Buttons) -->
             <div class="preset-playlists-wrap">
               <div class="preset-header-row">
@@ -235,6 +247,7 @@
                 <div class="playlist-select-wrapper">
                   <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
                     <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Getting Older - Coach's Track)</option>
+                    <option value="XwxWsq4otGg" data-title="Baseball Organ Music">🎹 Baseball Organ Music (Matthew Kaminski)</option>
                     <option value="PLfIVhrWS4Y_M" data-title="Baseball Multi-Mix">⚾ Baseball Multi-Song Mix</option>
                     <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
                     <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
@@ -364,20 +377,60 @@
           </button>
         </div>
 
-        <!-- Fade Slider & Master Volume Slider Drawer -->
-        <div class="dock-sliders-wrapper">
-          
-          <!-- Dedicated Fade Out Duration Slider -->
-          <div class="slider-control-card">
-            <div class="slider-header">
-              <div class="slider-label-group">
-                <span class="slider-icon">⏳</span>
-                <span class="slider-title">FADE DURATION</span>
-              </div>
-              <div class="slider-badge" id="fadeDurationVal">2.0s</div>
+        <!-- Full-Width Screen-to-Screen DJ Mixer Crossfader Deck -->
+        <div class="dj-crossfader-deck" id="djCrossfaderDeck">
+          <!-- Crossfader Header Bar -->
+          <div class="crossfader-header">
+            <div class="crossfader-title-group">
+              <span class="crossfader-icon">🎚️</span>
+              <span class="crossfader-title">MASTER CROSSFADER</span>
+              <span class="crossfader-hint">Slide across phone to fade</span>
             </div>
-            <div class="slider-track-wrap">
-              <input type="range" id="fadeDurationSlider" min="0.5" max="5.0" step="0.5" value="2.0" aria-label="Fade out duration in seconds">
+            <div class="crossfader-status-group">
+              <div class="crossfader-badge" id="crossfaderStatusBadge">🔊 100% SOUND</div>
+              <button class="btn-crossfader-reset" id="crossfaderResetBtn" title="Reset to 100% Full Sound">↺ 100%</button>
+            </div>
+          </div>
+
+          <!-- DJ Calibration Tick Scale (Top) -->
+          <div class="crossfader-ticks-row">
+            <span class="tick-mark bold">100%</span>
+            <span class="tick-mark">·</span>
+            <span class="tick-mark">75%</span>
+            <span class="tick-mark">·</span>
+            <span class="tick-mark bold center">50% MID</span>
+            <span class="tick-mark">·</span>
+            <span class="tick-mark">25%</span>
+            <span class="tick-mark">·</span>
+            <span class="tick-mark bold cut">0% CUT</span>
+          </div>
+
+          <!-- Full Screen-Width Crossfader Track Slot & Slider -->
+          <div class="crossfader-slot-wrap" id="crossfaderSlotWrap">
+            <div class="crossfader-center-detent"></div>
+            <input 
+              type="range" 
+              id="masterCrossfader" 
+              class="dj-crossfader-slider" 
+              min="0" 
+              max="100" 
+              value="0" 
+              step="1"
+              aria-label="DJ Master Crossfader (Slide from left full sound to right silence)">
+          </div>
+
+          <!-- DJ Legend Row (Bottom Labels) -->
+          <div class="crossfader-legend-row">
+            <span class="legend-left">◀ 🔊 FULL BLAST (SOUND ON)</span>
+            <span class="legend-center">◆ SLIDE TO FADE OUT</span>
+            <span class="legend-right">🔇 SILENCE / CUT ▶</span>
+          </div>
+
+          <!-- Quick Auto-Fade Duration Pills Row -->
+          <div class="crossfader-footer-row">
+            <div class="auto-fade-label">
+              <span>⏳ AUTO-FADE SPEED:</span>
+              <span id="fadeDurationVal" class="fade-sec-badge">2.0s</span>
             </div>
             <div class="preset-pills">
               <button class="preset-pill" data-seconds="1.0">1.0s</button>
@@ -385,22 +438,8 @@
               <button class="preset-pill" data-seconds="3.0">3.0s</button>
               <button class="preset-pill" data-seconds="4.0">4.0s</button>
             </div>
+            <input type="hidden" id="fadeDurationSlider" value="2.0">
           </div>
-
-          <!-- Master Volume Slider -->
-          <div class="slider-control-card volume-card">
-            <div class="slider-header">
-              <div class="slider-label-group">
-                <span class="slider-icon" id="volIcon">🔊</span>
-                <span class="slider-title">VOLUME</span>
-              </div>
-              <div class="slider-badge" id="masterVolumeVal">100%</div>
-            </div>
-            <div class="slider-track-wrap">
-              <input type="range" id="masterVolumeSlider" min="0" max="100" step="1" value="100" aria-label="Master volume percentage">
-            </div>
-          </div>
-
         </div>
 
         <!-- Beta Version Tag in Lower Right Corner -->

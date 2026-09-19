@@ -20,6 +20,17 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' }
     ]
   },
+  'XwxWsq4otGg': {
+    title: 'Baseball Organ Music',
+    subtitle: 'Ballpark Organ Classics • Matthew Kaminski',
+    tracks: [
+      { id: 'XwxWsq4otGg', title: 'The Star-Spangled Banner (Organ)', artist: 'Matthew Kaminski (Braves Organist)' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
+      { id: 'btPJPFnesV4', title: 'Eye of the Tiger (Charge Theme)', artist: 'Survivor' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" }
+    ]
+  },
   'PLfIVhrWS4Y_M': {
     title: 'Baseball Multi-Mix',
     subtitle: "Coach's Alternate Queue",
@@ -162,6 +173,7 @@ class GrizzliesApp {
       ytRandomBtn: document.getElementById('ytRandomBtn'),
       ytPlaylistStatusTag: document.getElementById('ytPlaylistStatusTag'),
       playlistSelect: document.getElementById('playlistSelect'),
+      organMusicBtn: document.getElementById('organMusicBtn'),
 
       // Inline Dugout Song Jar (Directly from the Playlist)
       inlineSongJarCard: document.getElementById('inlineSongJarCard'),
@@ -192,7 +204,10 @@ class GrizzliesApp {
       fadeBtnSubtitle: document.getElementById('fadeBtnSubtitle'),
       stopCutBtn: document.getElementById('stopCutBtn'),
 
-      // Sliders
+      // Sliders & DJ Crossfader
+      masterCrossfader: document.getElementById('masterCrossfader'),
+      crossfaderStatusBadge: document.getElementById('crossfaderStatusBadge'),
+      crossfaderResetBtn: document.getElementById('crossfaderResetBtn'),
       fadeDurationSlider: document.getElementById('fadeDurationSlider'),
       fadeDurationVal: document.getElementById('fadeDurationVal'),
       presetPills: document.querySelectorAll('.preset-pill'),
@@ -484,6 +499,11 @@ class GrizzliesApp {
       this.dom.stopCutBtn.disabled = false;
       this.dom.fadeOutBtn.classList.remove('is-fading');
       this.updateOnDeckAfterPlay(track);
+
+      // Auto-restore fader to full volume if it was cut/muted
+      if (this.dom.masterCrossfader && parseInt(this.dom.masterCrossfader.value, 10) >= 95) {
+        this.resetCrossfader();
+      }
     });
 
     this.audioEngine.on('onPause', (track) => {
@@ -545,9 +565,13 @@ class GrizzliesApp {
       }
     });
 
-    this.audioEngine.on('onFadeProgress', ({ remainingTime }) => {
+    this.audioEngine.on('onFadeProgress', ({ remainingTime, progress }) => {
       if (this.activeAudioSource === 'walkup') {
         this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+        if (typeof progress === 'number') {
+          const targetPos = Math.round(progress * 100);
+          this.applyCrossfaderPosition(targetPos, true);
+        }
       }
     });
 
@@ -555,6 +579,7 @@ class GrizzliesApp {
       if (this.activeAudioSource === 'walkup') {
         this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
         this.dom.fadeOutBtn.classList.remove('is-fading');
+        this.applyCrossfaderPosition(100, true);
       }
     });
 
@@ -591,6 +616,20 @@ class GrizzliesApp {
       this.dom.stopCutBtn.disabled = false;
       this.dom.fadeOutBtn.classList.remove('is-fading');
 
+      // Auto-restore fader to full volume if it was cut/muted
+      if (this.dom.masterCrossfader && parseInt(this.dom.masterCrossfader.value, 10) >= 95) {
+        this.resetCrossfader();
+      }
+
+      // Sync organ quick-launch button highlight
+      if (this.dom.organMusicBtn) {
+        if (this.activePlaylistId === 'XwxWsq4otGg') {
+          this.dom.organMusicBtn.classList.add('active');
+        } else {
+          this.dom.organMusicBtn.classList.remove('active');
+        }
+      }
+
       // Update inline song jar highlights
       this.renderInlineSongJar();
     });
@@ -616,6 +655,10 @@ class GrizzliesApp {
       this.dom.ytAudioPill.textContent = 'STOPPED';
       this.dom.ytPlayIcon.style.display = 'block';
       this.dom.ytPauseIcon.style.display = 'none';
+
+      if (this.dom.organMusicBtn && this.activePlaylistId === 'XwxWsq4otGg') {
+        this.dom.organMusicBtn.classList.remove('active');
+      }
 
       if (this.activeAudioSource === 'youtube') {
         this.activeAudioSource = 'none';
@@ -650,9 +693,13 @@ class GrizzliesApp {
       this.dom.fadeOutBtn.classList.add('is-fading');
     });
 
-    this.ytEngine.on('onFadeProgress', ({ remainingTime }) => {
+    this.ytEngine.on('onFadeProgress', ({ remainingTime, progress }) => {
       if (this.activeAudioSource === 'youtube') {
         this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+        if (typeof progress === 'number') {
+          const targetPos = Math.round(progress * 100);
+          this.applyCrossfaderPosition(targetPos, true);
+        }
       }
     });
 
@@ -660,6 +707,7 @@ class GrizzliesApp {
       if (this.activeAudioSource === 'youtube') {
         this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
         this.dom.fadeOutBtn.classList.remove('is-fading');
+        this.applyCrossfaderPosition(100, true);
       }
       this.renderInlineSongJar();
     });
@@ -742,50 +790,97 @@ class GrizzliesApp {
   }
 
   // =========================================================================
-  // Slider Controls
+  // Slider Controls & Full-Width DJ Master Crossfader
   // =========================================================================
   setupSliders() {
-    // 1. Fade Duration Slider
+    // 1. Fade Duration Slider & Presets
     const savedFade = localStorage.getItem('grizzlies_fade_duration');
     if (savedFade) {
       const val = parseFloat(savedFade);
-      this.dom.fadeDurationSlider.value = val;
+      if (this.dom.fadeDurationSlider) this.dom.fadeDurationSlider.value = val;
       this.updateFadeDuration(val);
     } else {
       this.updateFadeDuration(2.0);
     }
 
-    this.dom.fadeDurationSlider.addEventListener('input', (e) => {
-      const val = parseFloat(e.target.value);
-      this.updateFadeDuration(val);
-    });
+    if (this.dom.fadeDurationSlider) {
+      this.dom.fadeDurationSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        this.updateFadeDuration(val);
+      });
+    }
 
     // Preset pills for 1.0s, 2.0s, 3.0s, 4.0s
     this.dom.presetPills.forEach(pill => {
       pill.addEventListener('click', () => {
         const secs = parseFloat(pill.dataset.seconds);
-        this.dom.fadeDurationSlider.value = secs;
+        if (this.dom.fadeDurationSlider) this.dom.fadeDurationSlider.value = secs;
         this.updateFadeDuration(secs);
         this.triggerHaptic(15);
       });
     });
 
-    // 2. Master Volume Slider
-    this.dom.masterVolumeSlider.addEventListener('input', (e) => {
-      const pct = parseInt(e.target.value, 10);
-      this.dom.masterVolumeVal.textContent = `${pct}%`;
-      this.audioEngine.setMasterVolume(pct / 100);
-      this.ytEngine.setVolume(pct);
-      
-      // Update icon
-      if (pct === 0) {
-        this.dom.volIcon.textContent = '🔇';
-      } else if (pct < 50) {
-        this.dom.volIcon.textContent = '🔉';
+    // 2. Full-Width DJ Master Crossfader
+    if (this.dom.masterCrossfader) {
+      this.dom.masterCrossfader.addEventListener('input', (e) => {
+        const pos = parseInt(e.target.value, 10);
+        this.applyCrossfaderPosition(pos, false);
+      });
+    }
+
+    if (this.dom.crossfaderResetBtn) {
+      this.dom.crossfaderResetBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        this.resetCrossfader();
+      });
+    }
+
+    // Fallback support if legacy masterVolumeSlider is present
+    if (this.dom.masterVolumeSlider) {
+      this.dom.masterVolumeSlider.addEventListener('input', (e) => {
+        const pct = parseInt(e.target.value, 10);
+        if (this.dom.masterVolumeVal) this.dom.masterVolumeVal.textContent = `${pct}%`;
+        this.audioEngine.setMasterVolume(pct / 100);
+        this.ytEngine.setVolume(pct);
+      });
+    }
+  }
+
+  /**
+   * Applies crossfader position:
+   * 0 (Left of phone screen)  = 100% Volume (Full Blast)
+   * 100 (Right of phone screen) = 0% Volume (Silence / Cut)
+   */
+  applyCrossfaderPosition(fadePos, isAutoFade = false) {
+    const pos = Math.max(0, Math.min(100, parseInt(fadePos, 10) || 0));
+    if (this.dom.masterCrossfader && parseInt(this.dom.masterCrossfader.value, 10) !== pos) {
+      this.dom.masterCrossfader.value = pos;
+    }
+
+    // Vol percentage: Left (0) -> 100%, Right (100) -> 0%
+    const volPct = Math.max(0, Math.min(100, 100 - pos));
+
+    // Apply to both Walk-Up audio engine & YouTube engine
+    this.audioEngine.setMasterVolume(volPct / 100);
+    this.ytEngine.setVolume(volPct);
+
+    // Update crossfader status badge
+    if (this.dom.crossfaderStatusBadge) {
+      if (pos >= 98) {
+        this.dom.crossfaderStatusBadge.textContent = '0% CUT';
+        this.dom.crossfaderStatusBadge.classList.add('cut');
+      } else if (pos <= 2) {
+        this.dom.crossfaderStatusBadge.textContent = '100% SOUND';
+        this.dom.crossfaderStatusBadge.classList.remove('cut');
       } else {
-        this.dom.volIcon.textContent = '🔊';
+        this.dom.crossfaderStatusBadge.textContent = `${volPct}% SOUND`;
+        this.dom.crossfaderStatusBadge.classList.remove('cut');
       }
-    });
+    }
+  }
+
+  resetCrossfader() {
+    this.applyCrossfaderPosition(0, false);
   }
 
   updateFadeDuration(val) {
@@ -1149,6 +1244,31 @@ class GrizzliesApp {
       this.dom.ytRandomBtn.addEventListener('click', handleRandomTrack);
     }
 
+    // Dedicated Quick-Launch Ballpark Organ Music Button
+    if (this.dom.organMusicBtn) {
+      this.dom.organMusicBtn.addEventListener('click', () => {
+        this.triggerHaptic([30, 45]);
+        const organId = 'XwxWsq4otGg';
+        const organTitle = 'Baseball Organ Music';
+        
+        // If already selected and playing, toggle pause
+        if (this.activePlaylistId === organId && this.ytEngine.isPlaying) {
+          this.ytEngine.pause();
+          this.dom.organMusicBtn.classList.remove('active');
+        } else {
+          // Switch playlist, sync dropdown, reset fader if muted, and immediately play organ music
+          this.switchActivePlaylist(organId, organTitle);
+          if (this.dom.playlistSelect) {
+            this.dom.playlistSelect.value = organId;
+          }
+          this.dom.organMusicBtn.classList.add('active');
+          this.resetCrossfader();
+          activateYouTubeSource(organTitle);
+          this.ytEngine.play();
+        }
+      });
+    }
+
     // Preset Playlist Dropdown Menu (No auto-play on switch!)
     if (this.dom.playlistSelect) {
       this.dom.playlistSelect.addEventListener('change', (e) => {
@@ -1177,6 +1297,15 @@ class GrizzliesApp {
     if (this.dom.ytPlaylistStatusTag) this.dom.ytPlaylistStatusTag.textContent = '⚾ ' + title.toUpperCase();
     if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = title;
     if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = `${title} (Ready)`;
+
+    // Sync organ button active state
+    if (this.dom.organMusicBtn) {
+      if (listId === 'XwxWsq4otGg') {
+        this.dom.organMusicBtn.classList.add('active');
+      } else {
+        this.dom.organMusicBtn.classList.remove('active');
+      }
+    }
 
     // Fill the Song Jar with all of the tracks from this selected playlist!
     this.playlistSongs = this.loadPlaylistSongs(listId);

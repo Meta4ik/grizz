@@ -459,7 +459,7 @@ export class YouTubeInningsEngine {
       }
       this._sendCommand('setVolume', [targetVol]);
 
-      this.callbacks.onFadeProgress({ remainingTime: remainingSecs });
+      this.callbacks.onFadeProgress({ remainingTime: remainingSecs, progress });
 
       if (progress >= 1.0) {
         this._cancelFade();
