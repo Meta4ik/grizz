@@ -11,13 +11,32 @@ import { YouTubeInningsEngine } from './youtube-manager.js';
 export const PLAYLIST_TRACKS_MAP = {
   'EK-XfDRL2wA': {
     title: 'Baseball',
-    subtitle: "Coach's Baseball Track (Getting Older)",
+    subtitle: "Coach's Baseball Track & Dugout Mix",
     tracks: [
       { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
       { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
       { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
       { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey', artist: 'Chris Stapleton' },
-      { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' }
+      { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' },
+      { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+      { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
+      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel', artist: 'Darius Rucker' },
+      { id: 'YVkUvmDQ3HY', title: 'Without Me (Clean)', artist: 'Eminem' },
+      { id: 'fPO76Jlnz6c', title: 'All I Do Is Win (Clean)', artist: 'DJ Khaled' },
+      { id: 'I_izvAbhExY', title: "Can't Hold Us", artist: 'Macklemore & Ryan Lewis' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
+      { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
+      { id: '34Na4j8AVgA', title: 'The Sign', artist: 'Ace of Base' },
+      { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
+      { id: 'XwxWsq4otGg', title: 'The Star-Spangled Banner (Organ)', artist: 'Matthew Kaminski' },
+      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Halen' }
     ]
   },
   'XwxWsq4otGg': {
@@ -122,6 +141,8 @@ class GrizzliesApp {
     this.activePlaylistId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
     this.playlistSongs = this.loadPlaylistSongs(this.activePlaylistId);
     this.songJar = this.playlistSongs;
+    this.jarViewMode = 'all'; // 'all' or 'random5'
+    this.jarRandom5List = [];
 
     // Inning timer state
     this.timerDuration = 120;
@@ -185,6 +206,11 @@ class GrizzliesApp {
       inlineJarTitle: document.getElementById('inlineJarTitle'),
       inlineJarCountPill: document.getElementById('inlineJarCountPill'),
       inlineJarDrawRandomBtn: document.getElementById('inlineJarDrawRandomBtn'),
+      jarModeAllBtn: document.getElementById('jarModeAllBtn'),
+      jarModeRandom5Btn: document.getElementById('jarModeRandom5Btn'),
+      jarTabAllCount: document.getElementById('jarTabAllCount'),
+      jarRandomBanner: document.getElementById('jarRandomBanner'),
+      btnReroll5: document.getElementById('btnReroll5'),
       inlineJarAddInput: document.getElementById('inlineJarAddInput'),
       inlineJarAddBtn: document.getElementById('inlineJarAddBtn'),
       inlineJarSongsList: document.getElementById('inlineJarSongsList'),
@@ -1372,6 +1398,8 @@ class GrizzliesApp {
     }
 
     // Fill the Song Jar with all of the tracks from this selected playlist!
+    this.jarViewMode = 'all';
+    this.jarRandom5List = [];
     this.playlistSongs = this.loadPlaylistSongs(listId);
     this.renderInlineSongJar();
   }
@@ -1424,15 +1452,43 @@ class GrizzliesApp {
   }
 
   updateInlineJarBadge() {
-    const count = this.playlistSongs ? this.playlistSongs.length : 0;
+    const isRandom5 = this.jarViewMode === 'random5';
+    const totalCount = this.playlistSongs ? this.playlistSongs.length : 0;
     if (this.dom.inlineJarCountPill) {
-      this.dom.inlineJarCountPill.textContent = `${count} ${count === 1 ? 'SONG' : 'SONGS'}`;
+      this.dom.inlineJarCountPill.textContent = isRandom5
+        ? `5 OF ${totalCount} SONGS`
+        : `${totalCount} ${totalCount === 1 ? 'SONG' : 'SONGS'}`;
+    }
+    if (this.dom.jarTabAllCount) {
+      this.dom.jarTabAllCount.textContent = totalCount;
     }
   }
 
   setupInlineSongJar() {
     this.updateInlineJarBadge();
     this.renderInlineSongJar();
+
+    // Mode Selector: View All Songs vs Pull 5 Random Songs
+    if (this.dom.jarModeAllBtn) {
+      this.dom.jarModeAllBtn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        this.showAllJarSongs();
+      });
+    }
+
+    if (this.dom.jarModeRandom5Btn) {
+      this.dom.jarModeRandom5Btn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        this.pull5RandomSongs();
+      });
+    }
+
+    if (this.dom.btnReroll5) {
+      this.dom.btnReroll5.addEventListener('click', () => {
+        this.triggerHaptic([20, 35]);
+        this.pull5RandomSongs();
+      });
+    }
 
     // Big Draw Random Song from Playlist Button
     if (this.dom.inlineJarDrawRandomBtn) {
@@ -1458,6 +1514,19 @@ class GrizzliesApp {
     }
   }
 
+  pull5RandomSongs() {
+    if (!this.playlistSongs || this.playlistSongs.length === 0) return;
+    const shuffled = [...this.playlistSongs].sort(() => 0.5 - Math.random());
+    this.jarRandom5List = shuffled.slice(0, Math.min(5, this.playlistSongs.length));
+    this.jarViewMode = 'random5';
+    this.renderInlineSongJar();
+  }
+
+  showAllJarSongs() {
+    this.jarViewMode = 'all';
+    this.renderInlineSongJar();
+  }
+
   renderInlineSongJar() {
     if (!this.dom.inlineJarSongsList) return;
     this.dom.inlineJarSongsList.innerHTML = '';
@@ -1473,7 +1542,28 @@ class GrizzliesApp {
 
     this.updateInlineJarBadge();
 
-    this.playlistSongs.forEach((song, idx) => {
+    const isRandom5 = this.jarViewMode === 'random5';
+    const songsToRender = isRandom5 && this.jarRandom5List.length > 0 
+      ? this.jarRandom5List 
+      : this.playlistSongs;
+
+    if (this.dom.jarRandomBanner) {
+      this.dom.jarRandomBanner.style.display = isRandom5 ? 'flex' : 'none';
+      const sub = document.getElementById('randomBannerSub');
+      if (sub) sub.textContent = `Drawn from all ${this.playlistSongs.length} playlist songs`;
+    }
+
+    if (this.dom.jarModeAllBtn && this.dom.jarModeRandom5Btn) {
+      if (isRandom5) {
+        this.dom.jarModeAllBtn.classList.remove('active');
+        this.dom.jarModeRandom5Btn.classList.add('active');
+      } else {
+        this.dom.jarModeAllBtn.classList.add('active');
+        this.dom.jarModeRandom5Btn.classList.remove('active');
+      }
+    }
+
+    songsToRender.forEach((song, idx) => {
       const isThisPlaying = isYtPlaying && currentYtId === song.id;
 
       const card = document.createElement('div');
@@ -1494,7 +1584,7 @@ class GrizzliesApp {
               ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
               : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'}
           </button>
-          ${idx >= 3 ? `<button class="btn-song-delete-row" title="Remove Track">&times;</button>` : ''}
+          ${idx >= 3 && !isRandom5 ? `<button class="btn-song-delete-row" title="Remove Track">&times;</button>` : ''}
         </div>
       `;
 
@@ -1527,6 +1617,9 @@ class GrizzliesApp {
           this.triggerHaptic(15);
           const updated = this.playlistSongs.filter((_, i) => i !== idx);
           this.savePlaylistSongs(this.activePlaylistId, updated);
+          if (this.jarViewMode === 'random5') {
+            this.jarRandom5List = this.jarRandom5List.filter((_, i) => i !== idx);
+          }
           this.renderInlineSongJar();
         });
       }
@@ -1537,8 +1630,11 @@ class GrizzliesApp {
 
   drawRandomSongFromJar() {
     if (!this.playlistSongs || this.playlistSongs.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * this.playlistSongs.length);
-    const chosen = this.playlistSongs[randomIndex];
+    const pool = (this.jarViewMode === 'random5' && this.jarRandom5List.length > 0)
+      ? this.jarRandom5List
+      : this.playlistSongs;
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    const chosen = pool[randomIndex];
 
     if (this.audioEngine.isPlaying) this.audioEngine.stop();
     this.activeAudioSource = 'youtube';

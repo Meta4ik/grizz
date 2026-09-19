@@ -292,6 +292,27 @@
               </div>
             </button>
 
+            <!-- Mode Selector: Show All Songs vs Pull 5 Random Songs -->
+            <div class="jar-mode-tabs-row">
+              <button class="jar-mode-tab active" id="jarModeAllBtn" title="View all songs in this playlist">
+                <span>📋 ALL SONGS</span>
+                <span class="jar-tab-count" id="jarTabAllCount">24</span>
+              </button>
+              <button class="jar-mode-tab" id="jarModeRandom5Btn" title="Pull a random batch of 5 songs from this playlist">
+                <span>🎲 PULL 5 RANDOM</span>
+                <span class="jar-tab-count">5</span>
+              </button>
+            </div>
+
+            <!-- Banner shown when 5 Random mode is active -->
+            <div class="jar-random-banner" id="jarRandomBanner" style="display: none;">
+              <div class="random-banner-text">
+                <span class="random-banner-tag">🎲 5 RANDOM DUGOUT PICKS</span>
+                <span class="random-banner-sub" id="randomBannerSub">Drawn from all 24 playlist songs</span>
+              </div>
+              <button class="btn-reroll-5" id="btnReroll5" title="Draw 5 different songs from this playlist">🔄 ROLL NEW 5</button>
+            </div>
+
             <!-- Quick Add Song to Active Playlist / Jar -->
             <div class="jar-add-row">
               <input type="text" id="inlineJarAddInput" placeholder="Paste YouTube link or song title to add..." autocomplete="off">

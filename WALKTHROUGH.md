@@ -165,13 +165,25 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
   - A soft, faded blue gradient curtain (`linear-gradient(180deg, rgba(0, 229, 255, 0.24) 0%, rgba(0, 176, 255, 0.08) 50%, transparent 100%)`) washes down into the top 32px of the drawer.
   - The drag handle pill transitions to glowing cyan (`background: #00e5ff; box-shadow: 0 0 10px rgba(0, 229, 255, 0.75)`), providing instantaneous visual confirmation at a glance that the controls drawer is open.
 
+### 24. 24-Song Playlist Expansion & "Pull 5 Random" Dugout Mode
+- **No Limit on Song Jar**:
+  - Clarified that the app has **zero limit** on playlist track count (supports 24, 50, or 100+ songs with full vertical scrolling).
+  - The default Baseball tracklist in `PLAYLIST_TRACKS_MAP['EK-XfDRL2wA']` was expanded from 5 to **all 24 stadium tracks** (starting with Coach's flagship *"Getting Older"* followed by curated dugout anthems).
+  - Auto-merges any missing tracks directly into existing `localStorage` caches so coaches immediately see the full 24 songs upon updating.
+- **New View Mode Selector (`[📋 ALL SONGS (24)]` vs `[🎲 PULL 5 RANDOM]`)**:
+  - Added mode tabs inside the Song Jar card:
+    - **`[📋 ALL SONGS]`**: Shows the complete 24 tracks with individual row play/pause and delete actions.
+    - **`[🎲 PULL 5 RANDOM]`**: Randomly draws a fresh batch of 5 songs from the 24-song playlist, displaying only those 5 in the jar.
+  - **Re-Roll Banner (`[🔄 ROLL NEW 5]`)**:
+    - When in 5-random mode, an amber status banner appears (`🎲 5 RANDOM DUGOUT PICKS (Drawn from all 24 playlist songs)`).
+    - Tapping **`[🔄 ROLL NEW 5]`** immediately re-shuffles and draws 5 new random songs from the playlist with tactile haptic feedback.
+- **Smart Random Song Play (`[🎲 DRAW RANDOM SONG FROM PLAYLIST]`)**:
+  - If in 5-random mode, immediately drops and plays a random track from the 5 visible picks.
+  - If in all-songs mode, drops and plays a random track from all 24 songs in the playlist.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
-2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with `organMusicBtn`, `masterCrossfader`, hidden `dugoutClockWidget`, `toggleRallyBtn`, and luminous blue open drawer edge indicator.
-3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, and glowing blue open drawer indicator.
-
-
-
-
+2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS with 24-song Baseball playlist and `jarModeRandom5Btn`.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, live server ping refresh functionality, dedicated baseball organ music button, full-width DJ mixer crossfader, clean between-innings view, collapsible rally/chants section for game-time safety, glowing blue open drawer indicator, and 24-track song jar with 5-random shuffle mode.
