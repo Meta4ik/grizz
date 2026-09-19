@@ -186,6 +186,30 @@ html, body {
   text-transform: uppercase;
 }
 
+.btn-refresh {
+  gap: 5px;
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+}
+
+.btn-refresh:hover, .btn-refresh:active {
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+.btn-refresh svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-refresh.spinning svg {
+  animation: spinRefresh 0.8s linear infinite;
+}
+
+@keyframes spinRefresh {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ==========================================================================
    2. Dugout Navigation Switcher Tabs
    ========================================================================== */
@@ -530,7 +554,7 @@ html, body {
 .player-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 11px;
+  gap: 12px;
 }
 
 .player-card {
@@ -538,11 +562,12 @@ html, body {
   background: var(--surface-card);
   border: 1.5px solid var(--border-subtle);
   border-radius: 14px;
-  padding: 10px;
+  padding: 12px 11px 14px 11px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 94px;
+  min-height: 128px;
+  height: auto;
   cursor: pointer;
   box-shadow: var(--shadow-card);
   transition: transform 0.12s, border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
@@ -588,7 +613,17 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.card-badges-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+  max-width: 65%;
 }
 
 /* Big Athletic Jersey Badge (Wylie Red with White Numbers) */
@@ -760,35 +795,36 @@ html, body {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  margin-top: 4px;
+  margin-top: auto;
+  gap: 2px;
 }
 
 .player-name {
-  font-size: 0.94rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: var(--text-pure);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .song-title {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.76rem;
+  font-weight: 700;
   color: var(--text-red);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
   margin-top: 1px;
 }
 
 .song-artist {
-  font-size: 0.62rem;
+  font-size: 0.68rem;
+  font-weight: 500;
   color: var(--text-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .dock-spacer {

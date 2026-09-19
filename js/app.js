@@ -9,13 +9,24 @@ import { YouTubeInningsEngine } from './youtube-manager.js';
 
 // Curated Full Tracklists for each Playlist (Populates the Song Jar)
 export const PLAYLIST_TRACKS_MAP = {
-  'PLfIVhrWS4Y_M': {
+  'EK-XfDRL2wA': {
     title: 'Baseball',
-    subtitle: "Coach's Baseball Playlist",
+    subtitle: "Coach's Baseball Track (Getting Older)",
     tracks: [
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
       { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
       { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
-      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' }
+      { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey', artist: 'Chris Stapleton' },
+      { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' }
+    ]
+  },
+  'PLfIVhrWS4Y_M': {
+    title: 'Baseball Multi-Mix',
+    subtitle: "Coach's Alternate Queue",
+    tracks: [
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
+      { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
+      { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' }
     ]
   },
   'RDkOV2iTeGQik': {
@@ -77,7 +88,7 @@ export const PLAYLIST_TRACKS_MAP = {
   }
 };
 
-export const DEFAULT_JAR_SONGS = [...PLAYLIST_TRACKS_MAP['PLfIVhrWS4Y_M'].tracks];
+export const DEFAULT_JAR_SONGS = [...PLAYLIST_TRACKS_MAP['EK-XfDRL2wA'].tracks];
 
 class GrizzliesApp {
   constructor() {
@@ -97,7 +108,7 @@ class GrizzliesApp {
     this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
 
     // Active Playlist & Song Jar State (defaults to Coach's Baseball playlist)
-    this.activePlaylistId = this.ytEngine?.currentPlaylist?.id || 'PLfIVhrWS4Y_M';
+    this.activePlaylistId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
     this.playlistSongs = this.loadPlaylistSongs(this.activePlaylistId);
     this.songJar = this.playlistSongs;
 
@@ -190,6 +201,9 @@ class GrizzliesApp {
       volIcon: document.getElementById('volIcon'),
 
       // Header buttons
+      serverRefreshBtn: document.getElementById('serverRefreshBtn'),
+      refreshIcon: document.getElementById('refreshIcon'),
+      refreshLabel: document.getElementById('refreshLabel'),
       helpBtn: document.getElementById('helpBtn'),
       lineupToggleBtn: document.getElementById('lineupToggleBtn'),
       sortLabel: document.getElementById('sortLabel'),
@@ -869,6 +883,11 @@ class GrizzliesApp {
     // Fullscreen toggle
     this.dom.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
 
+    // Server Ping & App Refresh
+    if (this.dom.serverRefreshBtn) {
+      this.dom.serverRefreshBtn.addEventListener('click', () => this.handleServerRefresh());
+    }
+
     // Help & Tips Modal
     this.dom.helpBtn.addEventListener('click', () => {
       this.triggerHaptic(15);
@@ -1142,7 +1161,7 @@ class GrizzliesApp {
     }
 
     // Set initial playlist dropdown selection
-    const currentListId = this.ytEngine?.currentPlaylist?.id || 'PLfIVhrWS4Y_M';
+    const currentListId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
     if (this.dom.playlistSelect) {
       this.dom.playlistSelect.value = currentListId;
     }
@@ -1197,7 +1216,7 @@ class GrizzliesApp {
     }
 
     // 3. Fallback default
-    return [...PLAYLIST_TRACKS_MAP['PLfIVhrWS4Y_M'].tracks];
+    return [...PLAYLIST_TRACKS_MAP['EK-XfDRL2wA'].tracks];
   }
 
   savePlaylistSongs(listId, songs) {
@@ -1662,6 +1681,45 @@ class GrizzliesApp {
         // Silent catch for unsupported browsers
       }
     }
+  }
+
+  async handleServerRefresh() {
+    this.triggerHaptic([30, 40, 30]);
+    if (this.dom.serverRefreshBtn) {
+      this.dom.serverRefreshBtn.classList.add('spinning');
+    }
+    if (this.dom.refreshLabel) {
+      this.dom.refreshLabel.textContent = 'Syncing...';
+    }
+
+    try {
+      // 1. Purge browser CacheStorage
+      if ('caches' in window) {
+        const cacheKeys = await caches.keys();
+        await Promise.all(cacheKeys.map(key => caches.delete(key)));
+      }
+
+      // 2. Unregister / update service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const reg of registrations) {
+          await reg.update();
+        }
+      }
+
+      // 3. Ping server with cache-busting timestamp to verify fresh connection
+      const pingUrl = `${window.location.pathname}?ping=${Date.now()}`;
+      await fetch(pingUrl, {
+        cache: 'no-store',
+        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+      });
+    } catch (e) {
+      console.warn('Network ping error during refresh:', e);
+    }
+
+    // 4. Force hard reload with timestamped query param so browser immediately fetches newest code
+    const cleanUrl = window.location.origin + window.location.pathname + '?v=' + Date.now();
+    window.location.replace(cleanUrl);
   }
 
   toggleFullscreen() {

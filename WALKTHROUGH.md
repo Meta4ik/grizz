@@ -105,9 +105,24 @@ We have added a dedicated **Between-Innings Music Suite** to the Wylie Grizzlies
     - Wraps sequentially from batter #12 back to batter #1.
     - Fully synchronized with custom lineup reordering in the Lineup Modal.
 
+### 16. Button Padding & Layout Overhaul (No Words Cut Off)
+- **Eliminated Fixed Height**: Removed the cramped `height: 94px` on player cards, replacing it with `min-height: 128px; height: auto;`.
+- **Generous Interior Padding**: Increased card padding to `12px 11px 14px 11px` with comfortable margins between badges and text.
+- **Full Text Wrapping**: Switched player names, song titles, and artists to `white-space: normal; word-break: break-word;` so that even with 3 simultaneous badges (`#4 BATTER`, `⚾ AT BAT`, `NOW PLAYING`), the player name and track details have ample breathing room and are 100% visible with zero clipping.
+
+### 17. Coach's Baseball Flagship Track (`EK-XfDRL2wA`)
+- **Updated Primary Track**: Set Coach's requested link (`https://youtu.be/EK-XfDRL2wA`) — **Jaz Von ft. NBA YoungBoy - "Getting Older (Clean)"** — as the primary Baseball anthem.
+- **Universal Single Video & Playlist Support**: Enhanced the YouTube player engine to seamlessly cue/play both single video tracks (`loadVideoById`/`cueVideoById`) and full multi-track playlists (`loadPlaylist`/`cuePlaylist`).
+- **Auto-Migration**: Automatically clears legacy playlist references from `localStorage` so the coach immediately sees the updated track.
+
+### 18. Server Ping & Instant App Refresh Button (`🔄 Sync`)
+- **Header Refresh Button**: Added a dedicated `[🔄 Sync]` button in the top navigation bar.
+- **Cache & Service Worker Purge**: Tapping the button flushes browser `CacheStorage`, updates service worker registrations, and pings the server with a cache-busting timestamp.
+- **Instant Hard Reload**: Automatically re-fetches the latest code and assets directly from the server, eliminating cached stale bundles on mobile devices.
+
 ---
 
 ## Verification & Deployment
 1. Validated JavaScript syntax across all files (`node -c js/app.js`, `node -c js/youtube-manager.js`, `node -c js/audio-player.js`, `node -c js/roster.js`).
 2. Tested local server on port 3000 and verified valid HTTP 200 responses for HTML, CSS, and JS.
-3. Verified electric blue styling, baseball icons on both At-Bat and On-Deck cards, and automatic lineup rotation.
+3. Verified generous padding on cards, full text visibility with zero cutoffs, correct YouTube link cueing, and live server ping refresh functionality.

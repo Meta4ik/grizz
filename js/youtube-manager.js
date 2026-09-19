@@ -5,9 +5,9 @@
  */
 
 export const DEFAULT_PLAYLIST = {
-  id: 'PLfIVhrWS4Y_M',
+  id: 'EK-XfDRL2wA',
   title: 'Baseball',
-  artist: 'Between-Innings Warm-Up Queue'
+  artist: 'Jaz Von ft. NBA YoungBoy • Getting Older (Clean)'
 };
 
 export class YouTubeInningsEngine {
@@ -48,6 +48,10 @@ export class YouTubeInningsEngine {
       const saved = localStorage.getItem('grizzlies_active_playlist');
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Automatically migrate to new Coach's baseball track if old placeholder was saved
+        if (parsed && parsed.id === 'PLfIVhrWS4Y_M') {
+          return { ...DEFAULT_PLAYLIST };
+        }
         if (parsed && parsed.id) return parsed;
       }
     } catch (e) {
@@ -189,29 +193,50 @@ export class YouTubeInningsEngine {
     };
     this.savePlaylist(playlist);
 
+    const isPlaylist = playlistId.startsWith('PL') || playlistId.startsWith('RD');
     let loadedViaApi = false;
+
     if (this.player) {
       try {
-        if (autoPlay && typeof this.player.loadPlaylist === 'function') {
-          this.player.loadPlaylist({
-            list: playlistId,
-            listType: 'playlist'
-          });
-          loadedViaApi = true;
-        } else if (!autoPlay && typeof this.player.cuePlaylist === 'function') {
-          this.player.cuePlaylist({
-            list: playlistId,
-            listType: 'playlist'
-          });
-          loadedViaApi = true;
+        if (isPlaylist) {
+          if (autoPlay && typeof this.player.loadPlaylist === 'function') {
+            this.player.loadPlaylist({
+              list: playlistId,
+              listType: 'playlist'
+            });
+            loadedViaApi = true;
+          } else if (!autoPlay && typeof this.player.cuePlaylist === 'function') {
+            this.player.cuePlaylist({
+              list: playlistId,
+              listType: 'playlist'
+            });
+            loadedViaApi = true;
+          }
+        } else {
+          // Single video track
+          if (autoPlay && typeof this.player.loadVideoById === 'function') {
+            this.player.loadVideoById(playlistId);
+            loadedViaApi = true;
+          } else if (!autoPlay && typeof this.player.cueVideoById === 'function') {
+            this.player.cueVideoById(playlistId);
+            loadedViaApi = true;
+          }
         }
       } catch (e) {}
     }
 
-    if (autoPlay) {
-      this._sendCommand('loadPlaylist', { list: playlistId, listType: 'playlist' });
+    if (isPlaylist) {
+      if (autoPlay) {
+        this._sendCommand('loadPlaylist', { list: playlistId, listType: 'playlist' });
+      } else {
+        this._sendCommand('cuePlaylist', { list: playlistId, listType: 'playlist' });
+      }
     } else {
-      this._sendCommand('cuePlaylist', { list: playlistId, listType: 'playlist' });
+      if (autoPlay) {
+        this._sendCommand('loadVideoById', [playlistId]);
+      } else {
+        this._sendCommand('cueVideoById', [playlistId]);
+      }
     }
 
     if (!loadedViaApi) {
@@ -219,7 +244,11 @@ export class YouTubeInningsEngine {
       if (iframe) {
         const originParam = window.location.origin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
         const autoplayVal = autoPlay ? 1 : 0;
-        iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1&autoplay=${autoplayVal}${originParam}`;
+        if (isPlaylist) {
+          iframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&enablejsapi=1&playsinline=1&autoplay=${autoplayVal}${originParam}`;
+        } else {
+          iframe.src = `https://www.youtube.com/embed/${playlistId}?enablejsapi=1&playsinline=1&autoplay=${autoplayVal}${originParam}`;
+        }
         setTimeout(() => this._initPlayer(), 1200);
       }
     }

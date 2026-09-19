@@ -37,6 +37,12 @@
       </div>
       
       <div class="header-right">
+        <button id="serverRefreshBtn" class="btn-icon btn-refresh" title="Ping Server & Refresh App Data" aria-label="Refresh App Data">
+          <svg id="refreshIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span class="btn-label" id="refreshLabel">Sync</span>
+        </button>
         <button id="helpBtn" class="btn-icon" title="iPhone Fullscreen Tips" aria-label="Tips">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
@@ -183,8 +189,8 @@
               <div class="yt-video-mini-corner" id="ytPlayerContainer">
                 <iframe 
                   id="ytPlayerFrame"
-                  src="https://www.youtube.com/embed/videoseries?list=PLfIVhrWS4Y_M&enablejsapi=1&playsinline=1&autoplay=0"
-                  title="Between Innings Dugout Playlist"
+                  src="https://www.youtube.com/embed/EK-XfDRL2wA?enablejsapi=1&playsinline=1&autoplay=0"
+                  title="Between Innings Dugout Track"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerpolicy="strict-origin-when-cross-origin"
                   allowfullscreen>
@@ -228,7 +234,8 @@
                 <span class="preset-playlists-label">QUICK SWITCH PLAYLIST:</span>
                 <div class="playlist-select-wrapper">
                   <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
-                    <option value="PLfIVhrWS4Y_M" data-title="Baseball" selected>⚾ Baseball (Coach's Playlist)</option>
+                    <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Getting Older - Coach's Track)</option>
+                    <option value="PLfIVhrWS4Y_M" data-title="Baseball Multi-Mix">⚾ Baseball Multi-Song Mix</option>
                     <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
                     <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
                     <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
