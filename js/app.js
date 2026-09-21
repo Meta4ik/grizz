@@ -264,6 +264,7 @@ class GrizzliesApp {
       drawerSettingsBtn: document.getElementById('drawerSettingsBtn'),
       lineupToggleBtn: document.getElementById('lineupToggleBtn'),
       sortLabel: document.getElementById('sortLabel'),
+      headerMusicBtn: document.getElementById('headerMusicBtn'),
       fullscreenBtn: document.getElementById('fullscreenBtn'),
 
       // Settings Modal
@@ -1524,8 +1525,22 @@ class GrizzliesApp {
       this.renderLineupModalItems();
     });
 
-    // Fullscreen toggle
-    this.dom.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+    // Header Music Suite Button
+    if (this.dom.headerMusicBtn) {
+      this.dom.headerMusicBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        if (this.dom.inningsModal) {
+          this.dom.inningsModal.style.display = 'flex';
+          this.dom.fadeOutBtn.disabled = false;
+          this.dom.stopCutBtn.disabled = false;
+        }
+      });
+    }
+
+    // Fullscreen toggle (if button present)
+    if (this.dom.fullscreenBtn) {
+      this.dom.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+    }
 
     // Server Ping & App Refresh
     if (this.dom.serverRefreshBtn) {

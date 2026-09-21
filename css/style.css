@@ -169,7 +169,7 @@ html, body {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .btn-icon {
@@ -177,14 +177,15 @@ html, body {
   border: 1px solid var(--border-subtle);
   color: var(--text-high);
   height: 38px;
-  padding: 0 10px;
+  padding: 0 8px;
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  flex-shrink: 0;
 }
 
 .btn-icon:active {
@@ -194,14 +195,14 @@ html, body {
 }
 
 .btn-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
 .btn-refresh {
-  gap: 5px;
+  gap: 4px;
   border-color: rgba(0, 229, 255, 0.4);
   color: #00e5ff;
 }
@@ -211,7 +212,21 @@ html, body {
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
 }
 
-.btn-refresh svg {
+.btn-music-suite {
+  gap: 4px;
+  border-color: rgba(255, 179, 0, 0.4);
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.08);
+}
+
+.btn-music-suite:hover, .btn-music-suite:active {
+  border-color: #ffca28;
+  color: #ffffff;
+  background: rgba(255, 179, 0, 0.22);
+  box-shadow: 0 0 12px rgba(255, 179, 0, 0.45);
+}
+
+.btn-refresh svg, .btn-music-suite svg {
   transition: transform 0.3s ease;
 }
 
@@ -2139,7 +2154,7 @@ html, body {
 }
 
 /* ==========================================================================
-   6. Reorder Lineup Modal & Tips Modal
+   6. Reorder Lineup Modal & Tips Modal & Music Suite Modal
    ========================================================================== */
 .modal-overlay {
   position: absolute;
@@ -2153,11 +2168,13 @@ html, body {
   z-index: 100;
   display: flex;
   align-items: flex-end;
+  box-sizing: border-box;
 }
 
 .modal-card {
   width: 100%;
-  max-height: 84%;
+  max-height: 86vh;
+  max-height: 86dvh;
   background: #12141a;
   border-top: 2.5px solid var(--red-primary);
   border-radius: 20px 20px 0 0;
@@ -2167,9 +2184,12 @@ html, body {
   gap: 12px;
   box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
   animation: slideUp 0.25s ease-out;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .modal-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2198,11 +2218,19 @@ html, body {
   border-radius: 50%;
   font-size: 1.3rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .modal-body {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2211,17 +2239,43 @@ html, body {
 
 /* Dedicated Between-Innings Suite Modal */
 .innings-modal-card {
-  max-height: 88vh;
+  height: 90vh;
+  height: 90dvh;
+  max-height: 90vh;
+  max-height: 90dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .innings-modal-body {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 4px 4px 14px 4px;
+  padding: 4px 6px 24px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-primary) transparent;
+}
+
+.innings-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.innings-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.innings-modal-body::-webkit-scrollbar-thumb {
+  background: var(--red-primary);
+  border-radius: 4px;
 }
 
 .innings-badge-icon {
@@ -2399,6 +2453,7 @@ html, body {
 }
 
 .modal-footer {
+  flex-shrink: 0;
   display: flex;
   gap: 10px;
   padding-top: 8px;
