@@ -740,6 +740,48 @@ html, body {
   box-shadow: 0 0 16px var(--cut-glow);
 }
 
+/* Batter Finished Walk-Up Song / Stopped (Grayed Out State) */
+.player-card.has-played:not(.playing) {
+  opacity: 0.42;
+  filter: grayscale(0.85);
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(14, 16, 22, 0.45) !important;
+  box-shadow: none !important;
+  transition: opacity 0.25s ease, filter 0.25s ease, background-color 0.25s ease;
+}
+
+.player-card.has-played:not(.playing) .jersey-badge {
+  opacity: 0.65;
+  filter: grayscale(0.75);
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.player-card.has-played:not(.playing) .player-name {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.player-card.has-played:not(.playing) .song-title {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.player-card.has-played:not(.playing) .card-status-badge {
+  opacity: 0.6;
+}
+
+.player-card.has-played:hover {
+  opacity: 0.82;
+  filter: grayscale(0.25);
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.player-card.has-played:active {
+  opacity: 1;
+  filter: none;
+  transform: scale(0.96);
+}
+
 /* Card Progress Overlay Bar */
 .card-progress-bar {
   position: absolute;

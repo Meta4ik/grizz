@@ -136,6 +136,7 @@ class GrizzliesApp {
     this.lastBatterIndex = 0;
     this.currentBatter = this.lineupOrder[0] || null;
     this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
+    this.battedPlayerIds = new Set();
 
     // Active Playlist & Song Jar State (defaults to Coach's Baseball playlist)
     this.activePlaylistId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
@@ -666,6 +667,7 @@ class GrizzliesApp {
     if (this.activeTrack) {
       this.updateActiveCardVisuals(this.activeTrack.id);
     }
+    this.updateBatterCardsState();
   }
 
   updateBatterCardsState() {
@@ -674,9 +676,12 @@ class GrizzliesApp {
       const id = card.dataset.id;
       const isAtBat = this.currentBatter && this.currentBatter.id === id;
       const isOnDeck = !isAtBat && this.onDeckPlayer && this.onDeckPlayer.id === id;
+      const isPlaying = card.classList.contains('playing') || (this.activeTrack && this.activeTrack.id === id && this.audioEngine.isPlaying);
+      const isBatted = this.battedPlayerIds && this.battedPlayerIds.has(id);
 
       card.classList.toggle('is-at-bat', !!isAtBat);
       card.classList.toggle('is-on-deck', !!isOnDeck);
+      card.classList.toggle('has-played', !!isBatted && !isPlaying);
 
       const badgesWrap = card.querySelector('.card-badges-wrap');
       if (badgesWrap) {
@@ -722,6 +727,14 @@ class GrizzliesApp {
 
     // Advance batting rotation if a roster player is clicked
     if (!track.isHype) {
+      if (this.currentBatter && this.currentBatter.id !== track.id) {
+        this.battedPlayerIds.add(this.currentBatter.id);
+      }
+      if (this.battedPlayerIds.size >= this.lineupOrder.length) {
+        this.battedPlayerIds.clear();
+      }
+      this.battedPlayerIds.delete(track.id);
+
       this.currentBatter = track;
       const idx = this.lineupOrder.findIndex(p => p.id === track.id);
       if (idx >= 0) {
@@ -791,6 +804,10 @@ class GrizzliesApp {
     });
 
     this.audioEngine.on('onStop', (track) => {
+      const stoppedTrack = track || this.activeTrack || this.currentBatter;
+      if (stoppedTrack && !stoppedTrack.isHype) {
+        this.battedPlayerIds.add(stoppedTrack.id);
+      }
       this.clearActiveVisuals();
       if (this.activeAudioSource === 'walkup') {
         this.activeAudioSource = 'none';
@@ -807,6 +824,7 @@ class GrizzliesApp {
         if (dockNotch) dockNotch.style.left = '0%';
         this.dom.liveEqBadge.classList.remove('active');
       }
+      this.updateBatterCardsState();
     });
 
     this.audioEngine.on('onTimeUpdate', ({ currentTime, duration, progress, track }) => {
@@ -1406,6 +1424,10 @@ class GrizzliesApp {
     // Instant Cut / Stop button (kills whichever audio is currently running)
     this.dom.stopCutBtn.addEventListener('click', () => {
       this.triggerHaptic(30);
+      const stoppedTrack = this.activeTrack || this.currentBatter;
+      if (stoppedTrack && !stoppedTrack.isHype) {
+        this.battedPlayerIds.add(stoppedTrack.id);
+      }
       this.audioEngine.stop();
       this.ytEngine.stop();
       this.activeAudioSource = 'none';
@@ -1422,6 +1444,7 @@ class GrizzliesApp {
       const dockNotch = document.getElementById('trackProgressNotch');
       if (dockNotch) dockNotch.style.left = '0%';
       this.dom.liveEqBadge.classList.remove('active');
+      this.updateBatterCardsState();
     });
 
     // Master Dock Track Progress Scrubbing
@@ -2352,8 +2375,8 @@ class GrizzliesApp {
           <span class="lineup-batting-pos">#${idx + 1}</span>
           <div class="lineup-player-info">
             <div class="lineup-name-row">
-              <span class="lineup-player-name">${player.name}</span>
               <span class="lineup-jersey-pill"><span class="jersey-hash">#</span>${player.number}</span>
+              <span class="lineup-player-name">${player.name}</span>
             </div>
             <span class="lineup-player-num">${player.song} • ${player.artist}</span>
           </div>
