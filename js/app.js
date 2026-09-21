@@ -271,6 +271,12 @@ class GrizzliesApp {
       closeSettingsDoneBtn: document.getElementById('closeSettingsDoneBtn'),
       btnToggleRallySetting: document.getElementById('btnToggleRallySetting'),
       openPhoneSetupBtn: document.getElementById('openPhoneSetupBtn'),
+      openInningsModalBtn: document.getElementById('openInningsModalBtn'),
+
+      // Innings Modal
+      inningsModal: document.getElementById('inningsModal'),
+      closeInningsModal: document.getElementById('closeInningsModal'),
+      closeInningsDoneBtn: document.getElementById('closeInningsDoneBtn'),
 
       // Lineup Modal
       lineupModal: document.getElementById('lineupModal'),
@@ -1558,58 +1564,13 @@ class GrizzliesApp {
   }
 
   setupSwipeNavigation() {
-    // Top Tab Pill clicks
-    this.dom.tabWalkUp.addEventListener('click', () => this.switchPage('walkup'));
-    this.dom.tabInnings.addEventListener('click', () => this.switchPage('innings'));
-
-    // Mobile touch swipe gestures on pages track
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let isHorizontalSwipe = null;
-
-    const wrapper = this.dom.pagesTrackWrapper;
-
-    wrapper.addEventListener('touchstart', (e) => {
-      // Don't intercept touches on sliders, youtube frame, or lineup handle
-      if (e.target.closest('#ytPlayerContainer, input[type="range"], .lineup-drag-handle')) {
-        return;
-      }
-      const touch = e.touches[0];
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-      isHorizontalSwipe = null;
-    }, { passive: true });
-
-    wrapper.addEventListener('touchmove', (e) => {
-      if (touchStartX === 0 && touchStartY === 0) return;
-      const touch = e.touches[0];
-      const deltaX = touch.clientX - touchStartX;
-      const deltaY = touch.clientY - touchStartY;
-
-      if (isHorizontalSwipe === null && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
-        isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY) + 5;
-      }
-    }, { passive: true });
-
-    wrapper.addEventListener('touchend', (e) => {
-      if (touchStartX === 0 && touchStartY === 0) return;
-      const touch = e.changedTouches[0];
-      const deltaX = touch.clientX - touchStartX;
-
-      if (isHorizontalSwipe && Math.abs(deltaX) > 45) {
-        if (deltaX < 0 && this.currentPage === 'walkup') {
-          // Swiped left -> show innings
-          this.switchPage('innings');
-        } else if (deltaX > 0 && this.currentPage === 'innings') {
-          // Swiped right -> show walkup
-          this.switchPage('walkup');
-        }
-      }
-
-      touchStartX = 0;
-      touchStartY = 0;
-      isHorizontalSwipe = null;
-    }, { passive: true });
+    // Top Tab Pill clicks (if navigation tabs are displayed)
+    if (this.dom.tabWalkUp) {
+      this.dom.tabWalkUp.addEventListener('click', () => this.switchPage('walkup'));
+    }
+    if (this.dom.tabInnings) {
+      this.dom.tabInnings.addEventListener('click', () => this.switchPage('innings'));
+    }
   }
 
   // =========================================================================
@@ -2287,6 +2248,36 @@ class GrizzliesApp {
       });
     }
 
+    if (this.dom.openInningsModalBtn) {
+      this.dom.openInningsModalBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        closeSettings();
+        if (this.dom.inningsModal) {
+          this.dom.inningsModal.style.display = 'flex';
+          this.dom.fadeOutBtn.disabled = false;
+          this.dom.stopCutBtn.disabled = false;
+        }
+      });
+    }
+
+    const closeInnings = () => {
+      this.triggerHaptic(15);
+      if (this.dom.inningsModal) {
+        this.dom.inningsModal.style.display = 'none';
+      }
+    };
+    if (this.dom.closeInningsModal) {
+      this.dom.closeInningsModal.addEventListener('click', closeInnings);
+    }
+    if (this.dom.closeInningsDoneBtn) {
+      this.dom.closeInningsDoneBtn.addEventListener('click', closeInnings);
+    }
+    if (this.dom.inningsModal) {
+      this.dom.inningsModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.inningsModal) closeInnings();
+      });
+    }
+
     if (this.dom.openPhoneSetupBtn) {
       this.dom.openPhoneSetupBtn.addEventListener('click', () => {
         this.triggerHaptic(20);
@@ -2298,6 +2289,9 @@ class GrizzliesApp {
 
     if (new URLSearchParams(window.location.search).get('modal') === 'settings') {
       openSettings();
+    }
+    if (new URLSearchParams(window.location.search).get('modal') === 'innings') {
+      if (this.dom.inningsModal) this.dom.inningsModal.style.display = 'flex';
     }
   }
 

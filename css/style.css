@@ -301,9 +301,9 @@ html, body {
 
 .pages-track {
   display: flex;
-  width: 200%;
-  min-width: 200%;
-  max-width: 200%;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   height: 100%;
   transform: translateX(0%);
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
@@ -311,10 +311,10 @@ html, body {
 }
 
 .page-view {
-  width: 50%;
-  min-width: 50%;
-  max-width: 50%;
-  flex: 0 0 50%;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  flex: 0 0 100%;
   box-sizing: border-box;
   height: 100%;
   overflow-y: auto;
@@ -2066,6 +2066,25 @@ html, body {
   flex-direction: column;
   gap: 8px;
   padding-right: 4px;
+}
+
+/* Dedicated Between-Innings Suite Modal */
+.innings-modal-card {
+  max-height: 88vh;
+}
+
+.innings-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 4px 14px 4px;
+}
+
+.innings-badge-icon {
+  font-size: 1.25rem;
 }
 
 .lineup-item {
