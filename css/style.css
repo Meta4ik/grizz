@@ -966,7 +966,7 @@ html, body {
 }
 
 .player-card.is-at-bat .player-name {
-  font-size: 1.95rem !important;
+  font-size: 2.15rem !important;
   font-weight: 900 !important;
   color: #ffffff !important;
   line-height: 1.15 !important;
@@ -975,7 +975,7 @@ html, body {
 }
 
 .player-card.is-at-bat .song-title {
-  font-size: 1.3rem !important;
+  font-size: 1.35rem !important;
   font-weight: 800 !important;
   color: #70f3ff !important;
   line-height: 1.25 !important;
@@ -983,9 +983,9 @@ html, body {
 }
 
 .player-card.is-at-bat .song-artist {
-  font-size: 1.0rem !important;
+  font-size: 1.05rem !important;
   font-weight: 600 !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
   margin-top: 1px !important;
 }
 
@@ -1060,18 +1060,27 @@ html, body {
 }
 
 .player-card.is-on-deck .player-name {
-  font-size: 1.12rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: #ffffff;
+  letter-spacing: 0.3px;
+  line-height: 1.15;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
 }
 
 .player-card.is-on-deck .song-title {
-  color: #a7f3d0;
+  font-size: 0.84rem;
   font-weight: 800;
+  color: #a7f3d0;
+  line-height: 1.25;
+  margin-top: 2px;
 }
 
 .player-card.is-on-deck .song-artist {
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.2;
 }
 
 .player-card.is-on-deck .card-transport-track {
@@ -1134,6 +1143,46 @@ html, body {
   flex-direction: column;
   min-width: 0;
   flex: 1;
+}
+
+/* Player Name (Big, Ultra-Bold, High Contrast for Dugout Sunlight) */
+.player-name {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+}
+
+.song-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #ffe082;
+  line-height: 1.25;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.song-artist {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card.playing .player-name {
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 0 12px rgba(255, 59, 75, 0.85);
 }
 
 /* Sliding Transport Track Underneath Player Name */
