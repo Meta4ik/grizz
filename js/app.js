@@ -2359,7 +2359,7 @@ class GrizzliesApp {
           <div class="lineup-player-info">
             <div class="lineup-name-row">
               <span class="lineup-player-name">${player.name}</span>
-              <span class="lineup-jersey-pill">#${player.number}</span>
+              <span class="lineup-jersey-pill"><span class="jersey-hash">#</span>${player.number}</span>
             </div>
             <span class="lineup-player-num">${player.song} • ${player.artist}</span>
           </div>

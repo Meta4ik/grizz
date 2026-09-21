@@ -767,49 +767,55 @@ html, body {
   max-width: 65%;
 }
 
-/* Big Athletic Jersey Numbers (High Visibility Pure White with Red Stadium Drop Shadow) */
+/* Big Athletic Jersey Numbers (High Visibility White Box with Red Stadium Drop Shadow) */
 .jersey-badge {
   display: inline-flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 38px;
+  padding: 0 7px;
+  background: rgba(14, 17, 24, 0.88);
+  border: 2px solid #ffffff;
+  border-radius: 8px;
   font-family: var(--font-athletic);
-  font-size: 2.35rem;
+  font-size: 1.85rem;
   font-weight: 800;
-  line-height: 0.85;
+  line-height: 1;
   color: #ffffff;
   letter-spacing: 0.5px;
   text-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.95),
-    0 0 10px rgba(255, 23, 68, 0.9),
-    0 0 20px rgba(214, 24, 39, 0.75);
-  filter: drop-shadow(0 2px 5px rgba(214, 24, 39, 0.8));
-  box-shadow: none;
+    0 0 10px rgba(255, 23, 68, 0.95),
+    0 0 18px rgba(214, 24, 39, 0.75);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(214, 24, 39, 0.4),
+    inset 0 0 6px rgba(0, 0, 0, 0.6);
   flex-shrink: 0;
 }
 
 .jersey-badge .jersey-hash {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #ff3b4b;
-  margin-right: 1.5px;
-  text-shadow: 0 0 8px rgba(255, 59, 75, 0.85);
+  margin-right: 2px;
+  text-shadow: 0 0 6px rgba(255, 59, 75, 0.85);
   opacity: 0.95;
 }
 
 .player-card.playing .jersey-badge {
-  background: transparent;
+  background: rgba(4, 24, 42, 0.9);
   color: #ffffff;
-  border: none;
-  box-shadow: none;
+  border: 2px solid #ffffff;
+  box-shadow: 
+    0 0 16px rgba(0, 229, 255, 0.85),
+    0 0 28px rgba(0, 229, 255, 0.5),
+    inset 0 0 8px rgba(0, 229, 255, 0.3);
   text-shadow: 
     0 2px 6px rgba(0, 0, 0, 0.95),
-    0 0 16px #00e5ff,
-    0 0 28px rgba(0, 229, 255, 0.9);
-  filter: drop-shadow(0 2px 6px rgba(0, 229, 255, 0.85));
+    0 0 14px #00e5ff,
+    0 0 24px rgba(0, 229, 255, 0.9);
 }
 
 .player-card.playing .jersey-badge .jersey-hash {
@@ -891,25 +897,27 @@ html, body {
 }
 
 .player-card.is-at-bat .jersey-badge {
-  min-width: auto !important;
-  height: auto !important;
-  font-size: 3.2rem !important;
-  line-height: 0.85 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
+  min-width: 58px !important;
+  height: 48px !important;
+  padding: 0 10px !important;
+  font-size: 2.5rem !important;
+  line-height: 1 !important;
+  border-radius: 10px !important;
+  background: rgba(4, 18, 36, 0.9) !important;
   color: #ffffff !important;
-  border: none !important;
+  border: 2.5px solid #ffffff !important;
   font-weight: 900 !important;
   text-shadow: 
     0 2px 6px rgba(0, 0, 0, 0.95),
     0 0 16px #00e5ff,
-    0 0 32px rgba(0, 229, 255, 0.9) !important;
-  box-shadow: none !important;
-  filter: drop-shadow(0 3px 8px rgba(0, 229, 255, 0.85)) !important;
+    0 0 30px rgba(0, 229, 255, 0.9) !important;
+  box-shadow: 
+    0 0 18px rgba(0, 229, 255, 0.75),
+    inset 0 0 10px rgba(0, 229, 255, 0.25) !important;
 }
 
 .player-card.is-at-bat .jersey-badge .jersey-hash {
-  font-size: 1.85rem !important;
+  font-size: 1.5rem !important;
   color: #00e5ff !important;
   text-shadow: 0 0 10px rgba(0, 229, 255, 0.9) !important;
 }
@@ -1007,15 +1015,17 @@ html, body {
 }
 
 .player-card.is-at-bat.playing .jersey-badge {
-  background: transparent !important;
+  background: rgba(4, 30, 56, 0.95) !important;
   color: #ffffff !important;
-  border: none !important;
-  box-shadow: none !important;
+  border: 2.5px solid #ffffff !important;
+  box-shadow: 
+    0 0 24px rgba(0, 229, 255, 1),
+    0 0 36px rgba(255, 255, 255, 0.8),
+    inset 0 0 12px rgba(0, 229, 255, 0.4) !important;
   text-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.95),
     0 0 22px #00e5ff,
     0 0 38px #ffffff !important;
-  filter: drop-shadow(0 3px 10px rgba(0, 229, 255, 0.95)) !important;
 }
 
 .player-card.is-at-bat.playing .card-progress-bar {
@@ -1030,20 +1040,21 @@ html, body {
 }
 
 .player-card.is-on-deck .jersey-badge {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: rgba(4, 28, 14, 0.9) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 
+    0 0 14px rgba(0, 230, 118, 0.7),
+    inset 0 0 8px rgba(0, 230, 118, 0.2) !important;
   color: #ffffff !important;
-  font-size: 2.5rem !important;
+  font-size: 1.85rem !important;
   text-shadow: 
     0 2px 6px rgba(0, 0, 0, 0.95),
-    0 0 16px #00e676,
-    0 0 28px rgba(0, 230, 118, 0.9) !important;
-  filter: drop-shadow(0 3px 6px rgba(0, 230, 118, 0.85)) !important;
+    0 0 14px #00e676,
+    0 0 24px rgba(0, 230, 118, 0.9) !important;
 }
 
 .player-card.is-on-deck .jersey-badge .jersey-hash {
-  font-size: 1.5rem !important;
+  font-size: 1.15rem !important;
   color: #00e676 !important;
   text-shadow: 0 0 10px rgba(0, 230, 118, 0.9) !important;
 }
@@ -1218,15 +1229,16 @@ html, body {
 }
 
 .player-card.is-at-bat.paused .jersey-badge {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: rgba(36, 26, 4, 0.9) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 
+    0 0 14px rgba(255, 179, 0, 0.7),
+    inset 0 0 8px rgba(255, 179, 0, 0.2) !important;
   color: #ffffff !important;
   text-shadow: 
     0 2px 6px rgba(0, 0, 0, 0.95),
-    0 0 16px #ffb300,
-    0 0 28px rgba(255, 179, 0, 0.9) !important;
-  filter: drop-shadow(0 3px 6px rgba(255, 179, 0, 0.85)) !important;
+    0 0 14px #ffb300,
+    0 0 24px rgba(255, 179, 0, 0.9) !important;
 }
 
 .player-card.is-at-bat.paused .jersey-badge .jersey-hash {
@@ -2151,22 +2163,41 @@ html, body {
   text-overflow: ellipsis;
 }
 
-/* Prominent Jersey Number Pill */
+/* Prominent Jersey Number Pill with Crisp White Box & Red Stadium Drop Shadow */
 .lineup-jersey-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--red-primary);
+  min-width: 38px;
+  height: 30px;
+  padding: 0 6px;
+  background: rgba(14, 17, 24, 0.88);
+  border: 2px solid #ffffff;
+  border-radius: 7px;
   color: #ffffff;
   font-family: var(--font-athletic);
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   line-height: 1;
-  padding: 1px 7px;
-  border-radius: 6px;
-  border: 1px solid #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
+  text-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.95),
+    0 0 8px rgba(255, 23, 68, 0.9),
+    0 0 14px rgba(214, 24, 39, 0.7);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.7),
+    0 0 8px rgba(214, 24, 39, 0.4),
+    inset 0 0 4px rgba(0, 0, 0, 0.5);
   flex-shrink: 0;
+}
+
+.lineup-jersey-pill .jersey-hash {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ff3b4b;
+  margin-right: 1.5px;
+  text-shadow: 0 0 6px rgba(255, 59, 75, 0.85);
+  opacity: 0.95;
 }
 
 .lineup-player-num {
