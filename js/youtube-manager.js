@@ -117,24 +117,31 @@ export class YouTubeInningsEngine {
   _handleStateChange(state) {
     if (!window.YT) return;
 
-    // PLAYING === 1
-    if (state === window.YT.PlayerState.PLAYING) {
-      this.isPlaying = true;
+    // PLAYING === 1, BUFFERING === 3, CUED === 5
+    if (state === window.YT.PlayerState.PLAYING || state === window.YT.PlayerState.BUFFERING) {
+      if (state === window.YT.PlayerState.PLAYING) {
+        this.isPlaying = true;
+      }
+      let currentTrackInfo = this.currentPlaylist;
       if (this.player && typeof this.player.getVideoData === 'function') {
         try {
           const videoData = this.player.getVideoData();
           if (videoData && videoData.title) {
-            this.callbacks.onTrackChange({
+            currentTrackInfo = {
               id: videoData.video_id || this.currentPlaylist.id,
               title: videoData.title,
-              artist: videoData.author || this.currentPlaylist.title
-            });
+              artist: videoData.author || this.currentPlaylist.artist || this.currentPlaylist.title
+            };
+            this.currentPlaylist = currentTrackInfo;
+            this.callbacks.onTrackChange(currentTrackInfo);
           }
         } catch (e) {
           // Handled gracefully
         }
       }
-      this.callbacks.onPlay(this.currentPlaylist);
+      if (state === window.YT.PlayerState.PLAYING) {
+        this.callbacks.onPlay(currentTrackInfo);
+      }
     }
     // PAUSED === 2
     else if (state === window.YT.PlayerState.PAUSED) {
@@ -154,6 +161,20 @@ export class YouTubeInningsEngine {
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         if (!data) return;
+
+        if (data.info && data.info.videoData && data.info.videoData.title) {
+          const vData = data.info.videoData;
+          const trackInfo = {
+            id: vData.video_id || this.currentPlaylist.id,
+            title: vData.title,
+            artist: vData.author || this.currentPlaylist.artist || this.currentPlaylist.title
+          };
+          this.currentPlaylist = trackInfo;
+          this.callbacks.onTrackChange(trackInfo);
+          if (this.isPlaying) {
+            this.callbacks.onPlay(trackInfo);
+          }
+        }
 
         let playerState = null;
         if (data.event === 'onStateChange') {
@@ -335,7 +356,6 @@ export class YouTubeInningsEngine {
       try { this.player.nextVideo(); } catch (e) {}
     }
     this._sendCommand('nextVideo');
-    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   prevTrack() {
@@ -345,7 +365,6 @@ export class YouTubeInningsEngine {
       try { this.player.previousVideo(); } catch (e) {}
     }
     this._sendCommand('previousVideo');
-    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   playVideo(videoId, title = 'Dugout Track', artist = 'Song Jar Selection') {
@@ -356,6 +375,7 @@ export class YouTubeInningsEngine {
       title: title,
       artist: artist
     };
+    this.currentPlaylist = track;
     this.savePlaylist(track);
 
     let loadedViaApi = false;
@@ -407,7 +427,6 @@ export class YouTubeInningsEngine {
           try {
             this.player.playVideoAt(targetIndex);
             this.isPlaying = true;
-            this.callbacks.onPlay(this.currentPlaylist);
             return;
           } catch (e) {}
         }
@@ -425,7 +444,6 @@ export class YouTubeInningsEngine {
     }
     this._sendCommand('nextVideo');
     this.isPlaying = true;
-    this.callbacks.onPlay(this.currentPlaylist);
   }
 
   setVolume(pct) {

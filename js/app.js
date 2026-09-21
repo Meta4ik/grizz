@@ -897,7 +897,7 @@ class GrizzliesApp {
   }
 
   setupYouTubeCallbacks() {
-    this.ytEngine.on('onPlay', (playlist) => {
+    this.ytEngine.on('onPlay', (trackInfo) => {
       // Mutual exclusion: stop walk-up audio when YouTube starts
       if (this.audioEngine.isPlaying) {
         this.audioEngine.stop();
@@ -913,11 +913,13 @@ class GrizzliesApp {
       this.dom.ytPlayIcon.style.display = 'none';
       this.dom.ytPauseIcon.style.display = 'block';
 
-      // Update Master Dock
-      const title = playlist ? playlist.title : 'YOUTUBE PLAYING';
-      const artist = playlist ? (playlist.artist || 'Between Innings Music') : 'Between Innings Music';
-      this.dom.dockPlayerName.textContent = title;
-      this.dom.dockSongTitle.textContent = artist;
+      // Update Master Dock and Stage with exact song title & artist
+      const title = trackInfo?.title || this.ytEngine.currentPlaylist?.title || 'Between-Innings Music';
+      const artist = trackInfo?.artist || this.ytEngine.currentPlaylist?.artist || 'Between-Innings Queue';
+      if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = title;
+      if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = artist;
+      if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = title;
+      if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = artist;
       if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = title;
       if (this.dom.miniEqDot) this.dom.miniEqDot.classList.add('active');
       this.dom.liveEqBadge.classList.add('active');
@@ -986,13 +988,16 @@ class GrizzliesApp {
       this.renderInlineSongJar();
     });
 
-    this.ytEngine.on('onTrackChange', (playlist) => {
-      if (!playlist) return;
-      this.dom.ytCurrentTitle.textContent = playlist.title;
-      this.dom.ytCurrentArtist.textContent = playlist.artist || 'Between-Innings Warm-Up Queue';
+    this.ytEngine.on('onTrackChange', (trackInfo) => {
+      if (!trackInfo) return;
+      const title = trackInfo.title || 'Between-Innings Music';
+      const artist = trackInfo.artist || 'Between-Innings Warm-Up Queue';
+      if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = title;
+      if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = artist;
       if (this.activeAudioSource === 'youtube') {
-        this.dom.dockPlayerName.textContent = playlist.title;
-        if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = playlist.title;
+        if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = title;
+        if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = artist;
+        if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = title;
       }
       this.renderInlineSongJar();
     });
