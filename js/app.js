@@ -725,16 +725,11 @@ class GrizzliesApp {
     }
     this.activeAudioSource = 'walkup';
 
+    // Clear grayed out state so all items restore to regular color on next song
+    this.battedPlayerIds.clear();
+
     // Advance batting rotation if a roster player is clicked
     if (!track.isHype) {
-      if (this.currentBatter && this.currentBatter.id !== track.id) {
-        this.battedPlayerIds.add(this.currentBatter.id);
-      }
-      if (this.battedPlayerIds.size >= this.lineupOrder.length) {
-        this.battedPlayerIds.clear();
-      }
-      this.battedPlayerIds.delete(track.id);
-
       this.currentBatter = track;
       const idx = this.lineupOrder.findIndex(p => p.id === track.id);
       if (idx >= 0) {
@@ -745,6 +740,8 @@ class GrizzliesApp {
       this.updateOnDeckDisplay();
       this.updateBatterCardsState();
       this.scrollToBatterCard(track.id);
+    } else {
+      this.updateBatterCardsState();
     }
 
     this.audioEngine.play(track);
@@ -783,12 +780,14 @@ class GrizzliesApp {
       }
       this.activeAudioSource = 'walkup';
       this.activeTrack = track;
+      this.battedPlayerIds.clear();
       this.updateActiveCardVisuals(track.id, 'playing');
       this.updateDockInfo(track, true);
       this.dom.fadeOutBtn.disabled = false;
       this.dom.stopCutBtn.disabled = false;
       this.dom.fadeOutBtn.classList.remove('is-fading');
       this.updateOnDeckAfterPlay(track);
+      this.updateBatterCardsState();
 
       // Auto-restore fader to full volume if it was cut/muted
       if (this.dom.masterCrossfader && parseInt(this.dom.masterCrossfader.value, 10) >= 95) {
@@ -904,6 +903,8 @@ class GrizzliesApp {
         this.audioEngine.stop();
       }
       this.activeAudioSource = 'youtube';
+      this.battedPlayerIds.clear();
+      this.updateBatterCardsState();
 
       // Update YouTube Stage UI
       this.dom.ytPulseDot.classList.add('active');
