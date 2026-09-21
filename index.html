@@ -22,6 +22,43 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- App Startup Preloader / Audio Asset Verification Screen -->
+  <div class="app-preloader" id="appPreloader" role="dialog" aria-modal="true" aria-label="Loading Grizzlies Baseball Soundboard">
+    <div class="preloader-backdrop"></div>
+    <div class="preloader-card">
+      <div class="preloader-logo-wrap">
+        <div class="preloader-badge-ring">
+          <img src="icons/official-grizzly-logo.png" alt="Wylie Grizzlies" class="preloader-logo-img">
+        </div>
+        <div class="preloader-title-group">
+          <div class="preloader-league-tag">WYLIE GRIZZLIES 8U</div>
+          <h1 class="preloader-headline">DUGOUT SOUNDBOARD</h1>
+          <div class="preloader-season-tag">FALL 2026 SEASON</div>
+        </div>
+      </div>
+
+      <!-- Live Audio Verification Progress -->
+      <div class="preloader-status-block">
+        <div class="preloader-info-row">
+          <span class="preloader-status-text" id="preloaderStatusText">Checking dugout audio tracks...</span>
+          <span class="preloader-count-badge" id="preloaderCountBadge">0 / 14 READY</span>
+        </div>
+
+        <div class="preloader-progress-track">
+          <div class="preloader-progress-fill" id="preloaderProgressFill"></div>
+        </div>
+        
+        <div class="preloader-current-file" id="preloaderCurrentFile">Initializing walk-up engine...</div>
+      </div>
+
+      <!-- Ready CTA Button (Unlocks Web Audio Context & Enters App) -->
+      <button class="preloader-ready-btn" id="preloaderReadyBtn" style="display: none;">
+        <span class="btn-ready-icon">⚾</span>
+        <span class="btn-ready-text">ENTER DUGOUT</span>
+      </button>
+    </div>
+  </div>
+
   <div class="app-viewport">
     
     <!-- Top Dugout Header -->

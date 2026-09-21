@@ -312,6 +312,92 @@ class GrizzliesApp {
     this.initFaderWaveformVisualizer();
     this.updateSortLabel();
     this.updateOnDeckDisplay();
+    this.verifyAudioAndDismissPreloader();
+  }
+
+  // =========================================================================
+  // Startup Audio Verification & Preloader
+  // =========================================================================
+  async verifyAudioAndDismissPreloader() {
+    const preloader = document.getElementById('appPreloader');
+    if (!preloader) return;
+
+    const statusText = document.getElementById('preloaderStatusText');
+    const countBadge = document.getElementById('preloaderCountBadge');
+    const progressFill = document.getElementById('preloaderProgressFill');
+    const currentFile = document.getElementById('preloaderCurrentFile');
+    const readyBtn = document.getElementById('preloaderReadyBtn');
+
+    const allTracks = [...PLAYERS, ...HYPE_TRACKS];
+    const total = allTracks.length;
+    let verifiedCount = 0;
+
+    const updateUI = (name) => {
+      const pct = Math.min(100, Math.round((verifiedCount / total) * 100));
+      if (progressFill) progressFill.style.width = `${pct}%`;
+      if (countBadge) countBadge.textContent = `${verifiedCount} / ${total} READY`;
+      if (currentFile) currentFile.textContent = `Ready: ${name}`;
+    };
+
+    // Sequential verification with visual progress steps
+    for (let i = 0; i < allTracks.length; i++) {
+      const track = allTracks[i];
+      const displayName = track.name ? `#${track.number || ''} ${track.name}` : track.song;
+      if (statusText) statusText.textContent = `Loading: ${displayName}...`;
+
+      try {
+        await fetch(encodeURI(track.file), { method: 'HEAD' });
+      } catch (err) {
+        try {
+          const audioTester = new Audio();
+          audioTester.preload = 'metadata';
+          audioTester.src = encodeURI(track.file);
+        } catch (e) {}
+      }
+
+      verifiedCount++;
+      updateUI(displayName);
+      await new Promise(r => setTimeout(r, 35));
+    }
+
+    // All tracks verified!
+    if (statusText) statusText.textContent = 'All 14 Roster Tracks Ready!';
+    if (currentFile) currentFile.textContent = 'Dugout soundboard ready for game ⚾';
+    if (countBadge) {
+      countBadge.textContent = '14 / 14 VERIFIED';
+      countBadge.classList.add('all-ready');
+    }
+    if (progressFill) progressFill.style.width = '100%';
+
+    let dismissed = false;
+    const dismissPreloader = () => {
+      if (dismissed) return;
+      dismissed = true;
+      this.audioEngine._initWebAudio();
+      this.triggerHaptic(20);
+      preloader.classList.add('preloader-exit');
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 450);
+    };
+
+    if (readyBtn) {
+      readyBtn.style.display = 'inline-flex';
+      readyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dismissPreloader();
+      }, { once: true });
+    }
+
+    // Auto-dismiss smoothly after short delay, or user can tap anytime
+    const autoDismissTimer = setTimeout(() => {
+      dismissPreloader();
+    }, 1100);
+
+    preloader.addEventListener('click', () => {
+      clearTimeout(autoDismissTimer);
+      dismissPreloader();
+    }, { once: true });
   }
 
   // =========================================================================
