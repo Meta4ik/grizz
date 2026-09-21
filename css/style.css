@@ -2915,14 +2915,15 @@ html, body {
 .inline-song-jar-card {
   background: linear-gradient(135deg, rgba(26, 14, 18, 0.9) 0%, rgba(14, 15, 20, 0.96) 100%);
   border: 1.5px solid #4a1820;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px 16px 26px 26px;
+  padding: 14px 14px 18px 14px;
   margin-top: 14px;
   margin-bottom: 14px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: hidden;
 }
 
 .inline-jar-header {
