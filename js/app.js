@@ -580,7 +580,7 @@ class GrizzliesApp {
       card.innerHTML = `
         <div class="card-progress-bar" id="progress-${player.id}"></div>
         <div class="card-top-row">
-          <div class="jersey-badge">#${player.number}</div>
+          <div class="jersey-badge"><span class="jersey-hash">#</span>${player.number}</div>
           <div class="card-badges-wrap" id="badges-${player.id}">
             ${battingSlotText ? `<span class="card-status-badge on-deck-tag">${battingSlotText}</span>` : ''}
             ${batterBadgeHtml}

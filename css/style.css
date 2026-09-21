@@ -767,32 +767,54 @@ html, body {
   max-width: 65%;
 }
 
-/* Big Athletic Jersey Badge (Wylie Red with White Numbers) */
+/* Big Athletic Jersey Numbers (High Visibility Pure White with Red Stadium Drop Shadow) */
 .jersey-badge {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 38px;
-  height: 32px;
-  padding: 0 6px;
-  background: var(--red-primary);
-  border: 1.5px solid #ffffff;
-  border-radius: 7px;
+  align-items: baseline;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   font-family: var(--font-athletic);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 2.35rem;
+  font-weight: 800;
+  line-height: 0.85;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(214, 24, 39, 0.4);
+  letter-spacing: 0.5px;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.95),
+    0 0 10px rgba(255, 23, 68, 0.9),
+    0 0 20px rgba(214, 24, 39, 0.75);
+  filter: drop-shadow(0 2px 5px rgba(214, 24, 39, 0.8));
+  box-shadow: none;
   flex-shrink: 0;
 }
 
+.jersey-badge .jersey-hash {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ff3b4b;
+  margin-right: 1.5px;
+  text-shadow: 0 0 8px rgba(255, 59, 75, 0.85);
+  opacity: 0.95;
+}
+
 .player-card.playing .jersey-badge {
-  background: #ffffff;
-  color: var(--red-primary);
-  border-color: var(--red-bright);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+  text-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.95),
+    0 0 16px #00e5ff,
+    0 0 28px rgba(0, 229, 255, 0.9);
+  filter: drop-shadow(0 2px 6px rgba(0, 229, 255, 0.85));
+}
+
+.player-card.playing .jersey-badge .jersey-hash {
+  color: #00e5ff;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.95);
 }
 
 /* Card Status Badges */
@@ -869,16 +891,27 @@ html, body {
 }
 
 .player-card.is-at-bat .jersey-badge {
-  min-width: 58px !important;
-  height: 46px !important;
-  font-size: 2.2rem !important;
-  border-radius: 9px !important;
-  background: #00e5ff !important;
-  color: #021427 !important;
-  border: 2.5px solid #ffffff !important;
+  min-width: auto !important;
+  height: auto !important;
+  font-size: 3.2rem !important;
+  line-height: 0.85 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
   font-weight: 900 !important;
-  text-shadow: none !important;
-  box-shadow: 0 0 18px rgba(0, 229, 255, 0.95), inset 0 0 8px rgba(255, 255, 255, 0.85) !important;
+  text-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.95),
+    0 0 16px #00e5ff,
+    0 0 32px rgba(0, 229, 255, 0.9) !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 3px 8px rgba(0, 229, 255, 0.85)) !important;
+}
+
+.player-card.is-at-bat .jersey-badge .jersey-hash {
+  font-size: 1.85rem !important;
+  color: #00e5ff !important;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.9) !important;
 }
 
 .player-card.is-at-bat .card-badges-wrap {
@@ -974,10 +1007,15 @@ html, body {
 }
 
 .player-card.is-at-bat.playing .jersey-badge {
-  background: #ffffff !important;
-  color: #0077c2 !important;
-  border-color: #00e5ff !important;
-  box-shadow: 0 0 22px rgba(255, 255, 255, 1), 0 0 32px rgba(0, 229, 255, 0.9) !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.95),
+    0 0 22px #00e5ff,
+    0 0 38px #ffffff !important;
+  filter: drop-shadow(0 3px 10px rgba(0, 229, 255, 0.95)) !important;
 }
 
 .player-card.is-at-bat.playing .card-progress-bar {
@@ -992,8 +1030,22 @@ html, body {
 }
 
 .player-card.is-on-deck .jersey-badge {
-  border-color: #00e676 !important;
-  box-shadow: 0 0 12px rgba(0, 230, 118, 0.65) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-size: 2.5rem !important;
+  text-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.95),
+    0 0 16px #00e676,
+    0 0 28px rgba(0, 230, 118, 0.9) !important;
+  filter: drop-shadow(0 3px 6px rgba(0, 230, 118, 0.85)) !important;
+}
+
+.player-card.is-on-deck .jersey-badge .jersey-hash {
+  font-size: 1.5rem !important;
+  color: #00e676 !important;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.9) !important;
 }
 
 .player-card.is-on-deck .player-name {
@@ -1166,8 +1218,20 @@ html, body {
 }
 
 .player-card.is-at-bat.paused .jersey-badge {
-  border-color: #ffb300 !important;
-  box-shadow: 0 0 14px rgba(255, 179, 0, 0.6) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  text-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.95),
+    0 0 16px #ffb300,
+    0 0 28px rgba(255, 179, 0, 0.9) !important;
+  filter: drop-shadow(0 3px 6px rgba(255, 179, 0, 0.85)) !important;
+}
+
+.player-card.is-at-bat.paused .jersey-badge .jersey-hash {
+  color: #ffb300 !important;
+  text-shadow: 0 0 10px rgba(255, 179, 0, 0.9) !important;
 }
 
 .card-status-badge.paused-status {
