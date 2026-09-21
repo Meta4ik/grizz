@@ -505,14 +505,13 @@ class GrizzliesApp {
           <div class="card-info-col">
             <div class="player-name">${player.name}</div>
             
-            <!-- Sliding Transport Track Underneath Name with Triangle Notch Indicator -->
+            <!-- Sliding Transport Track Underneath Name with Clean Bottom Triangle Playhead -->
             <div class="card-transport-container" id="transport-wrap-${player.id}">
               <div class="card-transport-track" id="card-track-${player.id}" title="Tap to scrub track position">
                 <div class="card-transport-fill" id="card-fill-${player.id}"></div>
                 <div class="card-transport-notch" id="card-notch-${player.id}">
-                  <span class="notch-triangle"></span>
                   <span class="notch-needle"></span>
-                  <span class="notch-triangle-bottom"></span>
+                  <span class="notch-triangle"></span>
                 </div>
               </div>
             </div>
