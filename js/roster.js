@@ -29,7 +29,7 @@ export const PLAYERS = [
     name: "Madoc Willis",
     song: "Save The Day",
     artist: "Stadium Mix",
-    file: "sounds/Grizzlies 8u Walkup Songs w-INTRO Fall 2026 8 Madoc Willis -  Save The Day.mp3"
+    file: "sounds/Grizzlies 8u - Fall 2026 8 Madoc Willis -  Save The Day.mp3"
   },
   {
     id: "player-12",
