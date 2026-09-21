@@ -1,3 +1,7 @@
 .DS_Store
 *.log
 .agent/
+sounds/*Audio*.mp3
+sounds/*B-Delay*.mp3
+sounds/*A-Return*.mp3
+sounds/*Bounce*.mp3
