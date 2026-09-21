@@ -77,9 +77,14 @@ export class WalkUpAudioEngine {
       this.gainNode = this.audioCtx.createGain();
       this.gainNode.gain.setValueAtTime(this.masterVolume, this.audioCtx.currentTime);
 
-      // Connect: Audio Element -> Gain Node -> Device Speakers
+      this.analyser = this.audioCtx.createAnalyser();
+      this.analyser.fftSize = 64;
+      this.analyser.smoothingTimeConstant = 0.8;
+
+      // Connect: Audio Element -> Analyser -> Gain Node -> Device Speakers
       this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
-      this.sourceNode.connect(this.gainNode);
+      this.sourceNode.connect(this.analyser);
+      this.analyser.connect(this.gainNode);
       this.gainNode.connect(this.audioCtx.destination);
 
       this.webAudioInitialized = true;
@@ -90,6 +95,16 @@ export class WalkUpAudioEngine {
     } catch (err) {
       console.warn("Web Audio API GainNode routing notice:", err);
     }
+  }
+
+  /**
+   * Retrieves real-time audio frequency data for waveform visualizers
+   */
+  getByteFrequencyData() {
+    if (!this.analyser) return null;
+    const buffer = new Uint8Array(this.analyser.frequencyBinCount);
+    this.analyser.getByteFrequencyData(buffer);
+    return buffer;
   }
 
   /**
@@ -280,6 +295,68 @@ export class WalkUpAudioEngine {
     } catch (err) {
       console.warn("Autoplay interaction notice:", err);
       this.callbacks.onError(err, track);
+    }
+  }
+
+  /**
+   * Pause current playback
+   */
+  pause() {
+    if (this.audio && !this.audio.paused) {
+      this._applyVolume(0.0);
+      this.audio.pause();
+      this.isPlaying = false;
+      this.callbacks.onPause(this.currentTrack);
+      this._stopTimeTracking();
+    }
+  }
+
+  /**
+   * Resume paused playback from current timestamp
+   */
+  async resume() {
+    if (this.audio && this.audio.paused && this.currentTrack) {
+      this._initWebAudio();
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        try { await this.audioCtx.resume(); } catch (e) {}
+      }
+      this._applyVolume(this.masterVolume);
+      try {
+        await this.audio.play();
+        this.isPlaying = true;
+        this.callbacks.onPlay(this.currentTrack);
+        this._startTimeTracking();
+      } catch (err) {
+        console.error("Error resuming audio:", err);
+      }
+    }
+  }
+
+  /**
+   * Seek to specific timestamp in seconds
+   */
+  seek(timeInSeconds) {
+    if (this.audio) {
+      const dur = this.audio.duration || 0;
+      const targetTime = Math.max(0, Math.min(dur, parseFloat(timeInSeconds) || 0));
+      this.audio.currentTime = targetTime;
+      const progress = dur > 0 ? (targetTime / dur) : 0;
+      this.callbacks.onTimeUpdate({
+        currentTime: targetTime,
+        duration: dur,
+        progress,
+        track: this.currentTrack
+      });
+    }
+  }
+
+  /**
+   * Seek by percentage (0.0 to 1.0)
+   */
+  seekPercent(pct) {
+    if (this.audio && this.audio.duration) {
+      const targetTime = this.audio.duration * Math.max(0, Math.min(1.0, parseFloat(pct) || 0));
+      this.seek(targetTime);
     }
   }
 

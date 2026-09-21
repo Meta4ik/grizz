@@ -520,13 +520,14 @@ html, body {
   position: sticky;
   top: 0;
   z-index: 25;
+  box-sizing: border-box;
   background: #0e0f14;
   background: linear-gradient(180deg, #0e0f14 0%, #0e0f14 92%, rgba(14, 15, 20, 0.98) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  margin-left: -14px;
-  margin-right: -14px;
-  padding: 8px 14px 6px 14px;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 8px 0 6px 0;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75);
 }
 
@@ -592,57 +593,99 @@ html, body {
   line-height: 1;
 }
 
-/* On-Deck Notification Banner */
+/* On-Deck Notification Banner (High-Contrast Emerald Field Green Theme) */
 .on-deck-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(90deg, rgba(0, 229, 255, 0.16) 0%, rgba(13, 27, 42, 0.92) 100%);
-  border: 1.5px solid rgba(0, 229, 255, 0.55);
+  gap: 8px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, rgba(2, 38, 20, 0.98) 0%, rgba(6, 24, 14, 0.98) 100%);
+  border: 2px solid #00e676;
   padding: 8px 12px;
   border-radius: 12px;
   margin-top: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   animation: fadeIn 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 229, 255, 0.15);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 230, 118, 0.4);
+  overflow: hidden;
 }
 
-.on-deck-label {
-  font-size: 0.72rem;
-  font-weight: 900;
-  color: #00e5ff;
-  letter-spacing: 0.8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
-}
-
-.on-deck-name {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--text-pure);
-  margin-left: 8px;
+.on-deck-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
   flex: 1;
 }
 
-.play-ondeck-btn {
-  background: linear-gradient(135deg, #00d2ff 0%, #0066ff 100%);
+.on-deck-label {
+  font-size: 1.08rem;
+  font-weight: 900;
+  color: #00e676;
+  letter-spacing: 0.8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.7);
+  line-height: 1.2;
+}
+
+.on-deck-label .baseball-ico {
+  font-size: 1.15rem;
+}
+
+.on-deck-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.on-deck-player-title {
+  font-size: 1.38rem;
+  font-weight: 900;
   color: #ffffff;
-  border: 1px solid #70f3ff;
-  border-radius: 7px;
-  padding: 5px 12px;
-  font-size: 0.72rem;
+  letter-spacing: 0.2px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.on-deck-player-song {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #69f0ae;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.play-ondeck-btn {
+  background: linear-gradient(135deg, #00e676 0%, #00a854 100%);
+  color: #022614;
+  border: 1.5px solid #ffffff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: var(--font-athletic);
+  font-size: 1.05rem;
   font-weight: 900;
   cursor: pointer;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 10px rgba(0, 102, 255, 0.5);
-  transition: transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 3px 12px rgba(0, 168, 84, 0.6), 0 0 14px rgba(0, 230, 118, 0.5);
+  transition: transform 0.12s, box-shadow 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 .play-ondeck-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 6px rgba(0, 229, 255, 0.7);
+  transform: scale(0.94);
+  box-shadow: 0 0 22px rgba(0, 230, 118, 0.95);
 }
 
 /* ==========================================================================
@@ -792,71 +835,201 @@ html, body {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 
-/* Current Batter At-Bat: Lit Up Electric Blue / Cyan */
+/* Current Batter At-Bat: Full Width (Spans both columns) & Magnified Text */
 .player-card.is-at-bat {
-  background: linear-gradient(145deg, #092645 0%, #081729 100%) !important;
-  border: 2px solid #00e5ff !important;
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.6), inset 0 0 12px rgba(0, 229, 255, 0.25) !important;
+  grid-column: 1 / -1 !important; /* Spans both columns! Full width */
+  background: linear-gradient(135deg, #072847 0%, #0d1a29 100%) !important;
+  border: 2.5px solid #00e5ff !important;
+  border-radius: 16px;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.7), 0 0 28px rgba(0, 229, 255, 0.65), inset 0 0 16px rgba(0, 229, 255, 0.2) !important;
+  padding: 16px 18px 18px 18px;
+  min-height: 148px;
   transform: translateY(-2px);
-  z-index: 2;
+  z-index: 4;
+  animation: atBatCardExpand 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes atBatCardExpand {
+  0% {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.player-card.is-at-bat .card-top-row {
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .player-card.is-at-bat .jersey-badge {
+  min-width: 58px !important;
+  height: 46px !important;
+  font-size: 2.2rem !important;
+  border-radius: 9px !important;
   background: #00e5ff !important;
   color: #021427 !important;
-  border: 2px solid #ffffff !important;
+  border: 2.5px solid #ffffff !important;
   font-weight: 900 !important;
   text-shadow: none !important;
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.95), inset 0 0 6px rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.95), inset 0 0 8px rgba(255, 255, 255, 0.85) !important;
+}
+
+.player-card.is-at-bat .card-badges-wrap {
+  max-width: none !important;
+  flex-shrink: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-card.is-at-bat .card-status-badge.at-bat-badge {
+  background: #00e5ff !important;
+  color: #021427 !important;
+  border: 1.5px solid #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.8px !important;
+  padding: 5px 11px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.9) !important;
+  white-space: nowrap;
+}
+
+.player-card.is-at-bat .card-status-badge.at-bat-badge .baseball-ico {
+  font-size: 1.1rem;
+  margin-right: 4px;
+}
+
+.player-card.is-at-bat .card-status-badge.on-deck-tag {
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  white-space: nowrap;
+}
+
+.player-card.is-on-deck .card-status-badge.on-deck-tag {
+  background: rgba(0, 230, 118, 0.22) !important;
+  color: #69f0ae !important;
+  border: 1px solid rgba(0, 230, 118, 0.5) !important;
+}
+
+.player-card.is-at-bat .card-bottom-row {
+  margin-top: 6px;
+  gap: 3px;
 }
 
 .player-card.is-at-bat .player-name {
-  color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  font-size: 1.95rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.4px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95) !important;
 }
 
 .player-card.is-at-bat .song-title {
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
   color: #70f3ff !important;
-  font-weight: 700;
+  line-height: 1.25 !important;
+  margin-top: 4px !important;
+}
+
+.player-card.is-at-bat .song-artist {
+  font-size: 1.0rem !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  margin-top: 1px !important;
 }
 
 .player-card.is-at-bat .card-progress-bar {
   background: #00e5ff !important;
+  height: 4px;
 }
 
 /* When the At-Bat Batter is actively playing their walk-up track */
 .player-card.is-at-bat.playing {
-  background: linear-gradient(145deg, #0a3560 0%, #051a30 100%) !important;
-  border-color: #70f3ff !important;
-  box-shadow: 0 0 32px rgba(0, 229, 255, 0.85), inset 0 0 14px rgba(0, 229, 255, 0.35) !important;
-  animation: pulseBlueCard 2s infinite alternate ease-in-out !important;
+  grid-column: 1 / -1 !important;
+  background: linear-gradient(135deg, #093c6e 0%, #051a30 100%) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 46px rgba(0, 229, 255, 0.95), inset 0 0 22px rgba(0, 229, 255, 0.45) !important;
+  animation: pulseBlueCardFull 2s infinite alternate ease-in-out !important;
+}
+
+@keyframes pulseBlueCardFull {
+  0% {
+    box-shadow: 0 0 26px rgba(0, 229, 255, 0.7), inset 0 0 12px rgba(0, 229, 255, 0.25);
+    border-color: #00e5ff;
+  }
+  100% {
+    box-shadow: 0 0 50px rgba(0, 229, 255, 1), inset 0 0 26px rgba(0, 229, 255, 0.55);
+    border-color: #ffffff;
+  }
 }
 
 .player-card.is-at-bat.playing .jersey-badge {
   background: #ffffff !important;
   color: #0077c2 !important;
   border-color: #00e5ff !important;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(0, 229, 255, 0.9) !important;
+  box-shadow: 0 0 22px rgba(255, 255, 255, 1), 0 0 32px rgba(0, 229, 255, 0.9) !important;
 }
 
 .player-card.is-at-bat.playing .card-progress-bar {
   background: linear-gradient(90deg, #0077c2, #00e5ff, #ffffff) !important;
 }
 
-/* On-Deck Batter (The Person Immediately Following) */
+/* On-Deck Batter (The Person Immediately Following - High Visibility Emerald Field Green Theme) */
 .player-card.is-on-deck {
-  border: 2px dashed #00e5ff !important;
-  background: linear-gradient(145deg, rgba(0, 229, 255, 0.12) 0%, rgba(18, 23, 34, 0.95) 100%) !important;
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.3) !important;
+  border: 2.5px dashed #00e676 !important;
+  background: linear-gradient(145deg, rgba(0, 230, 118, 0.16) 0%, rgba(6, 24, 14, 0.96) 100%) !important;
+  box-shadow: 0 0 22px rgba(0, 230, 118, 0.45) !important;
 }
 
 .player-card.is-on-deck .jersey-badge {
-  border-color: #00e5ff;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+  border-color: #00e676 !important;
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.65) !important;
+}
+
+.player-card.is-on-deck .player-name {
+  font-size: 1.12rem;
+  font-weight: 900;
+  color: #ffffff;
 }
 
 .player-card.is-on-deck .song-title {
-  color: #9eeeff;
+  color: #a7f3d0;
+  font-weight: 800;
+}
+
+.player-card.is-on-deck .song-artist {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.player-card.is-on-deck .card-transport-track {
+  border-color: rgba(0, 230, 118, 0.5);
+  background: rgba(2, 26, 14, 0.85);
+}
+
+.player-card.is-on-deck .card-transport-fill {
+  background: linear-gradient(90deg, #008744 0%, #00e676 100%);
+}
+
+.player-card.is-on-deck .card-transport-notch .notch-triangle {
+  filter: drop-shadow(0 0 4px #00e676) drop-shadow(0 0 1px #000000);
+}
+
+.player-card.is-on-deck .card-transport-notch .notch-triangle-bottom {
+  filter: drop-shadow(0 0 4px #00e676) drop-shadow(0 0 1px #000000);
+}
+
+.player-card.is-on-deck .card-transport-notch .notch-needle {
+  box-shadow: 0 0 8px #00e676, 0 0 12px #ffffff;
 }
 
 /* Badges for At-Bat and On-Deck */
@@ -875,15 +1048,15 @@ html, body {
 }
 
 .card-status-badge.on-deck-badge {
-  background: rgba(0, 229, 255, 0.2);
-  color: #00e5ff;
-  border: 1.5px solid #00e5ff;
+  background: rgba(0, 230, 118, 0.22);
+  color: #00e676;
+  border: 1.5px solid #00e676;
   font-weight: 900;
-  font-size: 0.64rem;
-  letter-spacing: 0.5px;
-  padding: 2px 6px;
+  font-size: 0.88rem;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
   border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.55);
   display: inline-flex;
   align-items: center;
 }
@@ -897,162 +1070,318 @@ html, body {
   gap: 2px;
 }
 
-.player-name {
-  font-size: 0.98rem;
-  font-weight: 800;
-  color: var(--text-pure);
-  line-height: 1.25;
-  white-space: normal;
-  word-break: break-word;
+.card-info-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
-.song-title {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--text-red);
-  line-height: 1.2;
-  white-space: normal;
-  word-break: break-word;
-  margin-top: 1px;
+/* Sliding Transport Track Underneath Player Name */
+.card-transport-container {
+  width: 100%;
+  margin: 6px 0 8px 0;
+  padding: 2px 0;
+  display: block;
 }
 
-.song-artist {
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  line-height: 1.2;
-  white-space: normal;
-  word-break: break-word;
+.card-transport-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  position: relative;
+  overflow: visible;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+.player-card.is-at-bat .card-transport-track {
+  height: 14px; /* Taller in batter section for sunlight visibility */
+  border: 2px solid #00e5ff;
+  background: rgba(1, 14, 28, 0.9);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 229, 255, 0.35);
+}
+
+.player-card.is-at-bat.playing .card-transport-track {
+  border-color: #ffffff;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 18px rgba(0, 229, 255, 0.6);
+}
+
+.card-transport-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #d61827 0%, #ff3b30 100%);
+  border-radius: 4px;
+  transition: width 0.08s linear;
+}
+
+.player-card.is-at-bat .card-transport-fill {
+  background: linear-gradient(90deg, #0077c2 0%, #00e5ff 100%);
+}
+
+.player-card.is-at-bat.playing .card-transport-fill {
+  background: linear-gradient(90deg, #0077c2 0%, #00e5ff 70%, #ffffff 100%);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.85);
+}
+
+/* High-Contrast Playhead Notch / Triangle Indicator */
+.card-transport-notch {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.08s linear;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
+}
+
+/* Sharp top triangle pointing down ▽ */
+.card-transport-notch .notch-triangle {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #ffffff;
+  position: absolute;
+  top: -10px;
+  filter: drop-shadow(0 0 4px #00e5ff) drop-shadow(0 0 1px #000000);
+}
+
+/* Sharp bottom triangle pointing up △ */
+.card-transport-notch .notch-triangle-bottom {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid #ffffff;
+  position: absolute;
+  bottom: -10px;
+  filter: drop-shadow(0 0 4px #00e5ff) drop-shadow(0 0 1px #000000);
+}
+
+/* Bright vertical center needle ┃ */
+.card-transport-notch .notch-needle {
+  width: 3.5px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #00e5ff, 0 0 12px #ffffff;
+}
+
+/* Paused State for Player Cards */
+.player-card.is-at-bat.paused {
+  grid-column: 1 / -1 !important;
+  background: linear-gradient(135deg, #2b2308 0%, #171203 100%) !important;
+  border-color: #ffb300 !important;
+  box-shadow: 0 0 24px rgba(255, 179, 0, 0.55), inset 0 0 14px rgba(255, 179, 0, 0.25) !important;
+  animation: none !important;
+}
+
+.player-card.is-at-bat.paused .jersey-badge {
+  border-color: #ffb300 !important;
+  box-shadow: 0 0 14px rgba(255, 179, 0, 0.6) !important;
+}
+
+.card-status-badge.paused-status {
+  background: #ffb300;
+  color: #1a1200;
+  border: 1px solid #ffffff;
+  font-weight: 900;
+  font-size: 0.66rem;
+  letter-spacing: 0.5px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(255, 179, 0, 0.85);
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-card-playpause {
+  display: none; /* Hidden on regular small 2-column cards */
+}
+
+/* On Full-Width At-Bat Card: Horizontal Row with Play/Pause Button on the Right */
+.player-card.is-at-bat .card-bottom-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.player-card.is-at-bat .btn-card-playpause {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00e5ff 0%, #0077c2 100%);
+  border: 2.5px solid #ffffff;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 119, 194, 0.6), 0 0 16px rgba(0, 229, 255, 0.75);
+  transition: transform 0.12s, box-shadow 0.15s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.player-card.is-at-bat .btn-card-playpause:active {
+  transform: scale(0.92);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 1);
+}
+
+/* Playing State: Pulsing Red background with Pause Icon */
+.player-card.is-at-bat.playing .btn-card-playpause,
+.btn-card-playpause.is-playing {
+  background: linear-gradient(135deg, #ff1a2a 0%, #d61827 100%) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(214, 24, 39, 0.6), 0 0 20px rgba(255, 30, 45, 0.85) !important;
+  animation: pulsePlayBtn 1.8s infinite alternate ease-in-out !important;
+}
+
+/* Paused State: Amber/Gold background with Play Icon */
+.player-card.is-at-bat.paused .btn-card-playpause,
+.btn-card-playpause.is-paused {
+  background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(255, 179, 0, 0.6), 0 0 18px rgba(255, 179, 0, 0.85) !important;
+  animation: none !important;
+}
+
+@keyframes pulsePlayBtn {
+  0% { box-shadow: 0 0 12px rgba(255, 30, 45, 0.6); }
+  100% { box-shadow: 0 0 26px rgba(255, 30, 45, 1); }
+}
+
+/* Default / Initial Icon visibility (Play Icon Shown) */
+.btn-card-playpause .icon-play {
+  display: block !important;
+  margin-left: 3px !important;
+}
+
+.btn-card-playpause .icon-pause {
+  display: none !important;
+}
+
+/* When Playing: Show Pause Icon, Hide Play Icon */
+.player-card.playing .btn-card-playpause .icon-play,
+.btn-card-playpause.is-playing .icon-play {
+  display: none !important;
+}
+
+.player-card.playing .btn-card-playpause .icon-pause,
+.btn-card-playpause.is-playing .icon-pause {
+  display: block !important;
+  margin-left: 0 !important;
+}
+
+/* When Paused: Show Play Icon, Hide Pause Icon */
+.player-card.paused .btn-card-playpause .icon-play,
+.btn-card-playpause.is-paused .icon-play {
+  display: block !important;
+  margin-left: 3px !important;
+}
+
+.player-card.paused .btn-card-playpause .icon-pause,
+.btn-card-playpause.is-paused .icon-pause {
+  display: none !important;
+}
+
+.player-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, background-color 0.2s, box-shadow 0.2s, min-height 0.25s, padding 0.25s;
 }
 
 .dock-spacer {
-  height: 90px; /* Slim spacer when dock drawer is collapsed */
+  height: calc(100vh - 220px);
+  min-height: 520px; /* Generous space so even the very last batter can scroll up right underneath the On Deck section */
   transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dock-spacer.expanded {
-  height: 280px;
+  height: calc(100vh - 100px);
+  min-height: 700px;
 }
 
 /* ==========================================================================
-   4. Master Dugout Bottom Dock (Sliding Drawer)
+   4. Master Dugout Bottom Dock (Sliding Drawer with Red Background & Visible Slider)
    ========================================================================== */
 .master-dock {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(12, 13, 17, 0.96);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border-top: 1.5px solid #4a1c22;
+  background: linear-gradient(180deg, #d61827 0%, #9e0e1a 100%);
+  border-top: 2.5px solid #ff4b55;
   padding: 6px 14px calc(var(--safe-bottom) + 8px) 14px;
-  box-shadow: 0 -10px 32px rgba(0, 0, 0, 0.92);
+  box-shadow: 0 -8px 28px rgba(214, 24, 39, 0.5), 0 -12px 36px rgba(0, 0, 0, 0.95);
   z-index: 30;
   display: flex;
   flex-direction: column;
-  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-top-color 0.25s ease;
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
-/* Sliding Drawer Pull Handle Bar */
-.dock-drawer-handle-bar {
+/* Top Center Pull Tab (matching user sketch - vibrant red for sunlight visibility) */
+.drawer-pull-tab {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 24px;
+  background: linear-gradient(180deg, #ff2a3a 0%, #d61827 100%);
+  border: 2px solid #ff6677;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 2px 0 6px 0;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 32;
+  box-shadow: 0 -4px 14px rgba(214, 24, 39, 0.55);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drawer-pull-tab:hover,
+.drawer-pull-tab:active {
+  background: #ff3b4b;
+  box-shadow: 0 -4px 20px rgba(255, 59, 75, 0.85);
+}
+
+.drawer-pull-chevron {
+  color: #ffffff;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+
+.master-dock.drawer-expanded .drawer-pull-tab {
+  background: linear-gradient(180deg, #ff1a2a 0%, #b3131e 100%);
+  border-color: #ff5252;
+  box-shadow: 0 -6px 20px rgba(235, 28, 44, 0.7);
+}
+
+.master-dock.drawer-expanded .drawer-pull-chevron {
+  transform: rotate(180deg);
+  color: #ffffff;
+}
+
+/* ALWAYS VISIBLE HEADER: Volume Slider Deck */
+.dock-visible-header {
+  width: 100%;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
 }
 
-.drawer-drag-pill {
-  width: 38px;
-  height: 4.5px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.35);
-  transition: background 0.2s, width 0.2s;
-}
-
-.dock-drawer-handle-bar:hover .drawer-drag-pill,
-.dock-drawer-handle-bar:active .drawer-drag-pill {
-  background: var(--red-bright);
-  width: 50px;
-}
-
-.drawer-handle-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.drawer-now-playing-mini {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  flex: 1;
-}
-
-.mini-eq-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.mini-eq-dot.active {
-  background: #00e676;
-  box-shadow: 0 0 8px #00e676;
-  animation: pulseDot 1s infinite alternate ease-in-out;
-}
-
-.mini-track-text {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-pure);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.2px;
-}
-
-.btn-drawer-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, rgba(214, 24, 39, 0.2) 0%, rgba(214, 24, 39, 0.08) 100%);
-  border: 1px solid rgba(214, 24, 39, 0.45);
-  border-radius: 16px;
-  padding: 4px 10px;
-  color: #ffffff;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
-}
-
-.btn-drawer-toggle:active {
-  transform: scale(0.95);
-  background: rgba(214, 24, 39, 0.35);
-}
-
-.toggle-btn-label {
-  font-family: var(--font-athletic);
-  font-size: 0.92rem;
-  letter-spacing: 0.8px;
-  font-weight: 700;
-  color: #ffca28;
-}
-
-.toggle-chevron {
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Collapsible Body Inside Master Dock */
+/* Collapsible Body Inside Master Dock (Reveals STOP / FADE and bottom text) */
 .dock-drawer-body {
   display: flex;
   flex-direction: column;
@@ -1068,164 +1397,35 @@ html, body {
   margin-top: 0;
 }
 
-/* Faded Luminous Electric Blue Edge at Top of Controls Drawer When Open */
-.master-dock.drawer-expanded {
-  border-top: 2px solid #00e5ff;
-  box-shadow: 0 -8px 26px rgba(0, 229, 255, 0.38), 0 -12px 36px rgba(0, 0, 0, 0.95);
-}
-
-.master-dock.drawer-expanded::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 32px;
-  background: linear-gradient(180deg, rgba(0, 229, 255, 0.24) 0%, rgba(0, 176, 255, 0.08) 50%, transparent 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
 .master-dock.drawer-expanded .dock-drawer-body {
-  max-height: 480px;
+  max-height: 380px;
   opacity: 1;
   pointer-events: auto;
-  margin-top: 6px;
-  position: relative;
-  z-index: 2;
+  margin-top: 8px;
 }
 
-.master-dock.drawer-expanded .dock-drawer-handle-bar {
-  position: relative;
-  z-index: 2;
-}
-
-.master-dock.drawer-expanded .drawer-drag-pill {
-  background: #00e5ff;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.75);
-  width: 44px;
-}
-
-.master-dock.drawer-expanded .btn-drawer-toggle {
-  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22) 0%, rgba(0, 150, 255, 0.1) 100%);
-  border-color: rgba(0, 229, 255, 0.55);
-}
-
-.master-dock.drawer-expanded .toggle-btn-label {
-  color: #00e5ff;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
-}
-
-.master-dock.drawer-expanded .toggle-chevron {
-  color: #00e5ff;
-  transform: rotate(180deg);
-}
-
-/* Live Track Header in Dock */
-.dock-status-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.now-playing-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.live-eq-badge {
-  display: flex;
-  align-items: flex-end;
-  gap: 2.5px;
-  width: 22px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.eq-bar {
-  width: 3.5px;
-  background: var(--red-primary);
-  border-radius: 2px;
-  height: 4px;
-  transition: height 0.15s ease;
-}
-
-.live-eq-badge.active .bar-1 { animation: eqBounce 0.6s infinite alternate ease-in-out; }
-.live-eq-badge.active .bar-2 { animation: eqBounce 0.45s infinite alternate ease-in-out 0.15s; }
-.live-eq-badge.active .bar-3 { animation: eqBounce 0.7s infinite alternate ease-in-out 0.3s; }
-.live-eq-badge.active .bar-4 { animation: eqBounce 0.5s infinite alternate ease-in-out 0.2s; }
-
-.track-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.track-player {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--text-pure);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.track-song {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-red);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.track-timer {
-  font-family: var(--font-athletic);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-med);
-  flex-shrink: 0;
-}
-
-/* Master Track Progress Track */
-.track-progress-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.track-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--red-primary), var(--red-bright));
-  transition: width 0.1s linear;
-}
-
-/* Master Action Buttons Row */
+/* Master Action Buttons Row (Row 2, immediately below slider, matching sketch) */
 .dock-controls-row {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1.8fr 1fr;
   gap: 10px;
+  width: 100%;
 }
 
 .btn-action {
   position: relative;
   border: none;
-  border-radius: 12px;
-  height: 52px;
-  padding: 0 14px;
+  height: 56px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  transition: transform 0.1s, opacity 0.2s, filter 0.15s;
+  border-radius: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  transition: transform 0.08s, opacity 0.2s, filter 0.15s, background 0.15s, border-color 0.15s;
   overflow: hidden;
 }
 
@@ -1234,373 +1434,497 @@ html, body {
 }
 
 .btn-action:disabled {
-  opacity: 0.4;
+  opacity: 0.7;
   cursor: not-allowed;
-  filter: grayscale(0.6);
+  filter: grayscale(0.4);
 }
 
-/* Fade Out Button Styling (Distinct Warm Amber/Red Fade) */
-.btn-fade {
-  background: linear-gradient(135deg, #f57c00 0%, #d61827 100%);
+/* STOP Button - High Contrast Black with White Border & Athletic Typography */
+.btn-stop-clean {
+  background: #111319;
+  border: 2.5px solid #ffffff;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
 }
 
-.btn-fade:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(245, 124, 0, 0.45);
-}
-
-.btn-fade.is-fading {
-  background: linear-gradient(135deg, #ff9800 0%, #ff1744 100%);
-  color: #ffffff;
-  animation: pulseFadeBtn 0.7s infinite alternate;
-}
-
-.btn-action-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-
-.btn-title {
+.btn-stop-clean .action-btn-text {
   font-family: var(--font-athletic);
-  font-size: 1.35rem;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-}
-
-.btn-subtitle {
-  font-size: 0.65rem;
-  font-weight: 700;
-  opacity: 0.95;
-  letter-spacing: 0.3px;
-}
-
-/* Instant Cut / Stop Button Styling */
-.btn-stop {
-  background: linear-gradient(135deg, #1f0b0e 0%, #110607 100%);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
   color: #ffffff;
-  border: 2px solid var(--cut-red);
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
-.btn-stop:not(:disabled) {
-  box-shadow: 0 4px 16px var(--cut-glow);
+.btn-stop-clean:active:not(:disabled) {
+  background: #ff1744;
+  border-color: #ffffff;
 }
 
-.btn-stop svg {
-  color: var(--cut-red);
+/* FADE Button - Punchy Amber with White Border */
+.btn-fade-clean {
+  background: #ffb300;
+  border: 2.5px solid #ffffff;
+  color: #111319;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
 }
 
-/* ==========================================================================
-   5. Full-Width DJ Mixer Crossfader Deck
-   ========================================================================== */
-.dj-crossfader-deck {
+.btn-fade-clean .action-btn-text {
+  font-family: var(--font-athletic);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #111319;
+  line-height: 1;
+}
+
+.btn-fade-clean.is-fading {
+  background: linear-gradient(135deg, #ff9100 0%, #d50000 100%);
+  color: #ffffff;
+  animation: pulseFadeClean 0.6s infinite alternate;
+}
+
+/* Master Track Progress Track (Taller with Notch for High Outdoor Visibility) */
+.track-progress-track {
   width: 100%;
-  background: linear-gradient(180deg, #181b24 0%, #0d0f14 100%);
-  border: 1.5px solid #2d3342;
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 18px rgba(0, 0, 0, 0.65);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  position: relative;
+  overflow: visible;
+  margin: 4px 0 6px 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
 }
 
-.crossfader-header {
+.track-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff1a2a 0%, #ff8f00 70%, #ffffff 100%);
+  border-radius: 4px;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 8px rgba(255, 26, 42, 0.6);
+}
+
+/* ALL TEXT PUSHED FURTHER TO THE BOTTOM TO PRIORITIZE BUTTON INTERFACES */
+.dock-bottom-text-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
+  padding-top: 2px;
 }
 
-.crossfader-title-group {
+.dock-bottom-text-row .now-playing-info {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
-.crossfader-icon {
-  font-size: 1.15rem;
-  line-height: 1;
+.dock-bottom-text-row .track-player {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.crossfader-title {
+.dock-bottom-text-row .track-song {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #ffe082; /* Soft gold on red background */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-bottom-text-row .track-timer {
   font-family: var(--font-athletic);
-  font-size: 1.15rem;
-  letter-spacing: 0.8px;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #ffffff;
-  line-height: 1;
+  flex-shrink: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.crossfader-hint {
-  font-size: 0.62rem;
-  color: var(--text-dim);
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  margin-left: 2px;
-}
-
-.crossfader-status-group {
+.dock-bottom-text-row .dock-status-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.crossfader-badge {
-  font-family: var(--font-athletic);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #00e5ff;
-  letter-spacing: 0.5px;
-  padding: 2px 8px;
-  background: rgba(0, 229, 255, 0.12);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  border-radius: 6px;
-  white-space: nowrap;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-}
-
-.crossfader-badge.fading {
-  color: #ffb300;
-  background: rgba(255, 179, 0, 0.12);
-  border-color: rgba(255, 179, 0, 0.4);
-}
-
-.crossfader-badge.muted {
-  color: var(--cut-red);
-  background: rgba(255, 46, 62, 0.12);
-  border-color: rgba(255, 46, 62, 0.4);
-}
-
-.btn-crossfader-reset {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-high);
-  font-family: var(--font-athletic);
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
+.dock-bottom-text-row .btn-drawer-settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  color: #ffffff;
   cursor: pointer;
-  letter-spacing: 0.5px;
   transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
 
-.btn-crossfader-reset:active {
-  transform: scale(0.94);
-  background: var(--red-primary);
+.dock-bottom-text-row .btn-drawer-settings:active {
+  transform: scale(0.92);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.dock-bottom-text-row .app-beta-tag {
+  font-size: 0.64rem;
+  font-weight: 800;
   color: #ffffff;
-  border-color: var(--red-bright);
-}
-
-/* Tick Scale Row */
-.crossfader-ticks-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 8px;
-  font-family: var(--font-athletic);
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 2px 7px;
+  border-radius: 4px;
   letter-spacing: 0.5px;
-  user-select: none;
-  -webkit-user-select: none;
 }
 
-.tick-mark.bold {
-  color: #00e5ff;
-}
 
-.tick-mark.center {
-  color: #ffb300;
-}
-
-.tick-mark.cut {
-  color: var(--cut-red);
-}
-
-/* Crossfader Track Slot - Spans full width of the phone! */
-.crossfader-slot-wrap {
-  position: relative;
+/* ==========================================================================
+   5. Analog Studio Precision Fader (Matching Reference Image)
+   ========================================================================== */
+.analog-fader-deck {
   width: 100%;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  background: #090b10;
-  border: 2px solid #222632;
-  border-radius: 10px;
-  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.95), 0 1px 0 rgba(255, 255, 255, 0.06);
-  padding: 0 4px;
+  position: relative;
+  background: 
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 4px),
+    linear-gradient(180deg, #282c37 0%, #1c1f27 45%, #15171e 100%);
+  border: 2px solid #3c4354;
+  border-radius: 12px;
+  padding: 8px 14px 10px 14px;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 6px 20px rgba(0, 0, 0, 0.85);
   overflow: visible;
 }
 
-.crossfader-center-detent {
-  position: absolute;
-  left: 50%;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 1;
+/* Tick Scale Row with 10, 5, 0 Numbers (10 on Left, 0 on Right) */
+.fader-ruler-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 18px 0 24px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* Range input styled as real DJ Crossfader */
-.dj-crossfader-slider {
+.ruler-station {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.ruler-num {
+  font-family: var(--font-athletic);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+  letter-spacing: 0.5px;
+}
+
+.ruler-tick.major {
+  width: 2.5px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.ruler-subticks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  flex: 1;
+  padding: 0 8px;
+}
+
+.ruler-tick.sub {
+  width: 1.5px;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 1px;
+}
+
+/* Recessed Slot Track & Range Input */
+.fader-track-container {
+  position: relative;
+  width: 100%;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.fader-recessed-slot {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 28px;
+  background: #040508;
+  border-radius: 8px;
+  border: 1.5px solid #232733;
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fader-waveform-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.analog-crossfader-slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100% !important;
-  height: 10px !important;
-  background: linear-gradient(90deg, #00e5ff 0%, #ffb300 50%, var(--cut-red) 100%) !important;
-  border-radius: 5px !important;
+  height: 28px !important;
+  background: transparent !important;
   outline: none !important;
-  border: 1px solid #14161f !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  border: none !important;
   margin: 0 !important;
   cursor: pointer;
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
-/* WebKit Crossfader Knob (Massive 58x38 tactile cap) */
-.dj-crossfader-slider::-webkit-slider-thumb {
+/* 3D Lathe-turned Metallic Knob with Glowing Red Ring & Top Notch (Matching Photo) */
+.analog-crossfader-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 58px !important;
-  height: 38px !important;
-  border-radius: 6px !important;
-  background: linear-gradient(180deg, #3d4352 0%, #1e222c 45%, #10131a 55%, #272d3b 100%) !important;
-  border: 2px solid #5f687c !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 12px rgba(0, 229, 255, 0.4) !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  background: 
+    /* Top 12 o'clock red pointer notch */
+    radial-gradient(circle at 50% 12%, #ff1744 0%, #ff1744 6.5%, transparent 7.5%),
+    /* Lathe-turned concentric metallic highlight dome */
+    radial-gradient(circle at 45% 45%, #ffffff 0%, #e2e6ee 18%, #858fa2 52%, #383e4c 82%, #181a22 100%) !important;
+  border: 3.5px solid #232731 !important;
+  box-shadow: 
+    0 4px 14px rgba(0, 0, 0, 0.95),
+    0 0 0 2.5px rgba(255, 23, 68, 0.85), /* Glowing red ring */
+    inset 0 2px 3px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.8) !important;
   cursor: grab;
   position: relative;
-  transition: transform 0.08s, box-shadow 0.12s, border-color 0.12s;
-  /* Distinctive DJ Center Line Marker */
-  background-image: linear-gradient(90deg, 
-    transparent 0%, 
-    transparent 47%, 
-    #ffffff 47%, 
-    #ffffff 53%, 
-    transparent 53%, 
-    transparent 100%
-  ) !important;
+  z-index: 6;
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
 }
 
-.dj-crossfader-slider::-webkit-slider-thumb:active {
-  cursor: grabbing;
-  transform: scale(1.06);
-  border-color: #00e5ff !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.95), 0 0 18px #00e5ff !important;
-}
-
-/* Firefox thumb */
-.dj-crossfader-slider::-moz-range-thumb {
-  width: 58px;
-  height: 38px;
-  border-radius: 6px;
-  background: linear-gradient(180deg, #3d4352 0%, #1e222c 45%, #10131a 55%, #272d3b 100%);
-  border: 2px solid #5f687c;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+.analog-crossfader-slider::-moz-range-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 50% 12%, #ff1744 0%, #ff1744 6.5%, transparent 7.5%),
+    radial-gradient(circle at 45% 45%, #ffffff 0%, #e2e6ee 18%, #858fa2 52%, #383e4c 82%, #181a22 100%);
+  border: 3.5px solid #232731;
+  box-shadow: 
+    0 4px 14px rgba(0, 0, 0, 0.95),
+    0 0 0 2.5px rgba(255, 23, 68, 0.85),
+    inset 0 2px 3px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.8);
   cursor: grab;
 }
 
-/* Legend Row */
-.crossfader-legend-row {
+/* User Instruction: -MAKE IT FLASH AS YOU SLIDE IT */
+@keyframes knobLaserStrobe {
+  0%, 100% {
+    box-shadow: 
+      0 4px 14px rgba(0, 0, 0, 0.95),
+      0 0 0 3px #ff1744,
+      0 0 16px #ff1744,
+      inset 0 2px 3px rgba(255, 255, 255, 0.9),
+      inset 0 -3px 4px rgba(0, 0, 0, 0.8);
+    filter: brightness(1.1);
+  }
+  50% {
+    box-shadow: 
+      0 6px 24px rgba(0, 0, 0, 0.95),
+      0 0 0 4.5px #ff5252,
+      0 0 35px #ff1744,
+      0 0 50px rgba(255, 23, 68, 0.9),
+      inset 0 0 12px #ff1744,
+      inset 0 2px 4px #ffffff;
+    filter: brightness(1.65);
+  }
+}
+
+.analog-crossfader-slider.is-sliding::-webkit-slider-thumb,
+.analog-crossfader-slider:active::-webkit-slider-thumb,
+.analog-fader-deck.is-sliding .analog-crossfader-slider::-webkit-slider-thumb {
+  animation: knobLaserStrobe 0.12s infinite alternate ease-in-out !important;
+  cursor: grabbing;
+  transform: scale(1.08);
+}
+
+.analog-crossfader-slider.is-sliding::-moz-range-thumb,
+.analog-crossfader-slider:active::-moz-range-thumb,
+.analog-fader-deck.is-sliding .analog-crossfader-slider::-moz-range-thumb {
+  animation: knobLaserStrobe 0.12s infinite alternate ease-in-out !important;
+  cursor: grabbing;
+  transform: scale(1.08);
+}
+
+/* Drawer Footer Row */
+.dock-footer-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
+.app-beta-tag {
+  position: static;
   font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Settings Modal Styles */
+.settings-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.settings-group {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-title {
+  font-size: 0.92rem;
   font-weight: 800;
+  color: var(--text-pure);
+}
+
+.settings-badge {
+  font-family: var(--font-athletic);
+  font-size: 1.15rem;
+  color: var(--red-bright);
+  font-weight: 700;
   letter-spacing: 0.5px;
-  user-select: none;
-  -webkit-user-select: none;
-  padding: 0 4px;
 }
 
-.legend-left {
-  color: #00e5ff;
+.settings-desc {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  line-height: 1.35;
+  margin: 0;
 }
 
-.legend-center {
-  color: rgba(255, 255, 255, 0.45);
+.settings-range {
+  width: 100%;
+  margin-top: 6px;
+  accent-color: var(--red-primary);
 }
 
-.legend-right {
+.btn-setting-toggle {
+  background: rgba(0, 230, 118, 0.15);
+  border: 1px solid rgba(0, 230, 118, 0.45);
+  color: #00e676;
+  font-family: var(--font-athletic);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn-setting-toggle.hidden-mode {
+  background: rgba(255, 46, 62, 0.15);
+  border-color: rgba(255, 46, 62, 0.45);
   color: var(--cut-red);
 }
 
-.crossfader-footer-row {
+.btn-setting-action {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  color: #00e5ff;
+  font-family: var(--font-athletic);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+}
+
+.btn-setting-action:active {
+  transform: scale(0.95);
+  background: rgba(0, 229, 255, 0.3);
+}
+
+#helpModal {
+  z-index: 120;
+}
+
+.settings-info-box {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.settings-info-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.78rem;
 }
 
-.auto-fade-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.68rem;
-  font-weight: 800;
+.settings-info-row .info-label {
   color: var(--text-dim);
-  letter-spacing: 0.4px;
+  font-weight: 600;
 }
 
-.fade-sec-badge {
-  font-family: var(--font-athletic);
-  font-size: 0.95rem;
-  color: var(--red-bright);
-}
-
-.preset-pills {
-  display: flex;
-  gap: 4px;
-}
-
-.preset-pill {
-  background: #191c25;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-dim);
-  font-size: 0.65rem;
+.settings-info-row .info-val {
+  color: var(--text-pure);
   font-weight: 700;
-  border-radius: 5px;
-  padding: 3px 8px;
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s, border-color 0.1s;
-}
-
-.preset-pill.active {
-  background: var(--red-primary);
-  color: #ffffff;
-  border-color: var(--red-bright);
-  font-weight: 800;
-}
-
-/* App Beta Version Badge (Lower Right Corner) */
-.app-beta-tag {
-  position: absolute;
-  right: 12px;
-  bottom: 4px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  color: rgba(255, 255, 255, 0.35);
-  font-family: var(--font-ui);
-  text-transform: uppercase;
-  pointer-events: none;
-  z-index: 35;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ==========================================================================

@@ -45,11 +45,10 @@
           </svg>
           <span class="btn-label" id="refreshLabel">Sync</span>
         </button>
-        <button id="helpBtn" class="btn-icon" title="iPhone Fullscreen Tips" aria-label="Tips">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        <button id="headerSettingsBtn" class="btn-icon" title="Dugout Settings" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </button>
         <button id="lineupToggleBtn" class="btn-icon" title="Toggle Batting Order / Lineup" aria-label="Batting Lineup Order">
@@ -130,8 +129,10 @@
 
               <!-- Next Batter / On-Deck Notification Pill -->
               <div class="on-deck-banner" id="onDeckBanner" style="display: none;">
-                <span class="on-deck-label"><span class="baseball-ico">⚾</span> ON DECK:</span>
-                <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
+                <div class="on-deck-content">
+                  <span class="on-deck-label"><span class="baseball-ico">⚾</span> ON DECK:</span>
+                  <span class="on-deck-name" id="onDeckName">#7 Dash Johnson</span>
+                </div>
                 <button id="playOnDeckBtn" class="play-ondeck-btn">PLAY NEXT &rarr;</button>
               </div>
             </div>
@@ -340,27 +341,90 @@
     <!-- Master Dugout Playback & Fade Dock (Sliding Drawer) -->
     <footer class="master-dock drawer-collapsed" id="masterDock">
       
-      <!-- Sliding Drawer Pull Handle Bar (Always Visible at Bottom) -->
-      <div class="dock-drawer-handle-bar" id="dockDrawerHandleBar" role="button" aria-label="Toggle Controls Drawer" tabindex="0">
-        <div class="drawer-drag-pill"></div>
-        <div class="drawer-handle-row">
-          <div class="drawer-now-playing-mini">
-            <span class="mini-eq-dot" id="miniEqDot"></span>
-            <span class="mini-track-text" id="miniTrackText">READY TO HIT</span>
+      <!-- Top Center Pull Tab with Chevron (Vibrant Red BG) -->
+      <div class="drawer-pull-tab" id="drawerPullTab" role="button" aria-label="Toggle Controls Drawer" tabindex="0">
+        <svg class="drawer-pull-chevron" id="drawerPullChevron" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 8.5l-6.5 6.5h13z"/>
+        </svg>
+      </div>
+
+      <!-- ALWAYS VISIBLE HEADER: Volume Slider (Visual even when closed!) -->
+      <div class="dock-visible-header" id="dockVisibleHeader">
+        <!-- Analog Precision Fader Deck (0 - 5 - 10 Ruler + Recessed Slot + 3D Flashing Knob) -->
+        <div class="analog-fader-deck" id="analogFaderDeck">
+          <!-- Fader Tick Ruler with 10, 5, 0 Numbers (10 on Left = 100% Vol, 0 on Right = Silence) -->
+          <div class="fader-ruler-row">
+            <div class="ruler-station station-10">
+              <span class="ruler-num">10</span>
+              <span class="ruler-tick major"></span>
+            </div>
+            <div class="ruler-subticks subticks-left">
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+            </div>
+            <div class="ruler-station station-5">
+              <span class="ruler-num">5</span>
+              <span class="ruler-tick major"></span>
+            </div>
+            <div class="ruler-subticks subticks-right">
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+              <span class="ruler-tick sub"></span>
+            </div>
+            <div class="ruler-station station-0">
+              <span class="ruler-num">0</span>
+              <span class="ruler-tick major"></span>
+            </div>
           </div>
-          <button class="btn-drawer-toggle" id="drawerToggleBtn" type="button" aria-label="Toggle Controls Drawer">
-            <span class="toggle-btn-label" id="drawerToggleLabel">FADE & CONTROLS</span>
-            <svg class="toggle-chevron" id="drawerChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </button>
+
+          <!-- Deep Recessed Fader Track Slot & 3D Metallic Flashing Knob with Live Waveform -->
+          <div class="fader-track-container" id="faderTrackContainer">
+            <div class="fader-recessed-slot" id="faderRecessedSlot">
+              <canvas id="faderWaveformCanvas" class="fader-waveform-canvas"></canvas>
+            </div>
+            <input 
+              type="range" 
+              id="masterCrossfader" 
+              class="analog-crossfader-slider" 
+              min="0" 
+              max="100" 
+              value="0" 
+              step="1"
+              aria-label="Analog Master Fader">
+          </div>
         </div>
       </div>
 
-      <!-- Sliding Drawer Expandable Body -->
+      <!-- EXPANDABLE DRAWER BODY (Reveals STOP / FADE and bottom text) -->
       <div class="dock-drawer-body" id="dockDrawerBody">
-        <!-- Live Track Card & State -->
-        <div class="dock-status-bar">
+        <!-- Master Action Controls: Clean STOP and FADE (matching sketch) -->
+        <div class="dock-controls-row">
+          <!-- Big High-Contrast STOP Button (wider, ~65%) -->
+          <button id="stopCutBtn" class="btn-action btn-stop-clean" disabled aria-label="Stop playback instantly">
+            <span class="action-btn-text">STOP</span>
+          </button>
+
+          <!-- High-Contrast FADE Button (~35%) -->
+          <button id="fadeOutBtn" class="btn-action btn-fade-clean" disabled aria-label="Fade out smoothly">
+            <span class="action-btn-text">FADE</span>
+          </button>
+        </div>
+
+        <!-- Live Track Progress Bar with Notch Endpoint Indicator -->
+        <div class="track-progress-track" id="masterTrackProgress">
+          <div class="track-progress-fill" id="trackProgressFill"></div>
+          <div class="card-transport-notch" id="trackProgressNotch">
+            <span class="notch-triangle"></span>
+            <span class="notch-needle"></span>
+            <span class="notch-triangle-bottom"></span>
+          </div>
+        </div>
+
+        <!-- ALL TEXT PUSHED FURTHER TO THE BOTTOM TO PRIORITIZE BUTTON INTERFACES -->
+        <div class="dock-bottom-text-row">
           <div class="now-playing-info">
             <div class="live-eq-badge" id="liveEqBadge">
               <span class="eq-bar bar-1"></span>
@@ -373,108 +437,18 @@
               <div class="track-song" id="dockSongTitle">Tap any player to drop their walk-up track</div>
             </div>
           </div>
-          <div class="track-timer" id="dockTimer">0:00</div>
-        </div>
-
-        <!-- Live Track Progress Bar -->
-        <div class="track-progress-track">
-          <div class="track-progress-fill" id="trackProgressFill"></div>
-        </div>
-
-        <!-- Master Action Controls -->
-        <div class="dock-controls-row">
-          <!-- Big FADE OUT Button -->
-          <button id="fadeOutBtn" class="btn-action btn-fade" disabled>
-            <div class="btn-fade-glow"></div>
-            <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-              <path d="M19 12h-4"></path>
-              <path d="M17 9l-2 3 2 3"></path>
-            </svg>
-            <div class="btn-action-text">
-              <span class="btn-title">FADE OUT</span>
-              <span class="btn-subtitle" id="fadeBtnSubtitle">Over 2.0s</span>
-            </div>
-          </button>
-
-          <!-- Big CUT / STOP Button -->
-          <button id="stopCutBtn" class="btn-action btn-stop" disabled>
-            <svg class="btn-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="5" y="5" width="14" height="14" rx="2"></rect>
-            </svg>
-            <div class="btn-action-text">
-              <span class="btn-title">CUT / STOP</span>
-              <span class="btn-subtitle">Instant Kill</span>
-            </div>
-          </button>
-        </div>
-
-        <!-- Full-Width Screen-to-Screen DJ Mixer Crossfader Deck -->
-        <div class="dj-crossfader-deck" id="djCrossfaderDeck">
-          <!-- Crossfader Header Bar -->
-          <div class="crossfader-header">
-            <div class="crossfader-title-group">
-              <span class="crossfader-icon">🎚️</span>
-              <span class="crossfader-title">MASTER CROSSFADER</span>
-            </div>
-            <div class="crossfader-status-group">
-              <div class="crossfader-badge" id="crossfaderStatusBadge">🔊 100% SOUND</div>
-              <button class="btn-crossfader-reset" id="crossfaderResetBtn" title="Reset to 100% Full Sound">↺ 100%</button>
-            </div>
-          </div>
-
-          <!-- DJ Calibration Tick Scale (Top) -->
-          <div class="crossfader-ticks-row">
-            <span class="tick-mark bold">100%</span>
-            <span class="tick-mark">·</span>
-            <span class="tick-mark">75%</span>
-            <span class="tick-mark">·</span>
-            <span class="tick-mark bold center">50% MID</span>
-            <span class="tick-mark">·</span>
-            <span class="tick-mark">25%</span>
-            <span class="tick-mark">·</span>
-            <span class="tick-mark bold cut">0% CUT</span>
-          </div>
-
-          <!-- Full Screen-Width Crossfader Track Slot & Slider -->
-          <div class="crossfader-slot-wrap" id="crossfaderSlotWrap">
-            <div class="crossfader-center-detent"></div>
-            <input 
-              type="range" 
-              id="masterCrossfader" 
-              class="dj-crossfader-slider" 
-              min="0" 
-              max="100" 
-              value="0" 
-              step="1"
-              aria-label="DJ Master Crossfader (Slide from left full sound to right silence)">
-          </div>
-
-          <!-- DJ Legend Row (Bottom Labels) -->
-          <div class="crossfader-legend-row">
-            <span class="legend-left">◀ 🔊 FULL BLAST (SOUND ON)</span>
-            <span class="legend-center">◆ SLIDE TO FADE OUT</span>
-            <span class="legend-right">🔇 SILENCE / CUT ▶</span>
-          </div>
-
-          <!-- Quick Auto-Fade Duration Pills Row -->
-          <div class="crossfader-footer-row">
-            <div class="auto-fade-label">
-              <span>⏳ AUTO-FADE SPEED:</span>
-              <span id="fadeDurationVal" class="fade-sec-badge">2.0s</span>
-            </div>
-            <div class="preset-pills">
-              <button class="preset-pill" data-seconds="1.0">1.0s</button>
-              <button class="preset-pill active" data-seconds="2.0">2.0s</button>
-              <button class="preset-pill" data-seconds="3.0">3.0s</button>
-              <button class="preset-pill" data-seconds="4.0">4.0s</button>
-            </div>
-            <input type="hidden" id="fadeDurationSlider" value="2.0">
+          <div class="dock-status-right">
+            <div class="track-timer" id="dockTimer">0:00</div>
+            <button class="btn-drawer-settings" id="drawerSettingsBtn" title="Dugout Audio & App Settings" aria-label="Settings">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
+            <div class="app-beta-tag" id="appBetaTag">v1.3-beta</div>
           </div>
         </div>
 
-        <!-- Beta Version Tag in Lower Right Corner -->
-        <div class="app-beta-tag" id="appBetaTag">v1.3-beta</div>
       </div>
 
     </footer>
@@ -578,6 +552,69 @@
 
         <div class="modal-footer">
           <button class="btn-primary" id="closeSongJarDoneBtn" style="width: 100%;">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dugout Audio & App Settings Modal -->
+    <div class="modal-overlay" id="settingsModal" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h3>⚙️ DUGOUT SETTINGS</h3>
+            <p>Audio fading & dugout options</p>
+          </div>
+          <button class="modal-close-btn" id="closeSettingsModal">&times;</button>
+        </div>
+        <div class="modal-body settings-modal-body">
+          <!-- Auto Fade Speed Setting -->
+          <div class="settings-group">
+            <div class="settings-label-row">
+              <span class="settings-title">⏳ Auto-Fade Speed</span>
+              <span id="fadeDurationVal" class="settings-badge">2.0s</span>
+            </div>
+            <p class="settings-desc">Duration songs take to fade out when pressing FADE.</p>
+            <div class="preset-pills">
+              <button class="preset-pill" data-seconds="1.0">1.0s</button>
+              <button class="preset-pill active" data-seconds="2.0">2.0s (Default)</button>
+              <button class="preset-pill" data-seconds="3.0">3.0s</button>
+              <button class="preset-pill" data-seconds="4.0">4.0s</button>
+            </div>
+            <input type="range" id="fadeDurationSlider" min="0.5" max="5.0" step="0.5" value="2.0" class="settings-range">
+          </div>
+
+          <!-- Stadium Rally & Chants Safety Switch -->
+          <div class="settings-group">
+            <div class="settings-label-row">
+              <span class="settings-title">🎺 Stadium Sound FX</span>
+              <button id="btnToggleRallySetting" class="btn-setting-toggle" type="button">VISIBLE</button>
+            </div>
+            <p class="settings-desc">Keep crowd chant buttons visible or hide during games.</p>
+          </div>
+
+          <!-- iPhone Dugout Setup Guide -->
+          <div class="settings-group">
+            <div class="settings-label-row">
+              <span class="settings-title">📱 iPhone Setup Guide</span>
+              <button id="openPhoneSetupBtn" class="btn-setting-action" type="button">VIEW SETUP</button>
+            </div>
+            <p class="settings-desc">Add to Home Screen tips for 100% full screen with no Safari browser bars.</p>
+          </div>
+
+          <!-- Version Info -->
+          <div class="settings-group settings-info-box">
+            <div class="settings-info-row">
+              <span class="info-label">App Version</span>
+              <span class="info-val">v1.3-beta</span>
+            </div>
+            <div class="settings-info-row">
+              <span class="info-label">Dugout Soundboard</span>
+              <span class="info-val">8U Fall 2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" id="closeSettingsDoneBtn" style="width: 100%;">Done</button>
         </div>
       </div>
     </div>

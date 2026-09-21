@@ -157,8 +157,10 @@ class GrizzliesApp {
       tabInnings: document.getElementById('tabInnings'),
       pagesTrackWrapper: document.getElementById('pagesTrackWrapper'),
       pagesTrack: document.getElementById('pagesTrack'),
-      pageWalkup: document.getElementById('pageWalkup'),
+      pageWalkup: document.getElementById('pageWalkUp') || document.getElementById('pageWalkup'),
+      pageWalkUp: document.getElementById('pageWalkUp') || document.getElementById('pageWalkup'),
       pageInnings: document.getElementById('pageInnings'),
+      rosterStickyHeader: document.getElementById('rosterStickyHeader'),
 
       hypeGrid: document.getElementById('hypeGrid'),
       stadiumHypeSection: document.getElementById('stadiumHypeSection'),
@@ -217,6 +219,9 @@ class GrizzliesApp {
 
       // Master Dock (Sliding Drawer)
       masterDock: document.getElementById('masterDock'),
+      drawerPullTab: document.getElementById('drawerPullTab'),
+      drawerPullChevron: document.getElementById('drawerPullChevron'),
+      dockVisibleHeader: document.getElementById('dockVisibleHeader'),
       dockDrawerHandleBar: document.getElementById('dockDrawerHandleBar'),
       drawerToggleBtn: document.getElementById('drawerToggleBtn'),
       drawerToggleLabel: document.getElementById('drawerToggleLabel'),
@@ -235,8 +240,11 @@ class GrizzliesApp {
       fadeBtnSubtitle: document.getElementById('fadeBtnSubtitle'),
       stopCutBtn: document.getElementById('stopCutBtn'),
 
-      // Sliders & DJ Crossfader
+      // Analog Precision Fader & Settings
+      analogFaderDeck: document.getElementById('analogFaderDeck'),
       masterCrossfader: document.getElementById('masterCrossfader'),
+      faderRecessedSlot: document.getElementById('faderRecessedSlot'),
+      faderWaveformCanvas: document.getElementById('faderWaveformCanvas'),
       crossfaderStatusBadge: document.getElementById('crossfaderStatusBadge'),
       crossfaderResetBtn: document.getElementById('crossfaderResetBtn'),
       fadeDurationSlider: document.getElementById('fadeDurationSlider'),
@@ -246,14 +254,23 @@ class GrizzliesApp {
       masterVolumeVal: document.getElementById('masterVolumeVal'),
       volIcon: document.getElementById('volIcon'),
 
-      // Header buttons
+      // Header buttons & Settings
       serverRefreshBtn: document.getElementById('serverRefreshBtn'),
       refreshIcon: document.getElementById('refreshIcon'),
       refreshLabel: document.getElementById('refreshLabel'),
       helpBtn: document.getElementById('helpBtn'),
+      headerSettingsBtn: document.getElementById('headerSettingsBtn'),
+      drawerSettingsBtn: document.getElementById('drawerSettingsBtn'),
       lineupToggleBtn: document.getElementById('lineupToggleBtn'),
       sortLabel: document.getElementById('sortLabel'),
       fullscreenBtn: document.getElementById('fullscreenBtn'),
+
+      // Settings Modal
+      settingsModal: document.getElementById('settingsModal'),
+      closeSettingsModal: document.getElementById('closeSettingsModal'),
+      closeSettingsDoneBtn: document.getElementById('closeSettingsDoneBtn'),
+      btnToggleRallySetting: document.getElementById('btnToggleRallySetting'),
+      openPhoneSetupBtn: document.getElementById('openPhoneSetupBtn'),
 
       // Lineup Modal
       lineupModal: document.getElementById('lineupModal'),
@@ -290,7 +307,9 @@ class GrizzliesApp {
     this.setupYouTubeControls();
     this.setupInlineSongJar();
     this.setupDockDrawer();
+    this.setupSettingsModal();
     this.setupRallyToggle();
+    this.initFaderWaveformVisualizer();
     this.updateSortLabel();
     this.updateOnDeckDisplay();
   }
@@ -483,11 +502,70 @@ class GrizzliesApp {
           </div>
         </div>
         <div class="card-bottom-row">
-          <div class="player-name">${player.name}</div>
-          <div class="song-title">${player.song}</div>
-          <div class="song-artist">${player.artist}</div>
+          <div class="card-info-col">
+            <div class="player-name">${player.name}</div>
+            
+            <!-- Sliding Transport Track Underneath Name with Triangle Notch Indicator -->
+            <div class="card-transport-container" id="transport-wrap-${player.id}">
+              <div class="card-transport-track" id="card-track-${player.id}" title="Tap to scrub track position">
+                <div class="card-transport-fill" id="card-fill-${player.id}"></div>
+                <div class="card-transport-notch" id="card-notch-${player.id}">
+                  <span class="notch-triangle"></span>
+                  <span class="notch-needle"></span>
+                  <span class="notch-triangle-bottom"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="song-title">${player.song}</div>
+            <div class="song-artist">${player.artist}</div>
+          </div>
+          <!-- At-Bat One-Touch Play / Pause Button -->
+          <button class="btn-card-playpause" id="playpause-${player.id}" aria-label="Play walk-up song for ${player.name}" data-id="${player.id}">
+            <svg class="icon-play" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+              <polygon points="7 4 20 12 7 20 7 4"></polygon>
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="1.5"></rect>
+              <rect x="14" y="4" width="4" height="16" rx="1.5"></rect>
+            </svg>
+          </button>
         </div>
       `;
+
+      // Scrubbing on Card Transport Track
+      const transportTrack = card.querySelector(`#card-track-${player.id}`);
+      if (transportTrack) {
+        const handleScrub = (e) => {
+          e.stopPropagation();
+          if (this.activeTrack && this.activeTrack.id === player.id) {
+            const rect = transportTrack.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+            this.audioEngine.seekPercent(pct);
+          }
+        };
+        transportTrack.addEventListener('click', handleScrub);
+        transportTrack.addEventListener('touchstart', handleScrub, { passive: true });
+      }
+
+      // Play / Pause Button Event
+      const playPauseBtn = card.querySelector('.btn-card-playpause');
+      if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(20);
+          if (this.activeTrack && this.activeTrack.id === player.id) {
+            if (this.audioEngine.isPlaying) {
+              this.audioEngine.pause();
+            } else {
+              this.audioEngine.resume();
+            }
+          } else {
+            this.handleTrackClick(player);
+          }
+        });
+      }
 
       card.addEventListener('click', () => this.handleTrackClick(player));
       this.dom.playerGrid.appendChild(card);
@@ -562,9 +640,35 @@ class GrizzliesApp {
       }
       this.updateOnDeckDisplay();
       this.updateBatterCardsState();
+      this.scrollToBatterCard(track.id);
     }
 
     this.audioEngine.play(track);
+  }
+
+  // Auto-scroll so the newly active At-Bat card smoothly docks right underneath the sticky On-Deck section
+  scrollToBatterCard(playerId) {
+    setTimeout(() => {
+      const container = this.dom.pageWalkUp || this.dom.pageWalkup || document.getElementById('pageWalkUp') || document.getElementById('pageWalkup');
+      const card = this.dom.playerGrid ? this.dom.playerGrid.querySelector(`.player-card[data-id="${playerId}"]`) : null;
+      const stickyHeader = this.dom.rosterStickyHeader || document.getElementById('rosterStickyHeader');
+
+      if (!card || !container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 0;
+
+      // Desired position: Top of card sits right underneath the bottom of the sticky header / on-deck section (with 8px breathing gap)
+      const desiredCardTop = containerRect.top + headerHeight + 8;
+      const delta = cardRect.top - desiredCardTop;
+      const targetScrollTop = Math.max(0, container.scrollTop + delta);
+
+      container.scrollTo({
+        top: targetScrollTop,
+        behavior: 'smooth'
+      });
+    }, 45);
   }
 
   setupAudioCallbacks() {
@@ -575,7 +679,7 @@ class GrizzliesApp {
       }
       this.activeAudioSource = 'walkup';
       this.activeTrack = track;
-      this.updateActiveCardVisuals(track.id);
+      this.updateActiveCardVisuals(track.id, 'playing');
       this.updateDockInfo(track, true);
       this.dom.fadeOutBtn.disabled = false;
       this.dom.stopCutBtn.disabled = false;
@@ -589,7 +693,8 @@ class GrizzliesApp {
     });
 
     this.audioEngine.on('onPause', (track) => {
-      if (this.activeAudioSource === 'walkup') {
+      if (this.activeAudioSource === 'walkup' && track) {
+        this.updateActiveCardVisuals(track.id, 'paused');
         this.updateDockInfo(track, false);
       }
     });
@@ -607,6 +712,8 @@ class GrizzliesApp {
         if (this.dom.miniEqDot) this.dom.miniEqDot.classList.remove('active');
         this.dom.dockTimer.textContent = '0:00';
         this.dom.trackProgressFill.style.width = '0%';
+        const dockNotch = document.getElementById('trackProgressNotch');
+        if (dockNotch) dockNotch.style.left = '0%';
         this.dom.liveEqBadge.classList.remove('active');
       }
     });
@@ -618,14 +725,20 @@ class GrizzliesApp {
       this.dom.dockTimer.textContent = `${mins}:${secs}`;
       
       const pct = Math.min(100, (progress * 100)).toFixed(1) + '%';
-      this.dom.trackProgressFill.style.width = pct;
+      if (this.dom.trackProgressFill) this.dom.trackProgressFill.style.width = pct;
+      const dockNotch = document.getElementById('trackProgressNotch');
+      if (dockNotch) dockNotch.style.left = pct;
 
-      // Card bottom progress
+      // Card bottom progress and transport track
       if (track) {
         const cardProg = document.getElementById(`progress-${track.id}`);
-        if (cardProg) {
-          cardProg.style.width = pct;
-        }
+        if (cardProg) cardProg.style.width = pct;
+
+        const cardFill = document.getElementById(`card-fill-${track.id}`);
+        if (cardFill) cardFill.style.width = pct;
+
+        const cardNotch = document.getElementById(`card-notch-${track.id}`);
+        if (cardNotch) cardNotch.style.left = pct;
       }
     });
 
@@ -649,18 +762,22 @@ class GrizzliesApp {
 
     this.audioEngine.on('onFadeProgress', ({ remainingTime, progress }) => {
       if (this.activeAudioSource === 'walkup') {
-        this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+        if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
         if (typeof progress === 'number') {
           const targetPos = Math.round(progress * 100);
           this.applyCrossfaderPosition(targetPos, true);
+          if (this.dom.masterCrossfader) this.dom.masterCrossfader.classList.add('is-sliding');
+          if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.add('is-sliding');
         }
       }
     });
 
     this.audioEngine.on('onFadeComplete', () => {
       if (this.activeAudioSource === 'walkup') {
-        this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+        if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
         this.dom.fadeOutBtn.classList.remove('is-fading');
+        if (this.dom.masterCrossfader) this.dom.masterCrossfader.classList.remove('is-sliding');
+        if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.remove('is-sliding');
         this.applyCrossfaderPosition(100, true);
       }
     });
@@ -777,41 +894,71 @@ class GrizzliesApp {
 
     this.ytEngine.on('onFadeProgress', ({ remainingTime, progress }) => {
       if (this.activeAudioSource === 'youtube') {
-        this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
+        if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Fading (${remainingTime}s)`;
         if (typeof progress === 'number') {
           const targetPos = Math.round(progress * 100);
           this.applyCrossfaderPosition(targetPos, true);
+          if (this.dom.masterCrossfader) this.dom.masterCrossfader.classList.add('is-sliding');
+          if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.add('is-sliding');
         }
       }
     });
 
     this.ytEngine.on('onFadeComplete', () => {
       if (this.activeAudioSource === 'youtube') {
-        this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+        if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
         this.dom.fadeOutBtn.classList.remove('is-fading');
+        if (this.dom.masterCrossfader) this.dom.masterCrossfader.classList.remove('is-sliding');
+        if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.remove('is-sliding');
         this.applyCrossfaderPosition(100, true);
       }
       this.renderInlineSongJar();
     });
   }
 
-  updateActiveCardVisuals(activeId) {
-    this.clearActiveVisuals();
+  updateActiveCardVisuals(activeId, state = 'playing') {
+    if (state === 'playing') {
+      this.clearActiveVisuals();
+    }
     const activeEl = document.getElementById(`btn-${activeId}`);
     if (activeEl) {
-      activeEl.classList.add('playing');
-      const statusBadge = document.getElementById(`status-${activeId}`);
-      if (statusBadge) {
-        statusBadge.style.display = 'inline-block';
-        statusBadge.className = 'card-status-badge live';
-        statusBadge.textContent = 'NOW PLAYING';
+      if (state === 'playing') {
+        activeEl.classList.remove('paused');
+        activeEl.classList.add('playing');
+        const statusBadge = document.getElementById(`status-${activeId}`);
+        if (statusBadge) {
+          statusBadge.style.display = 'inline-block';
+          statusBadge.className = 'card-status-badge live';
+          statusBadge.textContent = 'NOW PLAYING';
+        }
+        const playPauseBtn = activeEl.querySelector('.btn-card-playpause');
+        if (playPauseBtn) {
+          playPauseBtn.setAttribute('aria-label', 'Pause walk-up song');
+          playPauseBtn.classList.add('is-playing');
+          playPauseBtn.classList.remove('is-paused');
+        }
+      } else if (state === 'paused') {
+        activeEl.classList.remove('playing');
+        activeEl.classList.add('paused');
+        const statusBadge = document.getElementById(`status-${activeId}`);
+        if (statusBadge) {
+          statusBadge.style.display = 'inline-block';
+          statusBadge.className = 'card-status-badge paused-status';
+          statusBadge.textContent = 'PAUSED';
+        }
+        const playPauseBtn = activeEl.querySelector('.btn-card-playpause');
+        if (playPauseBtn) {
+          playPauseBtn.setAttribute('aria-label', 'Resume walk-up song');
+          playPauseBtn.classList.remove('is-playing');
+          playPauseBtn.classList.add('is-paused');
+        }
       }
     }
   }
 
   clearActiveVisuals() {
     document.querySelectorAll('.player-card, .hype-btn').forEach(el => {
-      el.classList.remove('playing', 'fading');
+      el.classList.remove('playing', 'paused', 'fading');
       const cardId = el.dataset.id || el.id.replace('btn-', '');
       const statusBadge = document.getElementById(`status-${cardId}`);
       if (statusBadge) {
@@ -820,6 +967,19 @@ class GrizzliesApp {
       const prog = document.getElementById(`progress-${cardId}`);
       if (prog) {
         prog.style.width = '0%';
+      }
+      const cardFill = document.getElementById(`card-fill-${cardId}`);
+      if (cardFill) {
+        cardFill.style.width = '0%';
+      }
+      const cardNotch = document.getElementById(`card-notch-${cardId}`);
+      if (cardNotch) {
+        cardNotch.style.left = '0%';
+      }
+      const playPauseBtn = el.querySelector('.btn-card-playpause');
+      if (playPauseBtn) {
+        playPauseBtn.classList.remove('is-playing', 'is-paused');
+        playPauseBtn.setAttribute('aria-label', 'Play walk-up song');
       }
     });
   }
@@ -867,7 +1027,7 @@ class GrizzliesApp {
     }
     if (this.onDeckPlayer) {
       this.dom.onDeckBanner.style.display = 'flex';
-      this.dom.onDeckName.textContent = `#${this.onDeckPlayer.number} ${this.onDeckPlayer.name} (${this.onDeckPlayer.song})`;
+      this.dom.onDeckName.innerHTML = `<span class="on-deck-player-title">#${this.onDeckPlayer.number} ${this.onDeckPlayer.name}</span><span class="on-deck-player-song">${this.onDeckPlayer.song}</span>`;
     }
   }
 
@@ -902,12 +1062,30 @@ class GrizzliesApp {
       });
     });
 
-    // 2. Full-Width DJ Master Crossfader
+    // 2. Analog Studio Precision Fader with Flashing Laser Red Knob
     if (this.dom.masterCrossfader) {
+      const startSliding = () => {
+        this.dom.masterCrossfader.classList.add('is-sliding');
+        if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.add('is-sliding');
+      };
+
+      const stopSliding = () => {
+        this.dom.masterCrossfader.classList.remove('is-sliding');
+        if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.remove('is-sliding');
+      };
+
       this.dom.masterCrossfader.addEventListener('input', (e) => {
         const pos = parseInt(e.target.value, 10);
         this.applyCrossfaderPosition(pos, false);
       });
+
+      this.dom.masterCrossfader.addEventListener('pointerdown', startSliding);
+      this.dom.masterCrossfader.addEventListener('touchstart', startSliding, { passive: true });
+      this.dom.masterCrossfader.addEventListener('mousedown', startSliding);
+
+      window.addEventListener('pointerup', stopSliding);
+      window.addEventListener('touchend', stopSliding, { passive: true });
+      window.addEventListener('mouseup', stopSliding);
     }
 
     if (this.dom.crossfaderResetBtn) {
@@ -965,10 +1143,148 @@ class GrizzliesApp {
     this.applyCrossfaderPosition(0, false);
   }
 
+  // =========================================================================
+  // Live Audio Waveform Inside Volume Control
+  // =========================================================================
+  initFaderWaveformVisualizer() {
+    const canvas = this.dom.faderWaveformCanvas;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let phase = 0;
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (rect.width > 0 && rect.height > 0) {
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const render = () => {
+      requestAnimationFrame(render);
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.width;
+      const height = canvas.height;
+      if (width === 0 || height === 0) return;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Check current playback state
+      const isWalkupPlaying = this.audioEngine && this.audioEngine.isPlaying;
+      const isYtPlaying = this.ytEngine && this.ytEngine.isPlaying;
+      const isPlaying = isWalkupPlaying || isYtPlaying;
+
+      // Crossfader: 0 = 100% volume (left), 100 = 0% volume (right / cut)
+      const faderPos = this.dom.masterCrossfader ? parseInt(this.dom.masterCrossfader.value, 10) : 0;
+      const volMultiplier = Math.max(0, (100 - faderPos) / 100);
+      const isCut = faderPos >= 98 || volMultiplier <= 0.02;
+
+      phase += isPlaying ? 0.09 : 0.02;
+
+      // Real-time frequency data from Web Audio API AnalyserNode
+      const freqData = (isWalkupPlaying && typeof this.audioEngine.getByteFrequencyData === 'function') 
+        ? this.audioEngine.getByteFrequencyData() 
+        : null;
+      const hasRealFreqs = freqData && freqData.some(v => v > 0);
+
+      const barCount = Math.floor(width / (4.5 * dpr));
+      const barWidth = 2.6 * dpr;
+      const gap = (width - (barCount * barWidth)) / Math.max(1, barCount - 1);
+      const midY = height / 2;
+
+      // Subtle center audio zero-line
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1 * dpr;
+      ctx.moveTo(0, midY);
+      ctx.lineTo(width, midY);
+      ctx.stroke();
+
+      for (let i = 0; i < barCount; i++) {
+        const x = i * (barWidth + gap);
+        const normX = i / barCount;
+
+        let amp = 0.12;
+
+        if (isCut) {
+          amp = 0.05; // Flatline when sound is cut
+        } else if (hasRealFreqs) {
+          const binIdx = Math.floor(Math.pow(normX, 0.85) * (freqData.length - 1));
+          const binVal = freqData[binIdx] || 0;
+          amp = Math.max(0.12, (binVal / 255) * volMultiplier * 0.95);
+        } else if (isPlaying) {
+          // Dynamic high-energy musical waveform synthesis for active playback
+          const wave1 = Math.sin(phase * 3.2 + normX * 9.5);
+          const wave2 = Math.cos(phase * 2.1 + normX * 16.0);
+          const wave3 = Math.sin(phase * 4.8 + normX * 5.5);
+          const beat = Math.pow(Math.max(0, Math.sin(phase * 2.0)), 2.0);
+          amp = (0.35 + 0.42 * Math.abs(wave1) + 0.22 * Math.abs(wave2) + 0.35 * beat * Math.abs(wave3)) * volMultiplier;
+          amp = Math.min(0.96, Math.max(0.15, amp));
+        } else {
+          // Pre-recorded walk-up track waveform preview when idle (shows realistic audio peaks)
+          const staticEnvelope = Math.sin(normX * Math.PI); // Natural song arc (intro -> chorus -> outro)
+          const detail1 = Math.sin(normX * 18.0) * 0.25;
+          const detail2 = Math.cos(normX * 36.0) * 0.15;
+          const breath = Math.sin(phase + normX * 4.0) * 0.08;
+          amp = (0.22 + staticEnvelope * 0.45 + detail1 + detail2 + breath) * volMultiplier;
+          amp = Math.min(0.85, Math.max(0.12, amp));
+        }
+
+        const barHeight = Math.max(2.5 * dpr, amp * (height * 0.90));
+        const barY = midY - (barHeight / 2);
+
+        if (!isCut && isPlaying) {
+          // Vibrant live playing spectrum: Cyan base -> Amber/Gold mid -> Crimson Red peaks
+          const grad = ctx.createLinearGradient(0, barY, 0, barY + barHeight);
+          grad.addColorStop(0, '#ff1744');     // Hot red peak
+          grad.addColorStop(0.24, '#ffea00');  // Gold mid-high
+          grad.addColorStop(0.70, '#00e5ff');  // Cyan body
+          grad.addColorStop(1, '#005b9f');     // Deep electric blue
+          ctx.fillStyle = grad;
+          ctx.shadowColor = 'rgba(0, 229, 255, 0.75)';
+          ctx.shadowBlur = 4 * dpr;
+        } else if (!isCut) {
+          // Track loaded standby preview: Electric Cyan with subtle glow
+          const grad = ctx.createLinearGradient(0, barY, 0, barY + barHeight);
+          grad.addColorStop(0, '#70f3ff');
+          grad.addColorStop(0.5, '#00e5ff');
+          grad.addColorStop(1, '#0077c2');
+          ctx.fillStyle = grad;
+          ctx.shadowColor = 'rgba(0, 229, 255, 0.4)';
+          ctx.shadowBlur = 2.5 * dpr;
+        } else {
+          // Cut state: Dimmed carbon slate flatline
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+          ctx.shadowBlur = 0;
+        }
+
+        const r = Math.min(barWidth / 2, barHeight / 2);
+        ctx.beginPath();
+        if (typeof ctx.roundRect === 'function') {
+          ctx.roundRect(x, barY, barWidth, barHeight, r);
+        } else {
+          ctx.rect(x, barY, barWidth, barHeight);
+        }
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    };
+
+    render();
+  }
+
   updateFadeDuration(val) {
     this.audioEngine.setFadeDuration(val);
-    this.dom.fadeDurationVal.textContent = `${val.toFixed(1)}s`;
-    this.dom.fadeBtnSubtitle.textContent = `Over ${val.toFixed(1)}s`;
+    if (this.dom.fadeDurationVal) this.dom.fadeDurationVal.textContent = `${val.toFixed(1)}s`;
+    if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Over ${val.toFixed(1)}s`;
     localStorage.setItem('grizzlies_fade_duration', val);
 
     // Update preset pills active state
@@ -1005,20 +1321,51 @@ class GrizzliesApp {
       this.dom.fadeOutBtn.disabled = true;
       this.dom.stopCutBtn.disabled = true;
       this.dom.fadeOutBtn.classList.remove('is-fading');
-      this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+      if (this.dom.fadeBtnSubtitle) this.dom.fadeBtnSubtitle.textContent = `Over ${this.audioEngine.fadeDuration.toFixed(1)}s`;
+      if (this.dom.masterCrossfader) this.dom.masterCrossfader.classList.remove('is-sliding');
+      if (this.dom.analogFaderDeck) this.dom.analogFaderDeck.classList.remove('is-sliding');
       this.dom.dockPlayerName.textContent = 'READY TO HIT';
       this.dom.dockSongTitle.textContent = 'Tap any player to drop their walk-up track';
       this.dom.dockTimer.textContent = '0:00';
       this.dom.trackProgressFill.style.width = '0%';
+      const dockNotch = document.getElementById('trackProgressNotch');
+      if (dockNotch) dockNotch.style.left = '0%';
       this.dom.liveEqBadge.classList.remove('active');
     });
 
-    // Play On Deck button
-    this.dom.playOnDeckBtn.addEventListener('click', () => {
-      if (this.onDeckPlayer) {
-        this.handleTrackClick(this.onDeckPlayer);
-      }
-    });
+    // Master Dock Track Progress Scrubbing
+    const masterTrackProg = document.getElementById('masterTrackProgress');
+    if (masterTrackProg) {
+      const handleMasterScrub = (e) => {
+        const rect = masterTrackProg.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        if (this.activeAudioSource === 'walkup') {
+          this.audioEngine.seekPercent(pct);
+        } else if (this.activeAudioSource === 'youtube') {
+          this.ytEngine.seekPercent(pct);
+        }
+      };
+      masterTrackProg.addEventListener('click', handleMasterScrub);
+      masterTrackProg.addEventListener('touchstart', handleMasterScrub, { passive: true });
+    }
+
+    // Play On Deck button and banner title
+    if (this.dom.playOnDeckBtn) {
+      this.dom.playOnDeckBtn.addEventListener('click', () => {
+        if (this.onDeckPlayer) {
+          this.handleTrackClick(this.onDeckPlayer);
+        }
+      });
+    }
+    if (this.dom.onDeckName) {
+      this.dom.onDeckName.style.cursor = 'pointer';
+      this.dom.onDeckName.addEventListener('click', () => {
+        if (this.onDeckPlayer) {
+          this.handleTrackClick(this.onDeckPlayer);
+        }
+      });
+    }
 
     // Search filter
     this.dom.rosterSearch.addEventListener('input', () => {
@@ -1066,16 +1413,22 @@ class GrizzliesApp {
     }
 
     // Help & Tips Modal
-    this.dom.helpBtn.addEventListener('click', () => {
-      this.triggerHaptic(15);
-      this.dom.helpModal.style.display = 'flex';
-    });
-    this.dom.closeHelpModal.addEventListener('click', () => {
-      this.dom.helpModal.style.display = 'none';
-    });
-    this.dom.gotItBtn.addEventListener('click', () => {
-      this.dom.helpModal.style.display = 'none';
-    });
+    if (this.dom.helpBtn) {
+      this.dom.helpBtn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        this.dom.helpModal.style.display = 'flex';
+      });
+    }
+    if (this.dom.closeHelpModal) {
+      this.dom.closeHelpModal.addEventListener('click', () => {
+        this.dom.helpModal.style.display = 'none';
+      });
+    }
+    if (this.dom.gotItBtn) {
+      this.dom.gotItBtn.addEventListener('click', () => {
+        this.dom.helpModal.style.display = 'none';
+      });
+    }
 
     // Keyboard Shortcuts (Space to Cut, F to Fade)
     window.addEventListener('keydown', (e) => {
@@ -1452,6 +1805,7 @@ class GrizzliesApp {
   }
 
   updateInlineJarBadge() {
+    if (!this.dom) return;
     const isRandom5 = this.jarViewMode === 'random5';
     const totalCount = this.playlistSongs ? this.playlistSongs.length : 0;
     if (this.dom.inlineJarCountPill) {
@@ -1725,27 +2079,38 @@ class GrizzliesApp {
       }
     };
 
-    if (this.dom.dockDrawerHandleBar) {
-      this.dom.dockDrawerHandleBar.addEventListener('click', () => {
+    if (this.dom.drawerPullTab) {
+      this.dom.drawerPullTab.addEventListener('click', (e) => {
+        e.stopPropagation();
         toggle();
       });
+    }
 
-      this.dom.dockDrawerHandleBar.addEventListener('touchstart', (e) => {
+    if (this.dom.dockVisibleHeader) {
+      this.dom.dockVisibleHeader.addEventListener('touchstart', (e) => {
+        if (e.target.closest('#masterCrossfader')) return;
         if (e.touches && e.touches[0]) {
           touchStartY = e.touches[0].clientY;
         }
       }, { passive: true });
 
-      this.dom.dockDrawerHandleBar.addEventListener('touchend', (e) => {
+      this.dom.dockVisibleHeader.addEventListener('touchend', (e) => {
+        if (e.target.closest('#masterCrossfader')) return;
         if (e.changedTouches && e.changedTouches[0]) {
           const deltaY = e.changedTouches[0].clientY - touchStartY;
-          if (deltaY < -30) {
+          if (deltaY < -25) {
             toggle(true); // Swipe up to open
-          } else if (deltaY > 30) {
+          } else if (deltaY > 25) {
             toggle(false); // Swipe down to collapse
           }
         }
       }, { passive: true });
+    }
+
+    if (this.dom.dockDrawerHandleBar) {
+      this.dom.dockDrawerHandleBar.addEventListener('click', () => {
+        toggle();
+      });
     }
 
     if (this.dom.drawerToggleBtn) {
@@ -1753,6 +2118,113 @@ class GrizzliesApp {
         e.stopPropagation();
         toggle();
       });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('drawer') === 'open') {
+      toggle(true);
+    }
+    const atbatParam = urlParams.get('atbat');
+    if (atbatParam && this.lineupOrder && this.lineupOrder.length > 0) {
+      let targetPlayer = this.lineupOrder[0];
+      if (atbatParam === 'last') {
+        targetPlayer = this.lineupOrder[this.lineupOrder.length - 1];
+      } else if (!isNaN(parseInt(atbatParam, 10)) && parseInt(atbatParam, 10) > 1) {
+        const idx = Math.min(parseInt(atbatParam, 10) - 1, this.lineupOrder.length - 1);
+        targetPlayer = this.lineupOrder[idx];
+      }
+      this.currentBatter = targetPlayer;
+      const idx = this.lineupOrder.findIndex(p => p.id === targetPlayer.id);
+      const nextIdx = (idx + 1) % this.lineupOrder.length;
+      this.onDeckPlayer = this.lineupOrder[nextIdx];
+      this.updateBatterCardsState();
+      this.updateOnDeckDisplay();
+      this.scrollToBatterCard(targetPlayer.id);
+    }
+    if (urlParams.get('play') === '1' && this.lineupOrder && this.lineupOrder.length > 0) {
+      this.currentBatter = this.lineupOrder[0];
+      this.handleTrackClick(this.lineupOrder[0]);
+    }
+  }
+
+  // =========================================================================
+  // Dugout Settings Modal (Gear / Wrench)
+  // =========================================================================
+  setupSettingsModal() {
+    const openSettings = () => {
+      this.triggerHaptic(20);
+      if (this.dom.settingsModal) {
+        if (this.dom.fadeDurationVal) {
+          this.dom.fadeDurationVal.textContent = `${this.audioEngine.fadeDuration.toFixed(1)}s`;
+        }
+        if (this.dom.fadeDurationSlider) {
+          this.dom.fadeDurationSlider.value = this.audioEngine.fadeDuration;
+        }
+        this.updateSettingRallyBtnState();
+        this.dom.settingsModal.style.display = 'flex';
+      }
+    };
+
+    const closeSettings = () => {
+      this.triggerHaptic(15);
+      if (this.dom.settingsModal) {
+        this.dom.settingsModal.style.display = 'none';
+      }
+    };
+
+    if (this.dom.headerSettingsBtn) {
+      this.dom.headerSettingsBtn.addEventListener('click', openSettings);
+    }
+    if (this.dom.drawerSettingsBtn) {
+      this.dom.drawerSettingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettings();
+      });
+    }
+    if (this.dom.closeSettingsModal) {
+      this.dom.closeSettingsModal.addEventListener('click', closeSettings);
+    }
+    if (this.dom.closeSettingsDoneBtn) {
+      this.dom.closeSettingsDoneBtn.addEventListener('click', closeSettings);
+    }
+    if (this.dom.settingsModal) {
+      this.dom.settingsModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.settingsModal) closeSettings();
+      });
+    }
+
+    if (this.dom.btnToggleRallySetting) {
+      this.dom.btnToggleRallySetting.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        const isCurrentlyHidden = this.dom.stadiumHypeSection.classList.contains('is-hidden');
+        this.setRallySectionVisible(isCurrentlyHidden);
+        this.updateSettingRallyBtnState();
+      });
+    }
+
+    if (this.dom.openPhoneSetupBtn) {
+      this.dom.openPhoneSetupBtn.addEventListener('click', () => {
+        this.triggerHaptic(20);
+        if (this.dom.helpModal) {
+          this.dom.helpModal.style.display = 'flex';
+        }
+      });
+    }
+
+    if (new URLSearchParams(window.location.search).get('modal') === 'settings') {
+      openSettings();
+    }
+  }
+
+  updateSettingRallyBtnState() {
+    if (!this.dom.btnToggleRallySetting || !this.dom.stadiumHypeSection) return;
+    const isHidden = this.dom.stadiumHypeSection.classList.contains('is-hidden');
+    if (isHidden) {
+      this.dom.btnToggleRallySetting.textContent = 'HIDDEN (LOCKED)';
+      this.dom.btnToggleRallySetting.classList.add('hidden-mode');
+    } else {
+      this.dom.btnToggleRallySetting.textContent = 'VISIBLE';
+      this.dom.btnToggleRallySetting.classList.remove('hidden-mode');
     }
   }
 
@@ -2020,7 +2492,11 @@ class GrizzliesApp {
   }
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize on DOM ready or immediately if already loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.grizzliesApp = new GrizzliesApp();
+  });
+} else {
   window.grizzliesApp = new GrizzliesApp();
-});
+}
