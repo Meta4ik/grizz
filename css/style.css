@@ -2292,10 +2292,11 @@ html, body {
 
 .lineup-batting-pos {
   font-family: var(--font-athletic);
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: var(--red-bright);
-  width: 26px;
+  min-width: 20px;
+  text-align: center;
   flex-shrink: 0;
   line-height: 1;
 }

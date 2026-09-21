@@ -573,7 +573,7 @@ class GrizzliesApp {
       if (this.sortMode === 'lineup') {
         const slotIdx = this.lineupOrder.findIndex(p => p.id === player.id);
         if (slotIdx >= 0) {
-          battingSlotText = `#${slotIdx + 1} BATTER`;
+          battingSlotText = `BATTER ${slotIdx + 1}`;
         }
       }
 
@@ -2372,7 +2372,7 @@ class GrizzliesApp {
               <line x1="4" y1="17" x2="20" y2="17"></line>
             </svg>
           </div>
-          <span class="lineup-batting-pos">#${idx + 1}</span>
+          <span class="lineup-batting-pos">${idx + 1}</span>
           <div class="lineup-player-info">
             <div class="lineup-name-row">
               <span class="lineup-jersey-pill"><span class="jersey-hash">#</span>${player.number}</span>
