@@ -3416,6 +3416,24 @@ html, body {
   transition: 0.7s;
 }
 
+.btn-organ-launch {
+  width: 100%;
+  min-height: 64px;
+  background: linear-gradient(135deg, #241624 0%, #150d18 50%, #29101f 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
 .btn-organ-launch:hover::before {
   left: 140%;
 }
@@ -3431,16 +3449,16 @@ html, body {
 }
 
 .organ-icon {
-  font-size: 1.9rem;
+  font-size: 2.1rem;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
@@ -3455,7 +3473,7 @@ html, body {
 
 .organ-title {
   font-family: var(--font-athletic);
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: 1px;
   color: #ffd54f;
@@ -3464,95 +3482,88 @@ html, body {
 }
 
 .organ-subtitle {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.82);
   line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .organ-badge {
   font-family: var(--font-athletic);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.8px;
   background: #f59e0b;
   color: #0b0c10;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
 }
 
-/* Preset Playlists Switcher */
+/* Preset Playlists Switcher - Full Width & Large Dropdown */
 .preset-playlists-wrap {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.preset-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  width: 100%;
 }
 
 .preset-playlists-label {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-dim);
+  color: var(--text-med);
   letter-spacing: 1px;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .playlist-select-wrapper {
   position: relative;
-  flex: 1;
-  max-width: 220px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .playlist-dropdown {
   width: 100%;
-  background: #14161f;
-  border: 1.5px solid #361922;
-  border-radius: 8px;
-  padding: 6px 26px 6px 10px;
+  height: 52px;
+  background: #141722;
+  border: 2px solid #3c4458;
+  border-radius: 12px;
+  padding: 10px 42px 10px 14px;
   color: #ffffff;
   font-family: var(--font-ui);
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
   outline: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .playlist-dropdown:focus {
   border-color: var(--red-bright);
-  box-shadow: 0 0 10px rgba(214, 24, 39, 0.4);
+  box-shadow: 0 0 14px rgba(214, 24, 39, 0.5);
 }
 
 .playlist-dropdown option {
   background: #12141a;
   color: #ffffff;
-  padding: 8px;
+  padding: 12px 10px;
+  font-size: 0.95rem;
 }
 
 .dropdown-arrow {
   position: absolute;
-  right: 10px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--red-bright);
-  font-size: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 900;
   pointer-events: none;
 }
 
