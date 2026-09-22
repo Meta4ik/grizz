@@ -408,147 +408,85 @@
 
     <!-- Between-Innings Music Suite Modal -->
     <div class="modal-overlay" id="inningsModal" style="display: none;">
-      <div class="modal-card innings-modal-card">
-        <div class="modal-header">
-          <div class="modal-title-group">
-            <div class="modal-tag-row">
-              <span class="innings-badge-icon">⚡</span>
-              <h3>BETWEEN-INNINGS SUITE</h3>
-            </div>
-            <p>YouTube dugout playlist player & song list</p>
+      <div class="modal-card innings-clean-modal">
+        
+        <!-- Header -->
+        <div class="innings-clean-header">
+          <div class="innings-header-info">
+            <div class="innings-title-badge">🎵 BETWEEN-INNINGS MUSIC</div>
+            <div class="innings-subtitle" id="inningsSubtitle">⚾ Baseball Stadium Mix • 20 Clean Tracks</div>
           </div>
           <button class="modal-close-btn" id="closeInningsModal">&times;</button>
         </div>
 
-        <div class="modal-body innings-modal-body" id="pageInnings">
-          
-          <!-- YouTube Playlist Player Suite (Compact Audio Deck) -->
-          <div class="yt-player-card compact-audio-card">
+        <!-- Sticky Controls Bar -->
+        <div class="innings-top-controls">
+          <!-- Playlist Selector Dropdown -->
+          <div class="innings-select-row">
+            <label for="playlistSelect" class="innings-select-label">PLAYLIST:</label>
+            <div class="playlist-select-wrapper">
+              <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
+                <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Stadium Mix)</option>
+                <option value="RDkOV2iTeGQik" data-title="Pantera & Stadium Rock">🔥 Pantera & Stadium Rock</option>
+                <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Clean Rap Hits</option>
+                <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
+                <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country Hits</option>
+                <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
+              </select>
+              <span class="dropdown-arrow">▼</span>
+            </div>
+          </div>
+
+          <!-- Playback Bar -->
+          <div class="innings-player-bar">
+            <div class="innings-transport-btns">
+              <button class="btn-clean-skip" id="ytPrevBtn" title="Previous Track" aria-label="Previous Track">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+              </button>
+              <button class="btn-clean-play" id="ytPlayPauseBtn" title="Play or Pause Track" aria-label="Play or Pause Track">
+                <svg id="ytPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="ytPauseIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              </button>
+              <button class="btn-clean-skip" id="ytNextBtn" title="Next Track" aria-label="Next Track">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+              </button>
+            </div>
+
+            <div class="innings-now-playing-box">
+              <div class="innings-now-title" id="ytCurrentTitle">Getting Older</div>
+              <div class="innings-now-status" id="ytCurrentArtist">Jaz Von ft. NBA YoungBoy</div>
+            </div>
             
-            <!-- Top Row: Track Meta on Left, Mini Video in Top-Right Corner -->
-            <div class="yt-deck-top-row">
-              <div class="yt-deck-info">
-                <div class="yt-header-left">
-                  <span class="live-pulse-dot" id="ytPulseDot"></span>
-                  <span class="yt-header-tag">BETWEEN-INNINGS MUSIC</span>
-                  <span class="yt-audio-pill" id="ytAudioPill">READY</span>
-                </div>
-                <div class="yt-track-title" id="ytCurrentTitle">Baseball</div>
-                <div class="yt-track-artist" id="ytCurrentArtist">Dugout Inning Queue</div>
-              </div>
-
-              <!-- Mini Video Player in the Top Right Corner -->
-              <div class="yt-video-mini-corner" id="ytPlayerContainer">
-                <iframe 
-                  id="ytPlayerFrame"
-                  src="https://www.youtube.com/embed/EK-XfDRL2wA?enablejsapi=1&playsinline=1&autoplay=0"
-                  title="Between Innings Dugout Track"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen>
-                </iframe>
-              </div>
-            </div>
-
-            <!-- Transport Action Console with Sunlight-Optimized Large Play Button -->
-            <div class="yt-action-bar">
-              <div class="yt-quick-controls">
-                <button class="btn-yt-control btn-yt-skip" id="ytPrevBtn" title="Previous Song">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                </button>
-                <button class="btn-yt-control btn-yt-play" id="ytPlayPauseBtn" title="Play / Pause (Outdoor Sunlight Sized)">
-                  <svg id="ytPlayIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                  <svg id="ytPauseIcon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                </button>
-                <button class="btn-yt-control btn-yt-skip" id="ytNextBtn" title="Next Song">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-                </button>
-              </div>
-
-              <!-- Quick Link Indicator -->
-              <div class="yt-status-badge-wrap">
-                <span class="yt-status-tag" id="ytPlaylistStatusTag">⚾ BASEBALL QUEUE</span>
-              </div>
-            </div>
-
-            <!-- Quick Preset Playlist Selector (Full Width & Large Dropdown) -->
-            <div class="preset-playlists-wrap">
-              <label for="playlistSelect" class="preset-playlists-label">SELECT INNING PLAYLIST:</label>
-              <div class="playlist-select-wrapper">
-                <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
-                  <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Getting Older - Coach's Track)</option>
-                  <option value="XwxWsq4otGg" data-title="Baseball Organ Music">🎹 Baseball Organ Music (Matthew Kaminski)</option>
-                  <option value="RDkOV2iTeGQik" data-title="Pantera & Stadium Rock">🔥 Pantera & Stadium Rock</option>
-                  <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Clean Rap Hits</option>
-                  <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
-                  <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country Hits</option>
-                  <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
-                </select>
-                <span class="dropdown-arrow">▼</span>
-              </div>
-            </div>
-
-            <!-- Dedicated Quick-Launch Ballpark Organ Music Button (Large & Full Width) -->
-            <div class="organ-launch-wrap">
-              <button class="btn-organ-launch" id="organMusicBtn" title="Play Ballpark Organ Music (Matthew Kaminski)">
-                <span class="organ-icon">🎹</span>
-                <div class="organ-text">
-                  <span class="organ-title">BASEBALL ORGAN MUSIC</span>
-                  <span class="organ-subtitle">Ballpark Organ Classics • Matthew Kaminski</span>
-                </div>
-                <span class="organ-badge">HOT KEY</span>
-              </button>
-            </div>
-
-          </div>
-
-          <!-- Clean Song List Card (Populated directly from the Selected Playlist) -->
-          <div class="inline-song-jar-card" id="inlineSongJarCard">
-            <div class="inline-jar-header">
-              <div class="jar-header-left">
-                <span class="jar-header-icon">🎵</span>
-                <div>
-                  <div class="jar-header-title" id="inlineJarTitle">⚾ BASEBALL TRACKLIST</div>
-                  <div class="jar-header-subtitle">Tap any song to play immediately</div>
-                </div>
-              </div>
-              <div class="jar-header-right">
-                <span class="jar-count-pill" id="inlineJarCountPill">20 SONGS</span>
-              </div>
-            </div>
-
-            <!-- Mode Selector: All 20 Songs vs Pull 5 Random Songs -->
-            <div class="jar-mode-tabs-row">
-              <button class="jar-mode-tab active" id="jarModeAllBtn" title="View all 20 songs in this playlist">
-                <span>📋 ALL 20 SONGS</span>
-                <span class="jar-tab-count" id="jarTabAllCount">20</span>
-              </button>
-              <button class="jar-mode-tab" id="jarModeRandom5Btn" title="Pull a random batch of 5 songs from this playlist">
-                <span>🎲 PULL 5 RANDOM</span>
-                <span class="jar-tab-count">5</span>
-              </button>
-            </div>
-
-            <!-- Banner shown when 5 Random mode is active -->
-            <div class="jar-random-banner" id="jarRandomBanner" style="display: none;">
-              <div class="random-banner-text">
-                <span class="random-banner-tag">🎲 5 RANDOM DUGOUT PICKS</span>
-                <span class="random-banner-sub" id="randomBannerSub">Drawn from 20 clean playlist songs</span>
-              </div>
-              <button class="btn-reroll-5" id="btnReroll5" title="Draw 5 different songs from this playlist">🔄 ROLL NEW 5</button>
-            </div>
-
-            <!-- Scrollable Track List (20 Songs) -->
-            <div class="inline-jar-songs-list" id="inlineJarSongsList">
-              <!-- Populated dynamically by JS -->
+            <div class="innings-mode-random-wrap">
+              <button class="btn-clean-random5" id="jarModeRandom5Btn" title="Draw 5 Random Tracks">🎲 5 RANDOM</button>
+              <button class="btn-clean-all" id="jarModeAllBtn" title="View All 20 Tracks" style="display:none;">📋 ALL 20</button>
             </div>
           </div>
 
+          <!-- Hidden YouTube Iframe -->
+          <div id="ytPlayerContainer" style="width:1px; height:1px; position:absolute; left:-9999px; overflow:hidden;">
+            <iframe 
+              id="ytPlayerFrame"
+              src="https://www.youtube.com/embed/EK-XfDRL2wA?enablejsapi=1&playsinline=1&autoplay=0"
+              title="Between Innings Dugout Track"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
         </div>
 
-        <div class="modal-footer">
+        <!-- 3. Scrollable Tracklist -->
+        <div class="innings-songs-scroll-body" id="inningsSongsBody">
+          <div class="inline-jar-songs-list" id="inlineJarSongsList">
+            <!-- 20 Clean Track Cards dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- 4. Footer -->
+        <div class="innings-clean-footer">
           <button class="btn-primary" id="closeInningsDoneBtn" style="width: 100%;">Done</button>
         </div>
+
       </div>
     </div>
 

@@ -35,32 +35,6 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' }
     ]
   },
-  'XwxWsq4otGg': {
-    title: 'Baseball Organ Music',
-    subtitle: 'Ballpark Organ Classics • Matthew Kaminski',
-    tracks: [
-      { id: 'XwxWsq4otGg', title: 'The Star-Spangled Banner (Organ)', artist: 'Matthew Kaminski (Braves Organist)' },
-      { id: 'hTWKbfoikeg', title: 'Take Me Out to the Ball Game', artist: 'Ballpark Organist' },
-      { id: 'btPJPFnesV4', title: 'Charge Theme & Stadium Chants', artist: 'Atlanta Braves Organ' },
-      { id: 'v2AC41dglnM', title: 'Thunderstruck (Organ Version)', artist: 'Matthew Kaminski' },
-      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine (Ballpark Organ)", artist: 'Matthew Kaminski' },
-      { id: 'EK-XfDRL2wA', title: 'Getting Older (Dugout Mix)', artist: 'Jaz Von' },
-      { id: 'kOV2iTeGQik', title: 'Walk (Organ Riff)', artist: 'Matthew Kaminski' },
-      { id: '-tJYN-eG1zk', title: 'We Will Rock You (Organ Stomp)', artist: 'Stadium Organ' },
-      { id: 'CdkvPOatV35', title: 'Crazy Train (Organ Rally)', artist: 'Matthew Kaminski' },
-      { id: 'y6120QOlsfU', title: 'Sandstorm (Ballpark Synth)', artist: 'Stadium Organ' },
-      { id: 'djV11Xbc914', title: 'Take On Me (Organ Chants)', artist: 'Matthew Kaminski' },
-      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer (Organ Hook)", artist: 'Matthew Kaminski' },
-      { id: 'YkADj0TPrJA', title: "Don't Stop Believin' (7th Inning Organ)", artist: 'Matthew Kaminski' },
-      { id: 'eH3giaIzONA', title: 'Jump (Organ Riff)', artist: 'Matthew Kaminski' },
-      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel (Ballpark Jam)', artist: 'Stadium Organ' },
-      { id: 'MVDJxMxzTL0', title: 'Wild Ones (Stadium Edit)', artist: 'Dugout Organ' },
-      { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey (Organ Slow Burn)', artist: 'Matthew Kaminski' },
-      { id: 'fPO76Jlnz6c', title: 'All I Do Is Win (Organ Fanfare)', artist: 'Stadium Organ' },
-      { id: 'I_izvAbhExY', title: "Can't Hold Us (Organ Hype)", artist: 'Matthew Kaminski' },
-      { id: '34Na4j8AVgA', title: 'The Sign (Ballpark Organ)', artist: 'Matthew Kaminski' }
-    ]
-  },
   'RDkOV2iTeGQik': {
     title: 'Pantera & Stadium Rock',
     subtitle: 'High-Voltage Stadium Rock',
@@ -1004,25 +978,13 @@ class GrizzliesApp {
         this.resetCrossfader();
       }
 
-      // Sync organ quick-launch button highlight
-      if (this.dom.organMusicBtn) {
-        if (this.activePlaylistId === 'XwxWsq4otGg') {
-          this.dom.organMusicBtn.classList.add('active');
-        } else {
-          this.dom.organMusicBtn.classList.remove('active');
-        }
-      }
-
-      // Update inline song jar highlights
+      // Update inline song list highlights
       this.renderInlineSongJar();
     });
 
     this.ytEngine.on('onPause', (playlist) => {
-      this.dom.ytPulseDot.classList.remove('active');
-      this.dom.ytAudioPill.classList.remove('playing');
-      this.dom.ytAudioPill.textContent = 'PAUSED';
-      this.dom.ytPlayIcon.style.display = 'block';
-      this.dom.ytPauseIcon.style.display = 'none';
+      if (this.dom.ytPlayIcon) this.dom.ytPlayIcon.style.display = 'block';
+      if (this.dom.ytPauseIcon) this.dom.ytPauseIcon.style.display = 'none';
 
       if (this.activeAudioSource === 'youtube') {
         this.dom.liveEqBadge.classList.remove('active');
@@ -1033,15 +995,8 @@ class GrizzliesApp {
     });
 
     this.ytEngine.on('onStop', (playlist) => {
-      this.dom.ytPulseDot.classList.remove('active');
-      this.dom.ytAudioPill.classList.remove('playing');
-      this.dom.ytAudioPill.textContent = 'STOPPED';
-      this.dom.ytPlayIcon.style.display = 'block';
-      this.dom.ytPauseIcon.style.display = 'none';
-
-      if (this.dom.organMusicBtn && this.activePlaylistId === 'XwxWsq4otGg') {
-        this.dom.organMusicBtn.classList.remove('active');
-      }
+      if (this.dom.ytPlayIcon) this.dom.ytPlayIcon.style.display = 'block';
+      if (this.dom.ytPauseIcon) this.dom.ytPauseIcon.style.display = 'none';
 
       if (this.activeAudioSource === 'youtube') {
         this.activeAudioSource = 'none';
@@ -1837,43 +1792,7 @@ class GrizzliesApp {
       });
     }
 
-    // Random Song / Shuffle Track
-    const handleRandomTrack = () => {
-      this.triggerHaptic([25, 40]);
-      activateYouTubeSource();
-      this.drawRandomSongFromJar();
-    };
-
-    if (this.dom.ytRandomBtn) {
-      this.dom.ytRandomBtn.addEventListener('click', handleRandomTrack);
-    }
-
-    // Dedicated Quick-Launch Ballpark Organ Music Button
-    if (this.dom.organMusicBtn) {
-      this.dom.organMusicBtn.addEventListener('click', () => {
-        this.triggerHaptic([30, 45]);
-        const organId = 'XwxWsq4otGg';
-        const organTitle = 'Baseball Organ Music';
-        
-        // If already selected and playing, toggle pause
-        if (this.activePlaylistId === organId && this.ytEngine.isPlaying) {
-          this.ytEngine.pause();
-          this.dom.organMusicBtn.classList.remove('active');
-        } else {
-          // Switch playlist, sync dropdown, reset fader if muted, and immediately play organ music
-          this.switchActivePlaylist(organId, organTitle);
-          if (this.dom.playlistSelect) {
-            this.dom.playlistSelect.value = organId;
-          }
-          this.dom.organMusicBtn.classList.add('active');
-          this.resetCrossfader();
-          activateYouTubeSource(organTitle);
-          this.ytEngine.play();
-        }
-      });
-    }
-
-    // Preset Playlist Dropdown Menu (No auto-play on switch!)
+    // Preset Playlist Dropdown Menu
     if (this.dom.playlistSelect) {
       this.dom.playlistSelect.addEventListener('change', (e) => {
         const listId = e.target.value;
@@ -1894,22 +1813,13 @@ class GrizzliesApp {
   switchActivePlaylist(listId, title) {
     this.activePlaylistId = listId;
 
-    // Refresh connection to YouTube with the chosen playlist
+    // Refresh connection to YouTube with chosen playlist
     this.ytEngine.loadPlaylist(listId, title, false);
 
     if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = title;
-    if (this.dom.ytPlaylistStatusTag) this.dom.ytPlaylistStatusTag.textContent = '⚾ ' + title.toUpperCase();
+    if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = 'Dugout Inning Queue';
     if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = title;
     if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = `${title} (Ready)`;
-
-    // Sync organ button active state
-    if (this.dom.organMusicBtn) {
-      if (listId === 'XwxWsq4otGg') {
-        this.dom.organMusicBtn.classList.add('active');
-      } else {
-        this.dom.organMusicBtn.classList.remove('active');
-      }
-    }
 
     // Always fetch fresh 20-track list for this playlist preset
     this.jarViewMode = 'all';
@@ -1919,7 +1829,7 @@ class GrizzliesApp {
   }
 
   // =========================================================================
-  // Inline Dugout Song List (Populated directly from Active Playlist)
+  // Inline Dugout Song List
   // =========================================================================
   loadPlaylistSongs(listId) {
     if (PLAYLIST_TRACKS_MAP[listId]) {
@@ -1928,38 +1838,10 @@ class GrizzliesApp {
     return [...PLAYLIST_TRACKS_MAP['EK-XfDRL2wA'].tracks];
   }
 
-  savePlaylistSongs(listId, songs) {
-    this.playlistSongs = songs;
-    this.songJar = songs;
-    this.updateInlineJarBadge();
-  }
-
-  updateInlineJarBadge() {
-    if (!this.dom) return;
-    const isRandom5 = this.jarViewMode === 'random5';
-    const totalCount = this.playlistSongs ? this.playlistSongs.length : 0;
-    if (this.dom.inlineJarCountPill) {
-      this.dom.inlineJarCountPill.textContent = isRandom5
-        ? `5 OF ${totalCount} SONGS`
-        : `${totalCount} ${totalCount === 1 ? 'SONG' : 'SONGS'}`;
-    }
-    if (this.dom.jarTabAllCount) {
-      this.dom.jarTabAllCount.textContent = totalCount;
-    }
-  }
-
   setupInlineSongJar() {
-    this.updateInlineJarBadge();
     this.renderInlineSongJar();
 
-    // Mode Selector: View All 20 Songs vs Pull 5 Random Songs
-    if (this.dom.jarModeAllBtn) {
-      this.dom.jarModeAllBtn.addEventListener('click', () => {
-        this.triggerHaptic(15);
-        this.showAllJarSongs();
-      });
-    }
-
+    // Mode Switcher: 5 Random vs All 20
     if (this.dom.jarModeRandom5Btn) {
       this.dom.jarModeRandom5Btn.addEventListener('click', () => {
         this.triggerHaptic(20);
@@ -1967,10 +1849,10 @@ class GrizzliesApp {
       });
     }
 
-    if (this.dom.btnReroll5) {
-      this.dom.btnReroll5.addEventListener('click', () => {
-        this.triggerHaptic([20, 35]);
-        this.pull5RandomSongs();
+    if (this.dom.jarModeAllBtn) {
+      this.dom.jarModeAllBtn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        this.showAllJarSongs();
       });
     }
   }
@@ -1992,35 +1874,31 @@ class GrizzliesApp {
     if (!this.dom.inlineJarSongsList) return;
     this.dom.inlineJarSongsList.innerHTML = '';
 
-    const listInfo = PLAYLIST_TRACKS_MAP[this.activePlaylistId];
-    const playlistTitle = listInfo ? listInfo.title : (this.ytEngine.currentPlaylist?.title || 'Baseball');
-    if (this.dom.inlineJarTitle) {
-      this.dom.inlineJarTitle.textContent = `⚾ ${playlistTitle.toUpperCase()} TRACKLIST`;
+    const listInfo = PLAYLIST_TRACKS_MAP[this.activePlaylistId] || PLAYLIST_TRACKS_MAP['EK-XfDRL2wA'];
+    const playlistTitle = listInfo ? listInfo.title : 'Baseball';
+
+    const subtitleEl = document.getElementById('inningsSubtitle');
+    if (subtitleEl) {
+      subtitleEl.textContent = this.jarViewMode === 'random5'
+        ? `⚾ ${playlistTitle} • 5 Random Picks`
+        : `⚾ ${playlistTitle} • 20 Clean Tracks`;
     }
 
     const currentYtId = this.ytEngine?.currentPlaylist?.id;
     const isYtPlaying = this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying;
 
-    this.updateInlineJarBadge();
-
     const isRandom5 = this.jarViewMode === 'random5';
     const songsToRender = isRandom5 && this.jarRandom5List.length > 0 
       ? this.jarRandom5List 
-      : this.playlistSongs;
+      : (this.playlistSongs || this.loadPlaylistSongs(this.activePlaylistId));
 
-    if (this.dom.jarRandomBanner) {
-      this.dom.jarRandomBanner.style.display = isRandom5 ? 'flex' : 'none';
-      const sub = document.getElementById('randomBannerSub');
-      if (sub) sub.textContent = `Drawn from 20 clean playlist songs`;
-    }
-
-    if (this.dom.jarModeAllBtn && this.dom.jarModeRandom5Btn) {
+    if (this.dom.jarModeRandom5Btn && this.dom.jarModeAllBtn) {
       if (isRandom5) {
-        this.dom.jarModeAllBtn.classList.remove('active');
-        this.dom.jarModeRandom5Btn.classList.add('active');
+        this.dom.jarModeRandom5Btn.style.display = 'none';
+        this.dom.jarModeAllBtn.style.display = 'inline-flex';
       } else {
-        this.dom.jarModeAllBtn.classList.add('active');
-        this.dom.jarModeRandom5Btn.classList.remove('active');
+        this.dom.jarModeRandom5Btn.style.display = 'inline-flex';
+        this.dom.jarModeAllBtn.style.display = 'none';
       }
     }
 
@@ -2033,17 +1911,17 @@ class GrizzliesApp {
 
       card.innerHTML = `
         <div class="song-card-left">
-          <span class="song-index-badge">#${idx + 1}</span>
+          <span class="song-index-badge">${idx + 1}</span>
           <div class="song-card-text">
             <div class="song-card-title">${song.title}</div>
-            <div class="song-card-artist">${song.artist || 'Between-Innings Track'}</div>
+            <div class="song-card-artist">${song.artist || playlistTitle}</div>
           </div>
         </div>
         <div class="song-card-actions">
           <button class="btn-song-play-row" title="${isThisPlaying ? 'Pause Track' : 'Play Track'}" aria-label="Play ${song.title}">
             ${isThisPlaying 
-              ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
-              : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'}
+              ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
+              : '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'}
           </button>
         </div>
       `;
@@ -2063,6 +1941,8 @@ class GrizzliesApp {
           if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = song.title;
           if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = song.artist || playlistTitle;
           if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = song.title;
+          if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = song.title;
+          if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = song.artist || playlistTitle;
           this.ytEngine.playVideo(song.id, song.title, song.artist || playlistTitle);
           this.renderInlineSongJar();
         }

@@ -2245,51 +2245,216 @@ html, body {
   padding-right: 4px;
 }
 
-/* Dedicated Between-Innings Suite Modal */
-.innings-modal-card {
-  height: 90% !important;
-  max-height: 90% !important;
+/* Dedicated Between-Innings Suite Modal (Clean Architecture) */
+.innings-clean-modal {
+  width: 100%;
+  max-width: 580px;
+  height: 86dvh !important;
+  max-height: 86dvh !important;
+  background: #0d111a;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
 }
 
-.innings-modal-body {
+.innings-clean-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #131926;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.innings-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.innings-title-badge {
+  font-family: var(--font-athletic);
+  font-size: 1.35rem;
+  letter-spacing: 0.8px;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.innings-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.innings-top-controls {
+  flex-shrink: 0;
+  background: #171e2c;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.innings-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.innings-select-label {
+  font-family: var(--font-athletic);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--red-bright);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.innings-player-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(10, 13, 19, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+.innings-transport-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-clean-skip {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn-clean-skip:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0.95);
+}
+
+.btn-clean-play {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #d61827 0%, #a0101b 100%);
+  border: 1.5px solid #ff4d5a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(214, 24, 39, 0.4);
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+.btn-clean-play:active {
+  transform: scale(0.94);
+}
+
+.innings-now-playing-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  padding: 0 4px;
+}
+
+.innings-now-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.innings-now-status {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.innings-mode-random-wrap {
+  flex-shrink: 0;
+}
+
+.btn-clean-random5, .btn-clean-all {
+  font-family: var(--font-athletic);
+  font-size: 0.95rem;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 202, 40, 0.5);
+  background: rgba(255, 202, 40, 0.15);
+  color: #ffca28;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn-clean-random5:active, .btn-clean-all:active {
+  background: rgba(255, 202, 40, 0.3);
+  transform: scale(0.96);
+}
+
+.innings-songs-scroll-body {
   flex: 1 1 0px !important;
   min-height: 0 !important;
   height: 0 !important;
-  overflow-y: auto !important;
+  overflow-y: scroll !important;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y !important;
   overscroll-behavior-y: contain;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 4px 6px 28px 4px;
+  padding: 12px 14px 28px 14px;
   scrollbar-width: thin;
   scrollbar-color: var(--red-primary) transparent;
 }
 
-.innings-modal-body * {
-  touch-action: pan-y;
-}
-
-.innings-modal-body::-webkit-scrollbar {
+.innings-songs-scroll-body::-webkit-scrollbar {
   width: 6px;
 }
 
-.innings-modal-body::-webkit-scrollbar-track {
+.innings-songs-scroll-body::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 
-.innings-modal-body::-webkit-scrollbar-thumb {
+.innings-songs-scroll-body::-webkit-scrollbar-thumb {
   background: var(--red-primary);
   border-radius: 4px;
 }
 
-.innings-badge-icon {
-  font-size: 1.25rem;
+.innings-clean-footer {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: #131926;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .lineup-item {
