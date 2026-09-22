@@ -1761,15 +1761,19 @@ class GrizzliesApp {
       }
     };
 
-    // Stage Play / Pause toggle (Outdoor Sunlight-Optimized Large Button)
+    // Stage Play / Pause toggle
     if (this.dom.ytPlayPauseBtn) {
       this.dom.ytPlayPauseBtn.addEventListener('click', () => {
         this.triggerHaptic(20);
         if (this.ytEngine.isPlaying) {
           this.ytEngine.pause();
         } else {
-          activateYouTubeSource(this.ytEngine.currentPlaylist?.title);
-          this.ytEngine.play();
+          activateYouTubeSource(this.currentInningTrack?.title || this.ytEngine.currentPlaylist?.title);
+          if (this.currentInningTrack && this.ytEngine.currentPlaylist?.id !== this.currentInningTrack.id) {
+            this.playInningSong(this.currentInningTrack);
+          } else {
+            this.ytEngine.play();
+          }
         }
       });
     }
@@ -1779,7 +1783,7 @@ class GrizzliesApp {
       this.dom.ytNextBtn.addEventListener('click', () => {
         this.triggerHaptic(20);
         activateYouTubeSource();
-        this.ytEngine.nextTrack();
+        this.playNextInningTrack(1);
       });
     }
 
@@ -1788,7 +1792,7 @@ class GrizzliesApp {
       this.dom.ytPrevBtn.addEventListener('click', () => {
         this.triggerHaptic(20);
         activateYouTubeSource();
-        this.ytEngine.prevTrack();
+        this.playNextInningTrack(-1);
       });
     }
 
@@ -1813,18 +1817,24 @@ class GrizzliesApp {
   switchActivePlaylist(listId, title) {
     this.activePlaylistId = listId;
 
-    // Refresh connection to YouTube with chosen playlist
-    this.ytEngine.loadPlaylist(listId, title, false);
-
-    if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = title;
-    if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = 'Dugout Inning Queue';
-    if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = title;
-    if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = `${title} (Ready)`;
-
-    // Always fetch fresh 20-track list for this playlist preset
+    // Load full 20 songs for chosen playlist
     this.jarViewMode = 'all';
     this.jarRandom5List = [];
     this.playlistSongs = this.loadPlaylistSongs(listId);
+
+    // Refresh accurate song title and artist from the first track of this playlist
+    const firstTrack = this.playlistSongs[0];
+    if (firstTrack) {
+      this.currentInningTrack = firstTrack;
+      if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = firstTrack.title;
+      if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = firstTrack.artist;
+      if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = firstTrack.artist;
+      if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = `${firstTrack.title} (${title})`;
+    }
+
+    // Refresh connection to YouTube
+    this.ytEngine.loadPlaylist(listId, title, false);
+
     this.renderInlineSongJar();
   }
 
@@ -1839,6 +1849,10 @@ class GrizzliesApp {
   }
 
   setupInlineSongJar() {
+    this.playlistSongs = this.loadPlaylistSongs(this.activePlaylistId || 'EK-XfDRL2wA');
+    if (this.playlistSongs.length > 0 && !this.currentInningTrack) {
+      this.currentInningTrack = this.playlistSongs[0];
+    }
     this.renderInlineSongJar();
 
     // Mode Switcher: 5 Random vs All 20
@@ -1862,11 +1876,62 @@ class GrizzliesApp {
     const shuffled = [...this.playlistSongs].sort(() => 0.5 - Math.random());
     this.jarRandom5List = shuffled.slice(0, Math.min(5, this.playlistSongs.length));
     this.jarViewMode = 'random5';
+
+    // Update active inning track to the top random pick
+    const firstRandom = this.jarRandom5List[0];
+    if (firstRandom) {
+      this.currentInningTrack = firstRandom;
+      if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = firstRandom.title;
+      if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = firstRandom.artist;
+    }
+
     this.renderInlineSongJar();
   }
 
   showAllJarSongs() {
     this.jarViewMode = 'all';
+    const firstSong = this.playlistSongs && this.playlistSongs[0];
+    if (firstSong) {
+      this.currentInningTrack = firstSong;
+      if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = firstSong.title;
+      if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = firstSong.artist;
+    }
+    this.renderInlineSongJar();
+  }
+
+  playNextInningTrack(direction = 1) {
+    const list = (this.jarViewMode === 'random5' && this.jarRandom5List.length > 0)
+      ? this.jarRandom5List
+      : (this.playlistSongs || this.loadPlaylistSongs(this.activePlaylistId));
+    
+    if (!list || list.length === 0) return;
+
+    let currentIdx = list.findIndex(s => s.id === this.currentInningTrack?.id);
+    if (currentIdx === -1) {
+      currentIdx = list.findIndex(s => s.id === this.ytEngine?.currentPlaylist?.id);
+    }
+    if (currentIdx === -1) currentIdx = 0;
+
+    const nextIdx = (currentIdx + direction + list.length) % list.length;
+    const targetSong = list[nextIdx];
+    this.playInningSong(targetSong);
+  }
+
+  playInningSong(song) {
+    if (!song) return;
+    this.currentInningTrack = song;
+    if (this.audioEngine.isPlaying) this.audioEngine.stop();
+    this.activeAudioSource = 'youtube';
+    this.dom.fadeOutBtn.disabled = false;
+    this.dom.stopCutBtn.disabled = false;
+    this.dom.liveEqBadge.classList.add('active');
+    if (this.dom.miniEqDot) this.dom.miniEqDot.classList.add('active');
+    if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = song.title;
+    if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = song.artist;
+    if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = song.title;
+    if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = song.title;
+    if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = song.artist;
+    this.ytEngine.playVideo(song.id, song.title, song.artist);
     this.renderInlineSongJar();
   }
 
@@ -1884,7 +1949,7 @@ class GrizzliesApp {
         : `⚾ ${playlistTitle} • 20 Clean Tracks`;
     }
 
-    const currentYtId = this.ytEngine?.currentPlaylist?.id;
+    const currentYtId = this.currentInningTrack?.id || this.ytEngine?.currentPlaylist?.id;
     const isYtPlaying = this.activeAudioSource === 'youtube' && this.ytEngine.isPlaying;
 
     const isRandom5 = this.jarViewMode === 'random5';
@@ -1903,7 +1968,7 @@ class GrizzliesApp {
     }
 
     songsToRender.forEach((song, idx) => {
-      const isThisPlaying = isYtPlaying && currentYtId === song.id;
+      const isThisPlaying = (isYtPlaying || this.currentInningTrack?.id === song.id) && currentYtId === song.id;
 
       const card = document.createElement('div');
       card.className = `inline-jar-song-card ${isThisPlaying ? 'active' : ''}`;
@@ -1918,8 +1983,8 @@ class GrizzliesApp {
           </div>
         </div>
         <div class="song-card-actions">
-          <button class="btn-song-play-row" title="${isThisPlaying ? 'Pause Track' : 'Play Track'}" aria-label="Play ${song.title}">
-            ${isThisPlaying 
+          <button class="btn-song-play-row" title="${isThisPlaying && isYtPlaying ? 'Pause Track' : 'Play Track'}" aria-label="Play ${song.title}">
+            ${isThisPlaying && isYtPlaying 
               ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
               : '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'}
           </button>
@@ -1929,22 +1994,10 @@ class GrizzliesApp {
       // Tap entire row or play button to play track immediately
       card.addEventListener('click', (e) => {
         this.triggerHaptic(20);
-        if (isThisPlaying && e.target.closest('.btn-song-play-row')) {
+        if (isThisPlaying && isYtPlaying && e.target.closest('.btn-song-play-row')) {
           this.ytEngine.pause();
         } else {
-          if (this.audioEngine.isPlaying) this.audioEngine.stop();
-          this.activeAudioSource = 'youtube';
-          this.dom.fadeOutBtn.disabled = false;
-          this.dom.stopCutBtn.disabled = false;
-          this.dom.liveEqBadge.classList.add('active');
-          if (this.dom.miniEqDot) this.dom.miniEqDot.classList.add('active');
-          if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = song.title;
-          if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = song.artist || playlistTitle;
-          if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = song.title;
-          if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = song.title;
-          if (this.dom.ytCurrentArtist) this.dom.ytCurrentArtist.textContent = song.artist || playlistTitle;
-          this.ytEngine.playVideo(song.id, song.title, song.artist || playlistTitle);
-          this.renderInlineSongJar();
+          this.playInningSong(song);
         }
       });
 

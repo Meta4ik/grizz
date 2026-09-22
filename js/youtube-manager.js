@@ -123,24 +123,23 @@ export class YouTubeInningsEngine {
         this.isPlaying = true;
       }
       let currentTrackInfo = this.currentPlaylist;
-      if (this.player && typeof this.player.getVideoData === 'function') {
-        try {
-          const videoData = this.player.getVideoData();
-          if (videoData && videoData.title) {
-            currentTrackInfo = {
-              id: videoData.video_id || this.currentPlaylist.id,
-              title: videoData.title,
-              artist: videoData.author || this.currentPlaylist.artist || this.currentPlaylist.title
-            };
-            this.currentPlaylist = currentTrackInfo;
-            this.callbacks.onTrackChange(currentTrackInfo);
-          }
-        } catch (e) {
-          // Handled gracefully
+      if (!currentTrackInfo || !currentTrackInfo.title) {
+        if (this.player && typeof this.player.getVideoData === 'function') {
+          try {
+            const videoData = this.player.getVideoData();
+            if (videoData && videoData.title) {
+              currentTrackInfo = {
+                id: videoData.video_id || (this.currentPlaylist ? this.currentPlaylist.id : ''),
+                title: videoData.title,
+                artist: videoData.author || 'Dugout Inning Track'
+              };
+              this.currentPlaylist = currentTrackInfo;
+            }
+          } catch (e) {}
         }
       }
       if (state === window.YT.PlayerState.PLAYING) {
-        this.callbacks.onPlay(currentTrackInfo);
+        this.callbacks.onPlay(currentTrackInfo || this.currentPlaylist);
       }
     }
     // PAUSED === 2
