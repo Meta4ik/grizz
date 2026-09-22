@@ -1887,7 +1887,11 @@ class GrizzliesApp {
     // Set initial playlist dropdown selection
     const currentListId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
     if (this.dom.playlistSelect) {
-      this.dom.playlistSelect.value = curr  switchActivePlaylist(listId, title) {
+      this.dom.playlistSelect.value = currentListId;
+    }
+  }
+
+  switchActivePlaylist(listId, title) {
     this.activePlaylistId = listId;
 
     // Refresh connection to YouTube with the chosen playlist
