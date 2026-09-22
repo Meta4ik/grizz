@@ -7,7 +7,7 @@ import { PLAYERS, HYPE_TRACKS } from './roster.js';
 import { WalkUpAudioEngine } from './audio-player.js';
 import { YouTubeInningsEngine } from './youtube-manager.js';
 
-// Curated Full Tracklists for each Playlist (Populates the Song Jar)
+// Curated Full 20-Track Clean Lists for each Playlist
 export const PLAYLIST_TRACKS_MAP = {
   'EK-XfDRL2wA': {
     title: 'Baseball',
@@ -32,11 +32,7 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
       { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
       { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
-      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
-      { id: '34Na4j8AVgA', title: 'The Sign', artist: 'Ace of Base' },
-      { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
-      { id: 'XwxWsq4otGg', title: 'The Star-Spangled Banner (Organ)', artist: 'Matthew Kaminski' },
-      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Halen' }
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' }
     ]
   },
   'XwxWsq4otGg': {
@@ -44,32 +40,51 @@ export const PLAYLIST_TRACKS_MAP = {
     subtitle: 'Ballpark Organ Classics • Matthew Kaminski',
     tracks: [
       { id: 'XwxWsq4otGg', title: 'The Star-Spangled Banner (Organ)', artist: 'Matthew Kaminski (Braves Organist)' },
-      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
-      { id: 'btPJPFnesV4', title: 'Eye of the Tiger (Charge Theme)', artist: 'Survivor' },
-      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
-      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" }
-    ]
-  },
-  'PLfIVhrWS4Y_M': {
-    title: 'Baseball Multi-Mix',
-    subtitle: "Coach's Alternate Queue",
-    tracks: [
-      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von ft. NBA YoungBoy' },
-      { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
-      { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' }
+      { id: 'hTWKbfoikeg', title: 'Take Me Out to the Ball Game', artist: 'Ballpark Organist' },
+      { id: 'btPJPFnesV4', title: 'Charge Theme & Stadium Chants', artist: 'Atlanta Braves Organ' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck (Organ Version)', artist: 'Matthew Kaminski' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine (Ballpark Organ)", artist: 'Matthew Kaminski' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Dugout Mix)', artist: 'Jaz Von' },
+      { id: 'kOV2iTeGQik', title: 'Walk (Organ Riff)', artist: 'Matthew Kaminski' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You (Organ Stomp)', artist: 'Stadium Organ' },
+      { id: 'CdkvPOatV35', title: 'Crazy Train (Organ Rally)', artist: 'Matthew Kaminski' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm (Ballpark Synth)', artist: 'Stadium Organ' },
+      { id: 'djV11Xbc914', title: 'Take On Me (Organ Chants)', artist: 'Matthew Kaminski' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer (Organ Hook)", artist: 'Matthew Kaminski' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin' (7th Inning Organ)", artist: 'Matthew Kaminski' },
+      { id: 'eH3giaIzONA', title: 'Jump (Organ Riff)', artist: 'Matthew Kaminski' },
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel (Ballpark Jam)', artist: 'Stadium Organ' },
+      { id: 'MVDJxMxzTL0', title: 'Wild Ones (Stadium Edit)', artist: 'Dugout Organ' },
+      { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey (Organ Slow Burn)', artist: 'Matthew Kaminski' },
+      { id: 'fPO76Jlnz6c', title: 'All I Do Is Win (Organ Fanfare)', artist: 'Stadium Organ' },
+      { id: 'I_izvAbhExY', title: "Can't Hold Us (Organ Hype)", artist: 'Matthew Kaminski' },
+      { id: '34Na4j8AVgA', title: 'The Sign (Ballpark Organ)', artist: 'Matthew Kaminski' }
     ]
   },
   'RDkOV2iTeGQik': {
-    title: 'Pantera Rock Mix',
+    title: 'Pantera & Stadium Rock',
     subtitle: 'High-Voltage Stadium Rock',
     tracks: [
       { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
       { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
       { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
       { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' },
-      { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
       { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
-      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' }
+      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
+      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Halen' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
+      { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', artist: 'Queen' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm (Rock Cut)', artist: 'Darude' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older', artist: 'Jaz Von' },
+      { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jelly Roll' },
+      { id: 'aXmmyuIqZyo', title: 'Fast Car (Rock Cover)', artist: 'Luke Combs' },
+      { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' },
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel', artist: 'Darius Rucker' },
+      { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
+      { id: '34Na4j8AVgA', title: 'The Sign', artist: 'Ace of Base' }
     ]
   },
   'PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL': {
@@ -80,7 +95,22 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: 'YVkUvmDQ3HY', title: 'Without Me (Clean)', artist: 'Eminem' },
       { id: 'fPO76Jlnz6c', title: 'All I Do Is Win (Clean)', artist: 'DJ Khaled' },
       { id: 'I_izvAbhExY', title: "Can't Hold Us", artist: 'Macklemore & Ryan Lewis' },
-      { id: 'nfWlot6h_JM', title: 'Shake It Off', artist: 'Taylor Swift' }
+      { id: 'nfWlot6h_JM', title: 'Shake It Off (Hype Edit)', artist: 'Taylor Swift' },
+      { id: 'MVDJxMxzTL0', title: 'Wild Ones (Clean)', artist: 'Jessie Murph, Jelly Roll' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm (Trap Beat)', artist: 'Darude' },
+      { id: 'hTWKbfoikeg', title: 'All Star (Hip Hop Cut)', artist: 'Smash Mouth' },
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel (Clean Remix)', artist: 'Darius Rucker' },
+      { id: 'kOV2iTeGQik', title: 'Walk (Clean Drop)', artist: 'Pantera' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck (Beat Mix)', artist: 'AC/DC' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You (Boom Bap)', artist: 'Queen' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine (Trap Intro)", artist: "Guns N' Roses" },
+      { id: 'CdkvPOatV35', title: 'Crazy Train (Hype Version)', artist: 'Ozzy Osbourne' },
+      { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
+      { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey', artist: 'Chris Stapleton' },
+      { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' },
+      { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' }
     ]
   },
   'RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU': {
@@ -89,9 +119,24 @@ export const PLAYLIST_TRACKS_MAP = {
     tracks: [
       { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
       { id: 'C-u5WLJ9Yk4', title: '...Baby One More Time', artist: 'Britney Spears' },
-      { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', artist: 'Queen' },
+      { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody (90s Reissue)', artist: 'Queen' },
       { id: '34Na4j8AVgA', title: 'The Sign', artist: 'Ace of Base' },
-      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' }
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
+      { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
+      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+      { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
+      { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von' },
+      { id: 'YVkUvmDQ3HY', title: 'Without Me (Clean)', artist: 'Eminem' },
+      { id: 'fPO76Jlnz6c', title: 'All I Do Is Win (Clean)', artist: 'DJ Khaled' },
+      { id: 'I_izvAbhExY', title: "Can't Hold Us", artist: 'Macklemore & Ryan Lewis' },
+      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Halen' }
     ]
   },
   'RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY': {
@@ -102,7 +147,22 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jessie Murph, Jelly Roll' },
       { id: '1VRZq3J0uz4', title: 'Tennessee Whiskey', artist: 'Chris Stapleton' },
       { id: '7qaHdHpP530', title: 'Beer Never Broke My Heart', artist: 'Luke Combs' },
-      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel', artist: 'Darius Rucker' }
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel', artist: 'Darius Rucker' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older (Clean)', artist: 'Jaz Von' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
+      { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
+      { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
+      { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
+      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
+      { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
+      { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
+      { id: 'fPO76Jlnz6c', title: 'All I Do Is Win', artist: 'DJ Khaled' },
+      { id: 'I_izvAbhExY', title: "Can't Hold Us", artist: 'Macklemore' }
     ]
   },
   'RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI': {
@@ -112,8 +172,23 @@ export const PLAYLIST_TRACKS_MAP = {
       { id: 'djV11Xbc914', title: 'Take On Me', artist: 'a-ha' },
       { id: 'lDK9QqIzhwk', title: "Livin' On A Prayer", artist: 'Bon Jovi' },
       { id: 'dQw4w9WgXcQ', title: 'Never Gonna Give You Up', artist: 'Rick Astley' },
-      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Van' },
-      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' }
+      { id: 'eH3giaIzONA', title: 'Jump', artist: 'Van Halen' },
+      { id: 'YkADj0TPrJA', title: "Don't Stop Believin'", artist: 'Journey' },
+      { id: 'btPJPFnesV4', title: 'Eye of the Tiger', artist: 'Survivor' },
+      { id: 'v2AC41dglnM', title: 'Thunderstruck', artist: 'AC/DC' },
+      { id: '-tJYN-eG1zk', title: 'We Will Rock You', artist: 'Queen' },
+      { id: '1w7OgIMMRc4', title: "Sweet Child O' Mine", artist: "Guns N' Roses" },
+      { id: 'CdkvPOatV35', title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { id: 'kOV2iTeGQik', title: 'Walk', artist: 'Pantera' },
+      { id: '6FEDrU85FLE', title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
+      { id: 'hTWKbfoikeg', title: 'All Star', artist: 'Smash Mouth' },
+      { id: '34Na4j8AVgA', title: 'The Sign', artist: 'Ace of Base' },
+      { id: 'y6120QOlsfU', title: 'Sandstorm', artist: 'Darude' },
+      { id: 'n9U_F2e-WbE', title: 'Wagon Wheel', artist: 'Darius Rucker' },
+      { id: 'EK-XfDRL2wA', title: 'Getting Older', artist: 'Jaz Von' },
+      { id: 'MVDJxMxzTL0', title: 'Wild Ones', artist: 'Jelly Roll' },
+      { id: 'aXmmyuIqZyo', title: 'Fast Car', artist: 'Luke Combs' },
+      { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', artist: 'Queen' }
     ]
   }
 };
@@ -199,23 +274,19 @@ class GrizzliesApp {
       ytPlayIcon: document.getElementById('ytPlayIcon'),
       ytPauseIcon: document.getElementById('ytPauseIcon'),
       ytNextBtn: document.getElementById('ytNextBtn'),
-      ytRandomBtn: document.getElementById('ytRandomBtn'),
       ytPlaylistStatusTag: document.getElementById('ytPlaylistStatusTag'),
       playlistSelect: document.getElementById('playlistSelect'),
       organMusicBtn: document.getElementById('organMusicBtn'),
 
-      // Inline Dugout Song Jar (Directly from the Playlist)
+      // Song List Card
       inlineSongJarCard: document.getElementById('inlineSongJarCard'),
       inlineJarTitle: document.getElementById('inlineJarTitle'),
       inlineJarCountPill: document.getElementById('inlineJarCountPill'),
-      inlineJarDrawRandomBtn: document.getElementById('inlineJarDrawRandomBtn'),
       jarModeAllBtn: document.getElementById('jarModeAllBtn'),
       jarModeRandom5Btn: document.getElementById('jarModeRandom5Btn'),
       jarTabAllCount: document.getElementById('jarTabAllCount'),
       jarRandomBanner: document.getElementById('jarRandomBanner'),
       btnReroll5: document.getElementById('btnReroll5'),
-      inlineJarAddInput: document.getElementById('inlineJarAddInput'),
-      inlineJarAddBtn: document.getElementById('inlineJarAddBtn'),
       inlineJarSongsList: document.getElementById('inlineJarSongsList'),
 
       // Master Dock (Sliding Drawer)
@@ -1816,14 +1887,10 @@ class GrizzliesApp {
     // Set initial playlist dropdown selection
     const currentListId = this.ytEngine?.currentPlaylist?.id || 'EK-XfDRL2wA';
     if (this.dom.playlistSelect) {
-      this.dom.playlistSelect.value = currentListId;
-    }
-  }
-
-  switchActivePlaylist(listId, title) {
+      this.dom.playlistSelect.value = curr  switchActivePlaylist(listId, title) {
     this.activePlaylistId = listId;
 
-    // Load playlist in cue mode (autoPlay = false) so audio doesn't start unexpectedly
+    // Refresh connection to YouTube with the chosen playlist
     this.ytEngine.loadPlaylist(listId, title, false);
 
     if (this.dom.ytCurrentTitle) this.dom.ytCurrentTitle.textContent = title;
@@ -1840,7 +1907,7 @@ class GrizzliesApp {
       }
     }
 
-    // Fill the Song Jar with all of the tracks from this selected playlist!
+    // Always fetch fresh 20-track list for this playlist preset
     this.jarViewMode = 'all';
     this.jarRandom5List = [];
     this.playlistSongs = this.loadPlaylistSongs(listId);
@@ -1848,49 +1915,18 @@ class GrizzliesApp {
   }
 
   // =========================================================================
-  // Inline Dugout Song Jar (Populated directly from Active Playlist)
+  // Inline Dugout Song List (Populated directly from Active Playlist)
   // =========================================================================
   loadPlaylistSongs(listId) {
-    // 1. Try reading saved custom tracks for this specific playlist from localStorage
-    try {
-      const saved = localStorage.getItem('grizzlies_playlist_songs_' + listId);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const defaultList = PLAYLIST_TRACKS_MAP[listId]?.tracks || [];
-          const existingIds = new Set(parsed.map(s => s.id));
-          const missing = defaultList.filter(s => !existingIds.has(s.id));
-          if (missing.length > 0) {
-            const merged = [...parsed, ...missing];
-            this.savePlaylistSongs(listId, merged);
-            return merged;
-          }
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.warn('Error loading playlist songs:', e);
-    }
-
-    // 2. Fall back to preset map for known playlists
     if (PLAYLIST_TRACKS_MAP[listId]) {
-      const presetTracks = [...PLAYLIST_TRACKS_MAP[listId].tracks];
-      this.savePlaylistSongs(listId, presetTracks);
-      return presetTracks;
+      return [...PLAYLIST_TRACKS_MAP[listId].tracks];
     }
-
-    // 3. Fallback default
     return [...PLAYLIST_TRACKS_MAP['EK-XfDRL2wA'].tracks];
   }
 
   savePlaylistSongs(listId, songs) {
     this.playlistSongs = songs;
     this.songJar = songs;
-    try {
-      localStorage.setItem('grizzlies_playlist_songs_' + listId, JSON.stringify(songs));
-    } catch (e) {
-      console.warn('Error saving playlist songs:', e);
-    }
     this.updateInlineJarBadge();
   }
 
@@ -1912,7 +1948,7 @@ class GrizzliesApp {
     this.updateInlineJarBadge();
     this.renderInlineSongJar();
 
-    // Mode Selector: View All Songs vs Pull 5 Random Songs
+    // Mode Selector: View All 20 Songs vs Pull 5 Random Songs
     if (this.dom.jarModeAllBtn) {
       this.dom.jarModeAllBtn.addEventListener('click', () => {
         this.triggerHaptic(15);
@@ -1931,29 +1967,6 @@ class GrizzliesApp {
       this.dom.btnReroll5.addEventListener('click', () => {
         this.triggerHaptic([20, 35]);
         this.pull5RandomSongs();
-      });
-    }
-
-    // Big Draw Random Song from Playlist Button
-    if (this.dom.inlineJarDrawRandomBtn) {
-      this.dom.inlineJarDrawRandomBtn.addEventListener('click', () => {
-        this.triggerHaptic([30, 50]);
-        this.drawRandomSongFromJar();
-      });
-    }
-
-    // Quick Add Song to Active Playlist
-    if (this.dom.inlineJarAddBtn) {
-      this.dom.inlineJarAddBtn.addEventListener('click', () => {
-        this.handleAddSongToInlineJar();
-      });
-    }
-
-    if (this.dom.inlineJarAddInput) {
-      this.dom.inlineJarAddInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          this.handleAddSongToInlineJar();
-        }
       });
     }
   }
@@ -1978,7 +1991,7 @@ class GrizzliesApp {
     const listInfo = PLAYLIST_TRACKS_MAP[this.activePlaylistId];
     const playlistTitle = listInfo ? listInfo.title : (this.ytEngine.currentPlaylist?.title || 'Baseball');
     if (this.dom.inlineJarTitle) {
-      this.dom.inlineJarTitle.textContent = `⚾ ${playlistTitle.toUpperCase()} SONG JAR`;
+      this.dom.inlineJarTitle.textContent = `⚾ ${playlistTitle.toUpperCase()} TRACKLIST`;
     }
 
     const currentYtId = this.ytEngine?.currentPlaylist?.id;
@@ -1994,7 +2007,7 @@ class GrizzliesApp {
     if (this.dom.jarRandomBanner) {
       this.dom.jarRandomBanner.style.display = isRandom5 ? 'flex' : 'none';
       const sub = document.getElementById('randomBannerSub');
-      if (sub) sub.textContent = `Drawn from all ${this.playlistSongs.length} playlist songs`;
+      if (sub) sub.textContent = `Drawn from 20 clean playlist songs`;
     }
 
     if (this.dom.jarModeAllBtn && this.dom.jarModeRandom5Btn) {
@@ -2028,15 +2041,13 @@ class GrizzliesApp {
               ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
               : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'}
           </button>
-          ${idx >= 3 && !isRandom5 ? `<button class="btn-song-delete-row" title="Remove Track">&times;</button>` : ''}
         </div>
       `;
 
-      // Play button on row
-      const playBtn = card.querySelector('.btn-song-play-row');
-      playBtn.addEventListener('click', () => {
+      // Tap entire row or play button to play track immediately
+      card.addEventListener('click', (e) => {
         this.triggerHaptic(20);
-        if (isThisPlaying) {
+        if (isThisPlaying && e.target.closest('.btn-song-play-row')) {
           this.ytEngine.pause();
         } else {
           if (this.audioEngine.isPlaying) this.audioEngine.stop();
@@ -2053,96 +2064,8 @@ class GrizzliesApp {
         }
       });
 
-      // Delete custom added button
-      const delBtn = card.querySelector('.btn-song-delete-row');
-      if (delBtn) {
-        delBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.triggerHaptic(15);
-          const updated = this.playlistSongs.filter((_, i) => i !== idx);
-          this.savePlaylistSongs(this.activePlaylistId, updated);
-          if (this.jarViewMode === 'random5') {
-            this.jarRandom5List = this.jarRandom5List.filter((_, i) => i !== idx);
-          }
-          this.renderInlineSongJar();
-        });
-      }
-
       this.dom.inlineJarSongsList.appendChild(card);
     });
-  }
-
-  drawRandomSongFromJar() {
-    if (!this.playlistSongs || this.playlistSongs.length === 0) return;
-    const pool = (this.jarViewMode === 'random5' && this.jarRandom5List.length > 0)
-      ? this.jarRandom5List
-      : this.playlistSongs;
-    const randomIndex = Math.floor(Math.random() * pool.length);
-    const chosen = pool[randomIndex];
-
-    if (this.audioEngine.isPlaying) this.audioEngine.stop();
-    this.activeAudioSource = 'youtube';
-    this.dom.fadeOutBtn.disabled = false;
-    this.dom.stopCutBtn.disabled = false;
-    this.dom.liveEqBadge.classList.add('active');
-    if (this.dom.miniEqDot) this.dom.miniEqDot.classList.add('active');
-
-    const listInfo = PLAYLIST_TRACKS_MAP[this.activePlaylistId];
-    const playlistTitle = listInfo ? listInfo.title : 'Baseball';
-
-    if (this.dom.dockPlayerName) this.dom.dockPlayerName.textContent = chosen.title;
-    if (this.dom.dockSongTitle) this.dom.dockSongTitle.textContent = chosen.artist || playlistTitle;
-    if (this.dom.miniTrackText) this.dom.miniTrackText.textContent = `🎲 ${chosen.title}`;
-
-    this.ytEngine.playVideo(chosen.id, chosen.title, chosen.artist || playlistTitle);
-    this.renderInlineSongJar();
-  }
-
-  handleAddSongToInlineJar() {
-    const rawInput = this.dom.inlineJarAddInput.value.trim();
-    if (!rawInput) return;
-
-    let videoId = null;
-    let songTitle = rawInput;
-    let artistName = 'Custom Track';
-
-    const parsed = YouTubeInningsEngine.parseYouTubePlaylistInput(rawInput);
-    if (parsed) {
-      videoId = parsed.videoId || parsed.playlistId;
-      songTitle = 'YouTube Track';
-    } else {
-      videoId = 'kOV2iTeGQik';
-    }
-
-    const newSong = {
-      id: videoId,
-      title: songTitle,
-      artist: artistName
-    };
-
-    const updated = [...this.playlistSongs, newSong];
-    this.savePlaylistSongs(this.activePlaylistId, updated);
-    this.renderInlineSongJar();
-    this.dom.inlineJarAddInput.value = '';
-    this.triggerHaptic(25);
-
-    // Fetch real title asynchronously via YouTube oEmbed
-    if (videoId) {
-      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.title) {
-            const found = this.playlistSongs.find(s => s.id === videoId && s.title === 'YouTube Track');
-            if (found) {
-              found.title = data.title;
-              if (data.author_name) found.artist = data.author_name;
-              this.savePlaylistSongs(this.activePlaylistId, this.playlistSongs);
-              this.renderInlineSongJar();
-            }
-          }
-        })
-        .catch(() => {});
-    }
   }
 
   // =========================================================================

@@ -406,7 +406,7 @@
       </div>
     </div>
 
-    <!-- Between-Innings Music Suite Modal (Accessible from Settings Cog) -->
+    <!-- Between-Innings Music Suite Modal -->
     <div class="modal-overlay" id="inningsModal" style="display: none;">
       <div class="modal-card innings-modal-card">
         <div class="modal-header">
@@ -415,7 +415,7 @@
               <span class="innings-badge-icon">⚡</span>
               <h3>BETWEEN-INNINGS SUITE</h3>
             </div>
-            <p>YouTube dugout playlist player & song jar</p>
+            <p>YouTube dugout playlist player & song list</p>
           </div>
           <button class="modal-close-btn" id="closeInningsModal">&times;</button>
         </div>
@@ -463,15 +463,6 @@
                 <button class="btn-yt-control btn-yt-skip" id="ytNextBtn" title="Next Song">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                 </button>
-                <button class="btn-yt-control btn-yt-random" id="ytRandomBtn" title="Random Song from Active Playlist">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="16 3 21 3 21 8"></polyline>
-                    <line x1="4" y1="20" x2="21" y2="3"></line>
-                    <polyline points="21 16 21 21 16 21"></polyline>
-                    <line x1="15" y1="15" x2="21" y2="21"></line>
-                    <line x1="4" y1="4" x2="9" y2="9"></line>
-                  </svg>
-                </button>
               </div>
 
               <!-- Quick Link Indicator -->
@@ -487,11 +478,10 @@
                 <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
                   <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Getting Older - Coach's Track)</option>
                   <option value="XwxWsq4otGg" data-title="Baseball Organ Music">🎹 Baseball Organ Music (Matthew Kaminski)</option>
-                  <option value="PLfIVhrWS4Y_M" data-title="Baseball Multi-Mix">⚾ Baseball Multi-Song Mix</option>
-                  <option value="RDkOV2iTeGQik" data-title="Pantera Rock Mix">🔥 Pantera Rock</option>
-                  <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Rap</option>
+                  <option value="RDkOV2iTeGQik" data-title="Pantera & Stadium Rock">🔥 Pantera & Stadium Rock</option>
+                  <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Clean Rap Hits</option>
                   <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
-                  <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country</option>
+                  <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country Hits</option>
                   <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
                 </select>
                 <span class="dropdown-arrow">▼</span>
@@ -512,35 +502,26 @@
 
           </div>
 
-          <!-- Inline Dugout Song Jar (Filled Directly from the Playlist) -->
+          <!-- Clean Song List Card (Populated directly from the Selected Playlist) -->
           <div class="inline-song-jar-card" id="inlineSongJarCard">
             <div class="inline-jar-header">
               <div class="jar-header-left">
-                <span class="jar-header-icon">🫙</span>
+                <span class="jar-header-icon">🎵</span>
                 <div>
-                  <div class="jar-header-title" id="inlineJarTitle">⚾ BASEBALL SONG JAR</div>
-                  <div class="jar-header-subtitle">All tracks from this playlist • Tap to play</div>
+                  <div class="jar-header-title" id="inlineJarTitle">⚾ BASEBALL TRACKLIST</div>
+                  <div class="jar-header-subtitle">Tap any song to play immediately</div>
                 </div>
               </div>
               <div class="jar-header-right">
-                <span class="jar-count-pill" id="inlineJarCountPill">3 SONGS</span>
+                <span class="jar-count-pill" id="inlineJarCountPill">20 SONGS</span>
               </div>
             </div>
 
-            <!-- Big Draw Random Song from Jar Button -->
-            <button class="btn-jar-draw-random" id="inlineJarDrawRandomBtn">
-              <span class="draw-icon">🎲</span>
-              <div class="draw-text">
-                <span class="draw-main">DRAW RANDOM SONG FROM PLAYLIST</span>
-                <span class="draw-sub">Instantly drop a random track from this jar</span>
-              </div>
-            </button>
-
-            <!-- Mode Selector: Show All Songs vs Pull 5 Random Songs -->
+            <!-- Mode Selector: All 20 Songs vs Pull 5 Random Songs -->
             <div class="jar-mode-tabs-row">
-              <button class="jar-mode-tab active" id="jarModeAllBtn" title="View all songs in this playlist">
-                <span>📋 ALL SONGS</span>
-                <span class="jar-tab-count" id="jarTabAllCount">24</span>
+              <button class="jar-mode-tab active" id="jarModeAllBtn" title="View all 20 songs in this playlist">
+                <span>📋 ALL 20 SONGS</span>
+                <span class="jar-tab-count" id="jarTabAllCount">20</span>
               </button>
               <button class="jar-mode-tab" id="jarModeRandom5Btn" title="Pull a random batch of 5 songs from this playlist">
                 <span>🎲 PULL 5 RANDOM</span>
@@ -552,18 +533,12 @@
             <div class="jar-random-banner" id="jarRandomBanner" style="display: none;">
               <div class="random-banner-text">
                 <span class="random-banner-tag">🎲 5 RANDOM DUGOUT PICKS</span>
-                <span class="random-banner-sub" id="randomBannerSub">Drawn from all 24 playlist songs</span>
+                <span class="random-banner-sub" id="randomBannerSub">Drawn from 20 clean playlist songs</span>
               </div>
               <button class="btn-reroll-5" id="btnReroll5" title="Draw 5 different songs from this playlist">🔄 ROLL NEW 5</button>
             </div>
 
-            <!-- Quick Add Song to Active Playlist / Jar -->
-            <div class="jar-add-row">
-              <input type="text" id="inlineJarAddInput" placeholder="Paste YouTube link or song title to add..." autocomplete="off">
-              <button class="btn-jar-add" id="inlineJarAddBtn">➕ ADD</button>
-            </div>
-
-            <!-- Scrollable Track List from Playlist -->
+            <!-- Scrollable Track List (20 Songs) -->
             <div class="inline-jar-songs-list" id="inlineJarSongsList">
               <!-- Populated dynamically by JS -->
             </div>
