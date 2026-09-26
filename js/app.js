@@ -318,6 +318,7 @@ class GrizzliesApp {
       closeSettingsDoneBtn: document.getElementById('closeSettingsDoneBtn'),
       btnToggleRallySetting: document.getElementById('btnToggleRallySetting'),
       openPhoneSetupBtn: document.getElementById('openPhoneSetupBtn'),
+      openAppleMusicBtn: document.getElementById('openAppleMusicBtn'),
       openInningsModalBtn: document.getElementById('openInningsModalBtn'),
 
       // Innings Modal
@@ -1551,15 +1552,10 @@ class GrizzliesApp {
       this.renderLineupModalItems();
     });
 
-    // Header Music Suite Button
+    // Header Music Suite / Apple Music Button
     if (this.dom.headerMusicBtn) {
       this.dom.headerMusicBtn.addEventListener('click', () => {
-        this.triggerHaptic(20);
-        if (this.dom.inningsModal) {
-          this.dom.inningsModal.style.display = 'flex';
-          this.dom.fadeOutBtn.disabled = false;
-          this.dom.stopCutBtn.disabled = false;
-        }
+        this.openAppleMusic();
       });
     }
 
@@ -2098,6 +2094,26 @@ class GrizzliesApp {
   }
 
   // =========================================================================
+  // Apple Music Integration (Direct Launch on iOS / iPhone)
+  // =========================================================================
+  openAppleMusic() {
+    this.triggerHaptic(20);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIOS) {
+      // In iOS / iPhone, music:// immediately launches the native Apple Music app
+      window.location.href = 'music://';
+      setTimeout(() => {
+        window.open('https://music.apple.com', '_blank');
+      }, 600);
+    } else {
+      // Desktop or non-iOS: open Apple Music web player in a new tab
+      window.open('https://music.apple.com', '_blank');
+    }
+  }
+
+  // =========================================================================
   // Dugout Settings Modal (Gear / Wrench)
   // =========================================================================
   setupSettingsModal() {
@@ -2152,15 +2168,16 @@ class GrizzliesApp {
       });
     }
 
+    if (this.dom.openAppleMusicBtn) {
+      this.dom.openAppleMusicBtn.addEventListener('click', () => {
+        closeSettings();
+        this.openAppleMusic();
+      });
+    }
     if (this.dom.openInningsModalBtn) {
       this.dom.openInningsModalBtn.addEventListener('click', () => {
-        this.triggerHaptic(20);
         closeSettings();
-        if (this.dom.inningsModal) {
-          this.dom.inningsModal.style.display = 'flex';
-          this.dom.fadeOutBtn.disabled = false;
-          this.dom.stopCutBtn.disabled = false;
-        }
+        this.openAppleMusic();
       });
     }
 

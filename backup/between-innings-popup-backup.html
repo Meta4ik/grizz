@@ -1,0 +1,120 @@
+<!--
+  BACKUP: Between-Innings Music Suite Modal Popup & YouTube Player
+  Saved on: 2026-09-26
+  Description: This backup contains the full HTML markup and corresponding JS logic
+  for the Between-Innings YouTube Suite modal popup before it was replaced with direct
+  Apple Music linking.
+-->
+
+<!-- ========================================================================= -->
+<!-- 1. HTML MARKUP FOR INNINGS MODAL (Originally in index.html)               -->
+<!-- ========================================================================= -->
+<div class="modal-overlay" id="inningsModal" style="display: none;">
+  <div class="modal-card innings-clean-modal">
+    
+    <!-- Header -->
+    <div class="innings-clean-header">
+      <div class="innings-header-info">
+        <div class="innings-title-badge">🎵 BETWEEN-INNINGS MUSIC</div>
+        <div class="innings-subtitle" id="inningsSubtitle">⚾ Baseball Stadium Mix • 20 Clean Tracks</div>
+      </div>
+      <button class="modal-close-btn" id="closeInningsModal">&times;</button>
+    </div>
+
+    <!-- Sticky Controls Bar -->
+    <div class="innings-top-controls">
+      <!-- Playlist Selector Dropdown -->
+      <div class="innings-select-row">
+        <label for="playlistSelect" class="innings-select-label">PLAYLIST:</label>
+        <div class="playlist-select-wrapper">
+          <select id="playlistSelect" class="playlist-dropdown" aria-label="Select Inning Playlist">
+            <option value="EK-XfDRL2wA" data-title="Baseball" selected>⚾ Baseball (Stadium Mix)</option>
+            <option value="RDkOV2iTeGQik" data-title="Pantera & Stadium Rock">🔥 Pantera & Stadium Rock</option>
+            <option value="PL39z-AAkkatvD0NsFuLhWMypbC4yBzOFL" data-title="Clean Rap Hits">🎤 Clean Rap Hits</option>
+            <option value="RDCLAK5uy_nQkPLhMF6chdzKSlWdX8NHMrLVpdci-eU" data-title="90s Hits">📻 90s Hits</option>
+            <option value="RDCLAK5uy_nH_fdBVCcbNaVwi_tmZajZRq-ekddiuFY" data-title="Country Hits">🤠 Country Hits</option>
+            <option value="RDCLAK5uy_lMzHW51iFg1Kx0d_2EHpzbOgCrwtu8cgI" data-title="80s Hits">⚡ 80s Hits</option>
+          </select>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+      </div>
+
+      <!-- Playback Bar -->
+      <div class="innings-player-bar">
+        <div class="innings-transport-btns">
+          <button class="btn-clean-skip" id="ytPrevBtn" title="Previous Track" aria-label="Previous Track">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="btn-clean-play" id="ytPlayPauseBtn" title="Play or Pause Track" aria-label="Play or Pause Track">
+            <svg id="ytPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="ytPauseIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button class="btn-clean-skip" id="ytNextBtn" title="Next Track" aria-label="Next Track">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+
+        <div class="innings-now-playing-box">
+          <div class="innings-now-title" id="ytCurrentTitle">Getting Older</div>
+          <div class="innings-now-status" id="ytCurrentArtist">Jaz Von ft. NBA YoungBoy</div>
+        </div>
+        
+        <div class="innings-mode-random-wrap">
+          <button class="btn-clean-random5" id="jarModeRandom5Btn" title="Draw 5 Random Tracks">🎲 5 RANDOM</button>
+          <button class="btn-clean-all" id="jarModeAllBtn" title="View All 20 Tracks" style="display:none;">📋 ALL 20</button>
+        </div>
+      </div>
+
+      <!-- Hidden YouTube Iframe -->
+      <div id="ytPlayerContainer" style="width:1px; height:1px; position:absolute; left:-9999px; overflow:hidden;">
+        <iframe 
+          id="ytPlayerFrame"
+          src="https://www.youtube.com/embed/EK-XfDRL2wA?enablejsapi=1&playsinline=1&autoplay=0"
+          title="Between Innings Dugout Track"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <!-- 3. Scrollable Tracklist -->
+    <div class="innings-songs-scroll-body" id="inningsSongsBody">
+      <div class="inline-jar-songs-list" id="inlineJarSongsList">
+        <!-- Clean Track Cards dynamically populated by JS -->
+      </div>
+    </div>
+
+    <!-- 4. Footer -->
+    <div class="innings-clean-footer">
+      <button class="btn-primary" id="closeInningsDoneBtn" style="width: 100%;">Done</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 2. JAVASCRIPT SNIPPET FOR INNINGS MODAL WIRING (from app.js)              -->
+<!-- ========================================================================= -->
+<!--
+if (this.dom.headerMusicBtn) {
+  this.dom.headerMusicBtn.addEventListener('click', () => {
+    this.triggerHaptic(20);
+    if (this.dom.inningsModal) {
+      this.dom.inningsModal.style.display = 'flex';
+      this.dom.fadeOutBtn.disabled = false;
+      this.dom.stopCutBtn.disabled = false;
+    }
+  });
+}
+
+if (this.dom.openInningsModalBtn) {
+  this.dom.openInningsModalBtn.addEventListener('click', () => {
+    closeSettings();
+    if (this.dom.inningsModal) {
+      this.dom.inningsModal.style.display = 'flex';
+      this.dom.fadeOutBtn.disabled = false;
+      this.dom.stopCutBtn.disabled = false;
+    }
+  });
+}
+-->
