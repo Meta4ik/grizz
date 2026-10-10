@@ -2627,6 +2627,78 @@ html, body {
   cursor: default;
 }
 
+/* Lineup Visibility Toggle Button */
+.lineup-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.btn-player-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-family: var(--font-athletic);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+  background: rgba(0, 230, 118, 0.12);
+  border: 1.5px solid rgba(0, 230, 118, 0.45);
+  color: #00e676;
+}
+
+.btn-player-toggle:hover {
+  background: rgba(0, 230, 118, 0.22);
+  border-color: #00e676;
+}
+
+.btn-player-toggle.is-disabled {
+  background: rgba(255, 46, 62, 0.12);
+  border-color: rgba(255, 46, 62, 0.4);
+  color: #ff5252;
+}
+
+.btn-player-toggle.is-disabled:hover {
+  background: rgba(255, 46, 62, 0.22);
+  border-color: #ff5252;
+}
+
+/* Inactive / Benched Player State inside Lineup Modal */
+.lineup-item.is-benched {
+  opacity: 0.55;
+  background: rgba(14, 17, 24, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+  filter: grayscale(0.5);
+}
+
+.lineup-item.is-benched .lineup-batting-pos {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+}
+
+.lineup-item.is-benched .lineup-player-name {
+  color: var(--text-med);
+  text-decoration: line-through rgba(255, 255, 255, 0.3);
+}
+
+.lineup-item.is-benched .lineup-jersey-pill {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  text-shadow: none;
+  opacity: 0.7;
+}
+
 .modal-footer {
   flex-shrink: 0;
   display: flex;

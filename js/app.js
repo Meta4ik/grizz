@@ -179,12 +179,14 @@ class GrizzliesApp {
     this.currentPage = 'walkup'; // 'walkup' or 'innings'
 
     // Sort & lineup state
+    this.disabledPlayerIds = this.loadDisabledPlayers(); // Set of player IDs not present for game
     this.sortMode = localStorage.getItem('grizzlies_sort_mode') || 'number'; // 'number' or 'lineup'
     this.lineupOrder = this.loadLineupOrder();
     this.activeTrack = null;
     this.lastBatterIndex = 0;
-    this.currentBatter = this.lineupOrder[0] || null;
-    this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
+    const activeLineup = this.getActiveLineup();
+    this.currentBatter = activeLineup[0] || this.lineupOrder[0] || null;
+    this.onDeckPlayer = activeLineup[1] || activeLineup[0] || null;
     this.battedPlayerIds = new Set();
 
     // Active Playlist & Song Jar State (defaults to Coach's Baseball playlist)
@@ -328,6 +330,7 @@ class GrizzliesApp {
 
       // Lineup Modal
       lineupModal: document.getElementById('lineupModal'),
+      lineupModalSubtitle: document.getElementById('lineupModalSubtitle'),
       lineupList: document.getElementById('lineupList'),
       closeLineupModal: document.getElementById('closeLineupModal'),
       saveLineupBtn: document.getElementById('saveLineupBtn'),
@@ -457,6 +460,58 @@ class GrizzliesApp {
   // =========================================================================
   // Lineup & Data Storage
   // =========================================================================
+  loadDisabledPlayers() {
+    const saved = localStorage.getItem('grizzlies_disabled_players');
+    if (saved) {
+      try {
+        const ids = JSON.parse(saved);
+        if (Array.isArray(ids)) {
+          return new Set(ids);
+        }
+      } catch (e) {
+        console.error('Error parsing disabled players:', e);
+      }
+    }
+    return new Set();
+  }
+
+  saveDisabledPlayers(disabledSet) {
+    this.disabledPlayerIds = disabledSet;
+    const arr = Array.from(disabledSet);
+    localStorage.setItem('grizzlies_disabled_players', JSON.stringify(arr));
+  }
+
+  togglePlayerEnabled(playerId) {
+    if (this.disabledPlayerIds.has(playerId)) {
+      this.disabledPlayerIds.delete(playerId);
+    } else {
+      this.disabledPlayerIds.add(playerId);
+    }
+    this.saveDisabledPlayers(this.disabledPlayerIds);
+
+    // Sync current batter and on deck player in case currently selected batter was disabled
+    const active = this.getActiveLineup();
+    if (this.currentBatter && this.disabledPlayerIds.has(this.currentBatter.id)) {
+      this.currentBatter = active[0] || null;
+    }
+    if (this.onDeckPlayer && this.disabledPlayerIds.has(this.onDeckPlayer.id)) {
+      if (this.currentBatter) {
+        const idx = active.findIndex(p => p.id === this.currentBatter.id);
+        const nextIdx = idx >= 0 ? (idx + 1) % active.length : 0;
+        this.onDeckPlayer = active[nextIdx] || null;
+      } else {
+        this.onDeckPlayer = active[1] || active[0] || null;
+      }
+    } else if (!this.onDeckPlayer && active.length > 0) {
+      this.onDeckPlayer = active[1] || active[0] || null;
+    }
+    this.updateOnDeckDisplay();
+  }
+
+  getActiveLineup() {
+    return this.lineupOrder.filter(p => !this.disabledPlayerIds.has(p.id));
+  }
+
   loadLineupOrder() {
     const saved = localStorage.getItem('grizzlies_batting_order');
     if (saved) {
@@ -485,17 +540,21 @@ class GrizzliesApp {
     const ids = orderList.map(p => p.id);
     localStorage.setItem('grizzlies_batting_order', JSON.stringify(ids));
 
-    // Re-sync on-deck player to match newly ordered lineup
-    if (this.currentBatter) {
-      const idx = this.lineupOrder.findIndex(p => p.id === this.currentBatter.id);
+    // Re-sync on-deck player to match newly ordered active lineup
+    const active = this.getActiveLineup();
+    if (this.currentBatter && !this.disabledPlayerIds.has(this.currentBatter.id)) {
+      const idx = active.findIndex(p => p.id === this.currentBatter.id);
       if (idx >= 0) {
         this.lastBatterIndex = idx;
-        const nextIdx = (idx + 1) % this.lineupOrder.length;
-        this.onDeckPlayer = this.lineupOrder[nextIdx];
+        const nextIdx = (idx + 1) % active.length;
+        this.onDeckPlayer = active[nextIdx];
+      } else {
+        this.currentBatter = active[0] || null;
+        this.onDeckPlayer = active[1] || active[0] || null;
       }
     } else {
-      this.currentBatter = this.lineupOrder[0] || null;
-      this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0] || null;
+      this.currentBatter = active[0] || null;
+      this.onDeckPlayer = active[1] || active[0] || null;
     }
     this.updateOnDeckDisplay();
   }
@@ -507,6 +566,9 @@ class GrizzliesApp {
     } else {
       list = [...PLAYERS].sort((a, b) => a.numVal - b.numVal);
     }
+
+    // Filter out players disabled / absent for game so they don't show on main screen
+    list = list.filter(p => !this.disabledPlayerIds.has(p.id));
 
     const query = this.dom.rosterSearch.value.trim().toLowerCase();
     if (query) {
@@ -618,7 +680,8 @@ class GrizzliesApp {
       // Status badge: If sorting by lineup, show batting slot e.g. "1st", "2nd"
       let battingSlotText = '';
       if (this.sortMode === 'lineup') {
-        const slotIdx = this.lineupOrder.findIndex(p => p.id === player.id);
+        const activeLineup = this.getActiveLineup();
+        const slotIdx = activeLineup.findIndex(p => p.id === player.id);
         if (slotIdx >= 0) {
           battingSlotText = `BATTER ${slotIdx + 1}`;
         }
@@ -778,11 +841,12 @@ class GrizzliesApp {
     // Advance batting rotation if a roster player is clicked
     if (!track.isHype) {
       this.currentBatter = track;
-      const idx = this.lineupOrder.findIndex(p => p.id === track.id);
+      const activeLineup = this.getActiveLineup();
+      const idx = activeLineup.findIndex(p => p.id === track.id);
       if (idx >= 0) {
         this.lastBatterIndex = idx;
-        const nextIdx = (idx + 1) % this.lineupOrder.length;
-        this.onDeckPlayer = this.lineupOrder[nextIdx];
+        const nextIdx = (idx + 1) % activeLineup.length;
+        this.onDeckPlayer = activeLineup[nextIdx];
       }
       this.updateOnDeckDisplay();
       this.updateBatterCardsState();
@@ -1153,24 +1217,32 @@ class GrizzliesApp {
     if (track.isHype) return;
 
     this.currentBatter = track;
-    // Find position in lineup
-    const idx = this.lineupOrder.findIndex(p => p.id === track.id);
+    // Find position in active lineup
+    const activeLineup = this.getActiveLineup();
+    const idx = activeLineup.findIndex(p => p.id === track.id);
     if (idx >= 0) {
       this.lastBatterIndex = idx;
-      const nextIdx = (idx + 1) % this.lineupOrder.length;
-      this.onDeckPlayer = this.lineupOrder[nextIdx];
+      const nextIdx = (idx + 1) % activeLineup.length;
+      this.onDeckPlayer = activeLineup[nextIdx];
       this.updateOnDeckDisplay();
       this.updateBatterCardsState();
     }
   }
 
   updateOnDeckDisplay() {
-    if (!this.onDeckPlayer && this.lineupOrder.length > 0) {
-      this.onDeckPlayer = this.lineupOrder[1] || this.lineupOrder[0];
+    const activeLineup = this.getActiveLineup();
+    if (!this.onDeckPlayer && activeLineup.length > 0) {
+      this.onDeckPlayer = activeLineup[1] || activeLineup[0];
     }
-    if (this.onDeckPlayer) {
+    if (this.onDeckPlayer && !this.disabledPlayerIds.has(this.onDeckPlayer.id)) {
       this.dom.onDeckBanner.style.display = 'flex';
       this.dom.onDeckName.innerHTML = `<span class="on-deck-player-title">#${this.onDeckPlayer.number} ${this.onDeckPlayer.name}</span><span class="on-deck-player-song">${this.onDeckPlayer.song}</span>`;
+    } else if (activeLineup.length > 0) {
+      this.onDeckPlayer = activeLineup[0];
+      this.dom.onDeckBanner.style.display = 'flex';
+      this.dom.onDeckName.innerHTML = `<span class="on-deck-player-title">#${this.onDeckPlayer.number} ${this.onDeckPlayer.name}</span><span class="on-deck-player-song">${this.onDeckPlayer.song}</span>`;
+    } else {
+      this.dom.onDeckBanner.style.display = 'none';
     }
   }
 
@@ -2071,25 +2143,27 @@ class GrizzliesApp {
       toggle(true);
     }
     const atbatParam = urlParams.get('atbat');
-    if (atbatParam && this.lineupOrder && this.lineupOrder.length > 0) {
-      let targetPlayer = this.lineupOrder[0];
+    const activeLineup = this.getActiveLineup();
+    const effectiveLineup = activeLineup.length > 0 ? activeLineup : this.lineupOrder;
+    if (atbatParam && effectiveLineup && effectiveLineup.length > 0) {
+      let targetPlayer = effectiveLineup[0];
       if (atbatParam === 'last') {
-        targetPlayer = this.lineupOrder[this.lineupOrder.length - 1];
+        targetPlayer = effectiveLineup[effectiveLineup.length - 1];
       } else if (!isNaN(parseInt(atbatParam, 10)) && parseInt(atbatParam, 10) > 1) {
-        const idx = Math.min(parseInt(atbatParam, 10) - 1, this.lineupOrder.length - 1);
-        targetPlayer = this.lineupOrder[idx];
+        const idx = Math.min(parseInt(atbatParam, 10) - 1, effectiveLineup.length - 1);
+        targetPlayer = effectiveLineup[idx];
       }
       this.currentBatter = targetPlayer;
-      const idx = this.lineupOrder.findIndex(p => p.id === targetPlayer.id);
-      const nextIdx = (idx + 1) % this.lineupOrder.length;
-      this.onDeckPlayer = this.lineupOrder[nextIdx];
+      const idx = effectiveLineup.findIndex(p => p.id === targetPlayer.id);
+      const nextIdx = (idx + 1) % effectiveLineup.length;
+      this.onDeckPlayer = effectiveLineup[nextIdx];
       this.updateBatterCardsState();
       this.updateOnDeckDisplay();
       this.scrollToBatterCard(targetPlayer.id);
     }
-    if (urlParams.get('play') === '1' && this.lineupOrder && this.lineupOrder.length > 0) {
-      this.currentBatter = this.lineupOrder[0];
-      this.handleTrackClick(this.lineupOrder[0]);
+    if (urlParams.get('play') === '1' && effectiveLineup && effectiveLineup.length > 0) {
+      this.currentBatter = effectiveLineup[0];
+      this.handleTrackClick(effectiveLineup[0]);
     }
   }
 
@@ -2256,10 +2330,23 @@ class GrizzliesApp {
 
   renderLineupModalItems() {
     this.dom.lineupList.innerHTML = '';
+    const activeCount = this.lineupOrder.filter(p => !this.disabledPlayerIds.has(p.id)).length;
+    const totalCount = this.lineupOrder.length;
+
+    if (this.dom.lineupModalSubtitle) {
+      this.dom.lineupModalSubtitle.textContent = `${activeCount} of ${totalCount} Active • Toggle ✕ / ✓ to Bench or Play`;
+    }
+
+    let activeOrderCounter = 1;
+
     this.lineupOrder.forEach((player, idx) => {
+      const isDisabled = this.disabledPlayerIds.has(player.id);
+      const posLabel = isDisabled ? '—' : activeOrderCounter++;
+
       const item = document.createElement('div');
-      item.className = 'lineup-item';
+      item.className = `lineup-item ${isDisabled ? 'is-benched' : ''}`;
       item.dataset.idx = idx;
+      item.dataset.id = player.id;
       item.setAttribute('draggable', 'true');
       item.innerHTML = `
         <div class="lineup-item-left">
@@ -2270,7 +2357,7 @@ class GrizzliesApp {
               <line x1="4" y1="17" x2="20" y2="17"></line>
             </svg>
           </div>
-          <span class="lineup-batting-pos">${idx + 1}</span>
+          <span class="lineup-batting-pos">${posLabel}</span>
           <div class="lineup-player-info">
             <div class="lineup-name-row">
               <span class="lineup-jersey-pill"><span class="jersey-hash">#</span>${player.number}</span>
@@ -2279,11 +2366,28 @@ class GrizzliesApp {
             <span class="lineup-player-num">${player.song} • ${player.artist}</span>
           </div>
         </div>
-        <div class="lineup-move-btns">
-          <button class="move-btn" data-dir="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Up">▲</button>
-          <button class="move-btn" data-dir="down" data-idx="${idx}" ${idx === this.lineupOrder.length - 1 ? 'disabled' : ''} title="Move Down">▼</button>
+        <div class="lineup-item-actions">
+          <button class="btn-player-toggle ${isDisabled ? 'is-disabled' : ''}" data-id="${player.id}" title="${isDisabled ? 'Player is Benched (Click to Activate)' : 'Player is Active (Click to Bench/Hide)'}">
+            ${isDisabled ? '✕ BENCH' : '✓ ACTIVE'}
+          </button>
+          <div class="lineup-move-btns">
+            <button class="move-btn" data-dir="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Up">▲</button>
+            <button class="move-btn" data-dir="down" data-idx="${idx}" ${idx === this.lineupOrder.length - 1 ? 'disabled' : ''} title="Move Down">▼</button>
+          </div>
         </div>
       `;
+
+      // Visibility Toggle listener
+      const toggleBtn = item.querySelector('.btn-player-toggle');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(20);
+          this.togglePlayerEnabled(player.id);
+          this.renderPlayers();
+          this.renderLineupModalItems();
+        });
+      }
 
       item.querySelectorAll('.move-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
