@@ -25,7 +25,7 @@ export class WalkUpAudioEngine {
     this.currentVolume = 1.0;
     
     // Fade duration in seconds (customizable via slider)
-    this.fadeDuration = 2.0;
+    this.fadeDuration = 3.0;
     
     // Auto-fade limit in seconds (0 = disabled)
     this.autoFadeLimit = 0;
@@ -218,7 +218,7 @@ export class WalkUpAudioEngine {
    * Set fade out duration (seconds)
    */
   setFadeDuration(seconds) {
-    this.fadeDuration = Math.max(0.5, Math.min(10.0, parseFloat(seconds) || 2.0));
+    this.fadeDuration = Math.max(0.5, Math.min(10.0, parseFloat(seconds) || 3.0));
   }
 
   /**

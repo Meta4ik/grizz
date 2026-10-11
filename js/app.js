@@ -1257,7 +1257,7 @@ class GrizzliesApp {
       if (this.dom.fadeDurationSlider) this.dom.fadeDurationSlider.value = val;
       this.updateFadeDuration(val);
     } else {
-      this.updateFadeDuration(2.0);
+      this.updateFadeDuration(3.0);
     }
 
     if (this.dom.fadeDurationSlider) {
